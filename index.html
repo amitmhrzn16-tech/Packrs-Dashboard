@@ -257,6 +257,65 @@
       margin-top: 6px;
     }
 
+    .card-link {
+      position: absolute;
+      bottom: 10px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      color: rgba(255,255,255,.75);
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-decoration: none;
+      transition: color .15s;
+      z-index: 1;
+    }
+
+    .card-link:hover { color: #fff; }
+
+    .card-link svg {
+      width: 11px;
+      height: 11px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* money card view-more link */
+    .money-card { position: relative; }
+
+    .mc-link {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      color: var(--teal);
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .4px;
+      text-decoration: none;
+      opacity: .7;
+      transition: opacity .15s;
+    }
+
+    .mc-link:hover { opacity: 1; }
+
+    .mc-link svg {
+      width: 11px;
+      height: 11px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
     /* ── MONEY CARDS ────────────────────────────────── */
     .money-grid {
       display: grid;
@@ -538,6 +597,7 @@
           <span>International &ndash; 1</span>
         </div>
         <span class="card-badge">Last month: 200</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Warehouse Packages</div>
@@ -548,6 +608,7 @@
           <span>International &ndash; 1</span>
         </div>
         <span class="card-badge">In Warehouse</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Ongoing Packages</div>
@@ -558,6 +619,7 @@
           <span>International &ndash; 1</span>
         </div>
         <span class="card-badge">In Transit</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Delivered Packages</div>
@@ -568,6 +630,7 @@
           <span>International &ndash; 1</span>
         </div>
         <span class="card-badge">Delivered</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
     </div>
 
@@ -582,6 +645,7 @@
           <span>International &ndash; 1</span>
         </div>
         <span class="card-badge">Canceled</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Clients Added</div>
@@ -590,6 +654,7 @@
           <span>New this period</span>
         </div>
         <span class="card-badge">Last month: 200</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Points Collected</div>
@@ -598,6 +663,7 @@
           <span>Loyalty points</span>
         </div>
         <span class="card-badge">Last month: 10,000</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Delivery Charges Earned</div>
@@ -606,27 +672,32 @@
           <span>Current period</span>
         </div>
         <span class="card-badge">Last month: Rs 5,000,000</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
     </div>
 
     <!-- Row 3: Money Cards -->
     <div class="money-grid">
       <div class="money-card">
+        <a href="#" class="mc-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
         <div class="mc-title">Total COD Amount</div>
         <div class="mc-value">Rs 16,703</div>
         <div class="mc-sub">Packages number: 142</div>
       </div>
       <div class="money-card">
+        <a href="#" class="mc-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
         <div class="mc-title">Total Ready to Billed Amount</div>
         <div class="mc-value">Rs 16,703</div>
         <div class="mc-sub">Packages number: 98</div>
       </div>
       <div class="money-card">
+        <a href="#" class="mc-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
         <div class="mc-title">Total Invoiced Amount</div>
         <div class="mc-value">Rs 16,703</div>
         <div class="mc-sub">Packages number: 76</div>
       </div>
       <div class="money-card">
+        <a href="#" class="mc-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
         <div class="mc-title">Total Pending Amount</div>
         <div class="mc-value">Rs 16,703</div>
         <div class="mc-sub">Packages Number: 54</div>
