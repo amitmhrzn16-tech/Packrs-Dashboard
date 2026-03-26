@@ -416,6 +416,75 @@
       flex-shrink: 0;
     }
 
+    /* ── DATE FILTER BAR ────────────────────────────── */
+    .date-filter-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--teal-light);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .date-filter-bar label {
+      font-size: .68rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+      white-space: nowrap;
+    }
+
+    .date-filter-bar input[type="date"] {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: .7rem;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+
+    .date-filter-bar input[type="date"]:focus { border-color: var(--teal); }
+
+    .btn-filter {
+      padding: 4px 12px;
+      background: var(--teal-dark);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: .68rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .5px;
+      transition: background .15s;
+    }
+
+    .btn-filter:hover { background: var(--teal); }
+
+    .btn-reset {
+      padding: 4px 10px;
+      background: none;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: .68rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: color .15s, border-color .15s;
+    }
+
+    .btn-reset:hover { color: var(--red); border-color: var(--red); }
+
+    .filter-result-msg {
+      font-size: .65rem;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    tr.row-hidden { display: none; }
+
     /* ── RESPONSIVE ─────────────────────────────────── */
     @media (max-width: 1100px) {
       .cards-grid, .money-grid { grid-template-columns: repeat(2, 1fr); }
@@ -570,6 +639,15 @@
       <!-- Accounts Summary -->
       <div class="panel">
         <div class="panel-header">Accounts Summary</div>
+        <div class="date-filter-bar">
+          <label>From:</label>
+          <input type="date" id="accFrom" value="2025-04-01" />
+          <label>To:</label>
+          <input type="date" id="accTo" value="2025-04-20" />
+          <button class="btn-filter" onclick="filterTable('accountsBody','accFrom','accTo','accMsg')">Filter</button>
+          <button class="btn-reset"  onclick="resetTable('accountsBody','accFrom','accTo','accMsg','2025-04-01','2025-04-20')">Reset</button>
+          <span class="filter-result-msg" id="accMsg"></span>
+        </div>
         <div class="panel-body">
           <table>
             <thead>
@@ -579,14 +657,15 @@
                 <th>Income</th>
                 <th>Expense</th>
                 <th>Closing Balance</th>
+                <th>Date</th>
               </tr>
             </thead>
-            <tbody>
-              <tr><td>1</td><td>Cash</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td></tr>
-              <tr><td>2</td><td>Laxmi Bank</td><td>Rs 10,000</td><td>Rs 9,000</td><td class="badge-up">Rs 5,000</td></tr>
-              <tr><td>3</td><td>Petty Cash</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td></tr>
-              <tr><td>4</td><td>Nabil Bank</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td></tr>
-              <tr><td>5</td><td>Due</td><td>Rs 1,000</td><td>Rs 5,000</td><td class="badge-down">-Rs 4,000</td></tr>
+            <tbody id="accountsBody">
+              <tr data-date="2025-04-20"><td>1</td><td>Cash</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td><td>Apr 20</td></tr>
+              <tr data-date="2025-04-18"><td>2</td><td>Laxmi Bank</td><td>Rs 10,000</td><td>Rs 9,000</td><td class="badge-up">Rs 5,000</td><td>Apr 18</td></tr>
+              <tr data-date="2025-04-15"><td>3</td><td>Petty Cash</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td><td>Apr 15</td></tr>
+              <tr data-date="2025-04-10"><td>4</td><td>Nabil Bank</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td><td>Apr 10</td></tr>
+              <tr data-date="2025-04-05"><td>5</td><td>Due</td><td>Rs 1,000</td><td>Rs 5,000</td><td class="badge-down">-Rs 4,000</td><td>Apr 05</td></tr>
             </tbody>
           </table>
           <button class="btn-view" onclick="alert('Viewing full accounts...')">VIEW MORE</button>
@@ -596,6 +675,15 @@
       <!-- Riders Leader Board -->
       <div class="panel">
         <div class="panel-header">Riders Leader Board</div>
+        <div class="date-filter-bar">
+          <label>From:</label>
+          <input type="date" id="riderFrom" value="2025-04-01" />
+          <label>To:</label>
+          <input type="date" id="riderTo" value="2025-04-20" />
+          <button class="btn-filter" onclick="filterTable('ridersBody','riderFrom','riderTo','riderMsg')">Filter</button>
+          <button class="btn-reset"  onclick="resetTable('ridersBody','riderFrom','riderTo','riderMsg','2025-04-01','2025-04-20')">Reset</button>
+          <span class="filter-result-msg" id="riderMsg"></span>
+        </div>
         <div class="panel-body">
           <table>
             <thead>
@@ -604,14 +692,15 @@
                 <th>Rider Name</th>
                 <th>Total Packages</th>
                 <th>Last Month</th>
+                <th>Date</th>
               </tr>
             </thead>
-            <tbody>
-              <tr><td>1</td><td>Amit Maharjan</td><td>60</td><td class="badge-up">+8</td></tr>
-              <tr><td>2</td><td>Sandesh Dangol</td><td>30</td><td class="badge-down">-10</td></tr>
-              <tr><td>3</td><td>Rohan Maharjan</td><td>20</td><td class="badge-up">+25</td></tr>
-              <tr><td>4</td><td>Dinesh Dangol</td><td>10</td><td class="badge-up">+1</td></tr>
-              <tr><td>5</td><td>Nikesh Maharjan</td><td>5</td><td class="badge-down">-2</td></tr>
+            <tbody id="ridersBody">
+              <tr data-date="2025-04-20"><td>1</td><td>Amit Maharjan</td><td>60</td><td class="badge-up">+8</td><td>Apr 20</td></tr>
+              <tr data-date="2025-04-18"><td>2</td><td>Sandesh Dangol</td><td>30</td><td class="badge-down">-10</td><td>Apr 18</td></tr>
+              <tr data-date="2025-04-15"><td>3</td><td>Rohan Maharjan</td><td>20</td><td class="badge-up">+25</td><td>Apr 15</td></tr>
+              <tr data-date="2025-04-12"><td>4</td><td>Dinesh Dangol</td><td>10</td><td class="badge-up">+1</td><td>Apr 12</td></tr>
+              <tr data-date="2025-04-08"><td>5</td><td>Nikesh Maharjan</td><td>5</td><td class="badge-down">-2</td><td>Apr 08</td></tr>
             </tbody>
           </table>
           <button class="btn-view" onclick="alert('Viewing all riders...')">VIEW MORE</button>
@@ -635,6 +724,15 @@
       <!-- Top Clients -->
       <div class="panel">
         <div class="panel-header">Top Clients</div>
+        <div class="date-filter-bar">
+          <label>From:</label>
+          <input type="date" id="clientFrom" value="2025-04-01" />
+          <label>To:</label>
+          <input type="date" id="clientTo" value="2025-04-20" />
+          <button class="btn-filter" onclick="filterTable('clientsBody','clientFrom','clientTo','clientMsg')">Filter</button>
+          <button class="btn-reset"  onclick="resetTable('clientsBody','clientFrom','clientTo','clientMsg','2025-04-01','2025-04-20')">Reset</button>
+          <span class="filter-result-msg" id="clientMsg"></span>
+        </div>
         <div class="panel-body">
           <table>
             <thead>
@@ -643,14 +741,15 @@
                 <th>Vendor Name</th>
                 <th>Total Packages</th>
                 <th>Last Month</th>
+                <th>Date</th>
               </tr>
             </thead>
-            <tbody>
-              <tr><td>1</td><td>Deza Collection</td><td>50</td><td class="badge-up">+98</td></tr>
-              <tr><td>2</td><td>Amazing Dresup</td><td>30</td><td class="badge-down">-10</td></tr>
-              <tr><td>3</td><td>Daliya Solutions</td><td>20</td><td class="badge-up">+09</td></tr>
-              <tr><td>4</td><td>Ama Ko Achar</td><td>10</td><td class="badge-up">+1</td></tr>
-              <tr><td>5</td><td>ABC</td><td>5</td><td class="badge-up">+4</td></tr>
+            <tbody id="clientsBody">
+              <tr data-date="2025-04-20"><td>1</td><td>Deza Collection</td><td>50</td><td class="badge-up">+98</td><td>Apr 20</td></tr>
+              <tr data-date="2025-04-17"><td>2</td><td>Amazing Dresup</td><td>30</td><td class="badge-down">-10</td><td>Apr 17</td></tr>
+              <tr data-date="2025-04-14"><td>3</td><td>Daliya Solutions</td><td>20</td><td class="badge-up">+09</td><td>Apr 14</td></tr>
+              <tr data-date="2025-04-10"><td>4</td><td>Ama Ko Achar</td><td>10</td><td class="badge-up">+1</td><td>Apr 10</td></tr>
+              <tr data-date="2025-04-06"><td>5</td><td>ABC</td><td>5</td><td class="badge-up">+4</td><td>Apr 06</td></tr>
             </tbody>
           </table>
           <button class="btn-view" onclick="alert('Viewing all clients...')">VIEW MORE</button>
@@ -744,6 +843,37 @@
 </div><!-- /wrapper -->
 
 <script>
+// ── DATE FILTER ───────────────────────────────────────
+function filterTable(tbodyId, fromId, toId, msgId) {
+  const from  = document.getElementById(fromId).value;
+  const to    = document.getElementById(toId).value;
+  const tbody = document.getElementById(tbodyId);
+  const msg   = document.getElementById(msgId);
+
+  if (!from || !to) { msg.textContent = 'Select both dates.'; return; }
+  if (from > to)    { msg.textContent = 'From > To — invalid range.'; return; }
+
+  let visible = 0;
+  tbody.querySelectorAll('tr').forEach(row => {
+    const d = row.dataset.date;
+    if (d >= from && d <= to) {
+      row.classList.remove('row-hidden');
+      visible++;
+    } else {
+      row.classList.add('row-hidden');
+    }
+  });
+
+  msg.textContent = visible + ' record' + (visible !== 1 ? 's' : '') + ' found';
+}
+
+function resetTable(tbodyId, fromId, toId, msgId, defaultFrom, defaultTo) {
+  document.getElementById(fromId).value = defaultFrom;
+  document.getElementById(toId).value   = defaultTo;
+  document.getElementById(msgId).textContent = '';
+  document.getElementById(tbodyId).querySelectorAll('tr').forEach(r => r.classList.remove('row-hidden'));
+}
+
 // ── CALENDAR ──────────────────────────────────────────
 (function(){
   const grid       = document.getElementById('calGrid');
