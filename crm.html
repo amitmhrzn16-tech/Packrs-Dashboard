@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Packrs CRM — Customer Relationship Management</title>
+<link rel="stylesheet" href="css/shared.css">
+<style>
+/* CRM-specific styles */
+.vendor-id-box{background:var(--primary-light);border:1.5px dashed var(--primary);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
+.vendor-id-box .vid{font-size:18px;font-weight:800;color:var(--primary);letter-spacing:1px;}
+.vendor-id-box .generate-btn{background:var(--primary);color:#fff;border:none;padding:5px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;font-weight:600;}
+.sync-banner{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid #6ee7b7;border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.sync-banner .dot{width:10px;height:10px;background:#10b981;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 3px rgba(16,185,129,0.2);}
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-light);}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.activity-dot.teal{background:var(--primary);}
+.activity-dot.green{background:var(--success);}
+.activity-dot.blue{background:var(--info);}
+.activity-dot.amber{background:var(--warning);}
+.activity-dot.red{background:var(--danger);}
+.activity-dot.purple{background:#7c3aed;}
+.quick-action-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.15s;text-decoration:none;color:var(--text-primary);}
+.quick-action-btn:hover{background:var(--primary-light);border-color:var(--primary);}
+.quick-action-btn .qa-icon{font-size:26px;}
+.quick-action-btn .qa-label{font-size:12px;font-weight:600;text-align:center;}
+.quick-actions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.rule-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:14px;}
+.rule-card .rule-icon{width:38px;height:38px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.template-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:box-shadow 0.15s;}
+.template-card:hover{box-shadow:var(--shadow);}
+.template-preview{background:var(--bg);border-radius:var(--radius-sm);padding:10px;font-size:12.5px;color:var(--text-secondary);line-height:1.5;margin:10px 0;font-style:italic;}
+.email-sidebar{width:180px;flex-shrink:0;border-right:1px solid var(--border-light);padding-right:16px;}
+.email-folder{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;margin-bottom:2px;}
+.email-folder:hover{background:var(--bg);}
+.email-folder.active{background:var(--primary-light);color:var(--primary);font-weight:600;}
+.email-list-item{display:flex;gap:12px;padding:12px;border-bottom:1px solid var(--border-light);cursor:pointer;transition:background 0.12s;}
+.email-list-item:hover{background:var(--bg);}
+.email-list-item.unread{background:#f0f9ff;}
+.email-list-item .email-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
+.compose-toolbar{display:flex;gap:4px;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm) var(--radius-sm) 0 0;border-bottom:none;background:var(--bg);}
+.compose-toolbar button{width:30px;height:30px;border:none;background:transparent;cursor:pointer;border-radius:4px;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.compose-toolbar button:hover{background:var(--border);}
+.compose-body{border:1px solid var(--border);border-radius:0 0 var(--radius-sm) var(--radius-sm);min-height:200px;padding:12px;font-size:13.5px;font-family:var(--font);outline:none;width:100%;}
+.integration-status{background:linear-gradient(135deg,#ecfdf5,#f0fdf4);border:1px solid #a7f3d0;border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.delivery-row td .status-cell{display:flex;align-items:center;gap:6px;}
+.api-key-row{display:flex;gap:8px;}
+.api-key-row input{flex:1;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <a href="index.html">
+      <span class="logo-icon">📦</span>
+      <span class="logo-text">Packrs CRM<span class="logo-sub">Customer Relations</span></span>
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <ul class="sidebar-nav">
+      <li><a href="#" class="active" onclick="showSection('dashboard',this)"><span class="nav-icon">🏠</span> Dashboard</a></li>
+      <li><a href="#" onclick="showSection('clients',this)"><span class="nav-icon">👥</span> Clients <span class="nav-badge" id="clientBadge">12</span></a></li>
+      <li><a href="#" onclick="showSection('vendors',this)"><span class="nav-icon">🏪</span> Vendors</a></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Communication</div>
+    <ul class="sidebar-nav">
+      <li><a href="#" onclick="showSection('messages',this)"><span class="nav-icon">💬</span> Messages</a></li>
+      <li><a href="#" onclick="showSection('emails',this)"><span class="nav-icon">📧</span> Emails <span class="nav-badge">3</span></a></li>
+      <li><a href="#" onclick="showSection('campaigns',this)"><span class="nav-icon">📢</span> Campaigns</a></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Delivery System</div>
+    <ul class="sidebar-nav">
+      <li><a href="#" onclick="showSection('delivery',this)"><span class="nav-icon">🚚</span> Delivery Orders</a></li>
+      <li><a href="#" onclick="showSection('tracking',this)"><span class="nav-icon">📍</span> Tracking</a></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Tools</div>
+    <ul class="sidebar-nav">
+      <li><a href="scraper.html"><span class="nav-icon">🔍</span> Scraper</a></li>
+      <li><a href="#" onclick="showSection('settings',this)"><span class="nav-icon">⚙️</span> Settings</a></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="avatar">A</div>
+      <div class="user-info">
+        <div class="name">Amit Maharjan</div>
+        <div class="role">ADMIN</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <!-- HEADER -->
+  <header class="top-header">
+    <div class="page-title">
+      <h1 id="pageTitle">CRM Dashboard</h1>
+      <div class="breadcrumb" id="pageBreadcrumb">Packrs / CRM / Dashboard</div>
+    </div>
+    <div class="header-actions">
+      <div class="search-bar" style="width:240px">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="form-control" placeholder="Search clients, orders…" style="padding-left:36px">
+      </div>
+      <button class="header-btn" onclick="showToast('No new notifications','info')">
+        🔔 <span class="badge">5</span>
+      </button>
+      <button class="header-btn" onclick="showToast('Profile settings coming soon','info')">👤</button>
+      <a href="index.html" class="btn btn-outline btn-sm">← Main Dashboard</a>
+    </div>
+  </header>
+
+  <div class="page-body">
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION: DASHBOARD
+═══════════════════════════════════════════════════ -->
+<div id="sec-dashboard" class="section">
+  <div class="stats-grid" style="grid-template-columns:repeat(auto-fill,minmax(190px,1fr))">
+    <div class="stat-card"><div class="stat-icon teal">👥</div><div><div class="stat-value">248</div><div class="stat-label">Total Clients</div><div class="stat-change up">▲ 12 this month</div></div></div>
+    <div class="stat-card"><div class="stat-icon green">🏪</div><div><div class="stat-value" id="vendorCount">31</div><div class="stat-label">Active Vendors</div><div class="stat-change up">▲ 4 this week</div></div></div>
+    <div class="stat-card"><div class="stat-icon blue">💬</div><div><div class="stat-value">142</div><div class="stat-label">Messages Sent Today</div><div class="stat-change up">▲ 18% vs yesterday</div></div></div>
+    <div class="stat-card"><div class="stat-icon amber">📧</div><div><div class="stat-value">89</div><div class="stat-label">Emails Synced</div><div class="stat-change up">▲ Live sync ON</div></div></div>
+    <div class="stat-card"><div class="stat-icon purple">🚚</div><div><div class="stat-value">67</div><div class="stat-label">Deliveries Today</div><div class="stat-change down">▼ 3 pending</div></div></div>
+    <div class="stat-card"><div class="stat-icon red">💰</div><div><div class="stat-value">Rs 2.84L</div><div class="stat-label">Revenue This Month</div><div class="stat-change up">▲ 8.2% vs last month</div></div></div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Activity Feed -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📋 Recent Activity</span>
+        <button class="btn btn-ghost btn-sm">View All</button>
+      </div>
+      <div class="card-body" style="padding:12px 20px">
+        <div class="activity-item"><span class="activity-dot teal"></span><div><div style="font-size:13.5px;font-weight:600">New client added — <span style="color:var(--primary)">Shree Boutique</span></div><div style="font-size:12px;color:var(--text-secondary)">Vendor ID PKVND-0031 auto-created · 2 min ago</div></div></div>
+        <div class="activity-item"><span class="activity-dot blue"></span><div><div style="font-size:13.5px;font-weight:600">Bulk SMS sent — <span style="color:var(--info)">Order Confirmation</span></div><div style="font-size:12px;color:var(--text-secondary)">48 recipients · 5 min ago</div></div></div>
+        <div class="activity-item"><span class="activity-dot green"></span><div><div style="font-size:13.5px;font-weight:600">Email synced — <span style="color:var(--success)">12 new emails</span></div><div style="font-size:12px;color:var(--text-secondary)">IMAP auto-sync · 8 min ago</div></div></div>
+        <div class="activity-item"><span class="activity-dot amber"></span><div><div style="font-size:13.5px;font-weight:600">Delivery created — <span style="color:var(--warning)">PKG-4821</span></div><div style="font-size:12px;color:var(--text-secondary)">Client: Himalayan Threads · 15 min ago</div></div></div>
+        <div class="activity-item"><span class="activity-dot purple"></span><div><div style="font-size:13.5px;font-weight:600">Campaign sent — <span style="color:#7c3aed">March Promo</span></div><div style="font-size:12px;color:var(--text-secondary)">124 emails delivered · 1 hr ago</div></div></div>
+        <div class="activity-item"><span class="activity-dot teal"></span><div><div style="font-size:13.5px;font-weight:600">New client — <span style="color:var(--primary)">Kumari Garments</span></div><div style="font-size:12px;color:var(--text-secondary)">Vendor ID PKVND-0030 · 2 hr ago</div></div></div>
+        <div class="activity-item"><span class="activity-dot red"></span><div><div style="font-size:13.5px;font-weight:600">Payment reminder sent</div><div style="font-size:12px;color:var(--text-secondary)">8 overdue clients notified · 3 hr ago</div></div></div>
+        <div class="activity-item"><span class="activity-dot green"></span><div><div style="font-size:13.5px;font-weight:600">Delivery synced to system</div><div style="font-size:12px;color:var(--text-secondary)">23 orders updated · 4 hr ago</div></div></div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><span class="card-title">⚡ Quick Actions</span></div>
+        <div class="card-body">
+          <div class="quick-actions-grid">
+            <a href="#" class="quick-action-btn" onclick="openModal('addClientModal');return false"><span class="qa-icon">👤</span><span class="qa-label">Add Client</span></a>
+            <a href="#" class="quick-action-btn" onclick="showSection('messages',null);return false"><span class="qa-icon">💬</span><span class="qa-label">Bulk Message</span></a>
+            <a href="#" class="quick-action-btn" onclick="showSection('emails',null);return false"><span class="qa-icon">📧</span><span class="qa-label">Compose Email</span></a>
+            <a href="#" class="quick-action-btn" onclick="simulateSync();return false"><span class="qa-icon">🔄</span><span class="qa-label">Sync Emails</span></a>
+            <a href="#" class="quick-action-btn" onclick="showSection('delivery',null);return false"><span class="qa-icon">🚚</span><span class="qa-label">Add Delivery</span></a>
+            <a href="scraper.html" class="quick-action-btn"><span class="qa-icon">🔍</span><span class="qa-label">Scraper</span></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">🔗 System Status</span></div>
+        <div class="card-body" style="padding:14px 20px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px"><span>📦 Delivery System</span><span class="badge badge-success">● Connected</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px"><span>📧 Email Sync (IMAP)</span><span class="badge badge-success">● Live</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px"><span>💬 SMS Gateway</span><span class="badge badge-success">● Active</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px"><span>🔍 Scraper Service</span><span class="badge badge-warning">● 3 Jobs Running</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px"><span>🔄 Last Full Sync</span><span style="color:var(--text-secondary);font-size:12px">2 min ago</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION: CLIENTS
+═══════════════════════════════════════════════════ -->
+<div id="sec-clients" class="section" style="display:none">
+  <div class="flex-between mb-4">
+    <div class="flex gap-3">
+      <div class="search-bar"><span class="search-icon">🔍</span><input type="text" class="form-control" placeholder="Search clients…" oninput="filterClients(this.value)" style="padding-left:36px;width:220px"></div>
+      <select class="form-control" style="width:130px" onchange="filterClients()"><option>All Status</option><option>Active</option><option>Inactive</option><option>Pending</option></select>
+      <select class="form-control" style="width:140px"><option>All Regions</option><option>Kathmandu</option><option>Pokhara</option><option>Chitwan</option><option>Butwal</option><option>Biratnagar</option></select>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('addClientModal')">+ Add New Client</button>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">👥 All Clients <span id="clientTableCount" style="font-weight:400;color:var(--text-secondary);font-size:13px">(12)</span></span>
+      <div class="flex gap-2">
+        <button class="btn btn-outline btn-sm" onclick="showToast('Exporting CSV…','info')">⬇ Export CSV</button>
+        <button class="btn btn-outline btn-sm" onclick="showToast('Syncing all vendors to delivery system…','info')">🔄 Sync All</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th><input type="checkbox" onchange="toggleAll(this)"></th>
+            <th>Vendor ID</th><th>Client Name</th><th>Business</th><th>Phone</th><th>Region</th><th>Type</th><th>Status</th><th>Deliveries</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="clientsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION: MESSAGES
+═══════════════════════════════════════════════════ -->
+<div id="sec-messages" class="section" style="display:none">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('msg','templates',this)">📝 Templates</button>
+    <button class="tab-btn" onclick="switchTab('msg','automation',this)">⚙️ Automation Rules</button>
+    <button class="tab-btn" onclick="switchTab('msg','scheduled',this)">🕐 Scheduled</button>
+    <button class="tab-btn" onclick="switchTab('msg','history',this)">📜 History</button>
+  </div>
+
+  <!-- Templates -->
+  <div id="msgtab-templates" class="tab-content active">
+    <div class="flex-between mb-4">
+      <span style="font-size:14px;font-weight:600">Message Templates</span>
+      <button class="btn btn-primary btn-sm" onclick="showToast('Template editor opening…','info')">+ New Template</button>
+    </div>
+    <div class="grid-3" id="templateCards"></div>
+  </div>
+
+  <!-- Automation Rules -->
+  <div id="msgtab-automation" class="tab-content">
+    <div class="flex-between mb-4">
+      <span style="font-size:14px;font-weight:600">Automation Rules</span>
+      <button class="btn btn-primary btn-sm" onclick="showToast('Rule builder opening…','info')">+ New Rule</button>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Rule Name</th><th>Trigger</th><th>Channel</th><th>Template</th><th>Recipients</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>New Client Welcome</strong></td><td><span class="badge badge-info">client_added</span></td><td><span class="badge badge-success">WhatsApp</span></td><td>Welcome Message</td><td>All new clients</td><td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+            <tr><td><strong>Order Confirmation</strong></td><td><span class="badge badge-primary">order_created</span></td><td><span class="badge badge-info">SMS</span></td><td>Order Confirm</td><td>Client + rider</td><td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+            <tr><td><strong>Delivery Dispatched</strong></td><td><span class="badge badge-primary">delivery_dispatched</span></td><td><span class="badge badge-success">WhatsApp</span></td><td>Delivery Update</td><td>Client only</td><td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+            <tr><td><strong>Payment Reminder</strong></td><td><span class="badge badge-warning">payment_overdue</span></td><td><span class="badge badge-info">SMS</span></td><td>Payment Reminder</td><td>Overdue clients</td><td><div class="toggle" onclick="this.classList.toggle('on')"></div></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+            <tr><td><strong>Monthly Newsletter</strong></td><td><span class="badge badge-gray">monthly_cron</span></td><td><span class="badge badge-purple">Email</span></td><td>Newsletter</td><td>All active</td><td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scheduled -->
+  <div id="msgtab-scheduled" class="tab-content">
+    <div class="card">
+      <div class="card-header"><span class="card-title">🕐 Scheduled Messages</span><button class="btn btn-primary btn-sm" onclick="showToast('Scheduler opening…','info')">+ Schedule New</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Scheduled For</th><th>Channel</th><th>Template</th><th>Recipients</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td>Mar 28, 2026 09:00</td><td><span class="badge badge-success">WhatsApp</span></td><td>March Promo Offer</td><td>142 clients</td><td><span class="badge badge-warning">Pending</span></td><td><button class="btn btn-outline btn-sm">Cancel</button></td></tr>
+            <tr><td>Mar 29, 2026 10:30</td><td><span class="badge badge-info">SMS</span></td><td>Payment Reminder</td><td>18 overdue</td><td><span class="badge badge-warning">Pending</span></td><td><button class="btn btn-outline btn-sm">Cancel</button></td></tr>
+            <tr><td>Apr 01, 2026 08:00</td><td><span class="badge badge-purple">Email</span></td><td>Monthly Newsletter</td><td>248 all</td><td><span class="badge badge-warning">Pending</span></td><td><button class="btn btn-outline btn-sm">Cancel</button></td></tr>
+            <tr><td>Apr 05, 2026 11:00</td><td><span class="badge badge-success">WhatsApp</span></td><td>Feedback Request</td><td>67 recent</td><td><span class="badge badge-warning">Pending</span></td><td><button class="btn btn-outline btn-sm">Cancel</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div id="msgtab-history" class="tab-content">
+    <div class="card">
+      <div class="card-header"><span class="card-title">📜 Message History</span><button class="btn btn-outline btn-sm" onclick="showToast('Exporting…','info')">⬇ Export</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date/Time</th><th>Recipient</th><th>Channel</th><th>Message</th><th>Status</th></tr></thead>
+          <tbody id="msgHistoryBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION: EMAILS
+═══════════════════════════════════════════════════ -->
+<div id="sec-emails" class="section" style="display:none">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('email','inbox',this)">📥 Inbox <span class="badge badge-danger" style="margin-left:4px">12</span></button>
+    <button class="tab-btn" onclick="switchTab('email','compose',this)">✏️ Compose</button>
+    <button class="tab-btn" onclick="switchTab('email','etemplates',this)">📝 Templates</button>
+    <button class="tab-btn" onclick="switchTab('email','eautomation',this)">⚙️ Automation</button>
+    <button class="tab-btn" onclick="switchTab('email','sync',this)">🔄 Sync Settings</button>
+  </div>
+
+  <!-- Inbox -->
+  <div id="emailtab-inbox" class="tab-content active">
+    <div class="card">
+      <div style="display:flex;min-height:500px">
+        <div class="email-sidebar">
+          <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:8px;padding-left:10px">FOLDERS</div>
+          <div class="email-folder active">📥 Inbox <span class="badge badge-danger" style="margin-left:auto">12</span></div>
+          <div class="email-folder">📤 Sent</div>
+          <div class="email-folder">📝 Drafts <span class="badge badge-warning" style="margin-left:auto">3</span></div>
+          <div class="email-folder">⭐ Starred</div>
+          <div class="email-folder">🗑️ Trash</div>
+          <div class="email-folder">🚫 Spam</div>
+          <div style="height:1px;background:var(--border);margin:10px 0"></div>
+          <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:8px;padding-left:10px">LABELS</div>
+          <div class="email-folder"><span style="color:var(--primary)">●</span> Clients</div>
+          <div class="email-folder"><span style="color:var(--warning)">●</span> Payments</div>
+          <div class="email-folder"><span style="color:var(--success)">●</span> Deliveries</div>
+        </div>
+        <div style="flex:1;padding-left:16px">
+          <div class="flex-between" style="margin-bottom:12px">
+            <div class="search-bar"><span class="search-icon">🔍</span><input type="text" class="form-control" placeholder="Search emails…" style="padding-left:36px;width:220px"></div>
+            <button class="btn btn-primary btn-sm" onclick="simulateSync()">🔄 Sync Now</button>
+          </div>
+          <div id="emailList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compose -->
+  <div id="emailtab-compose" class="tab-content">
+    <div class="card">
+      <div class="card-header"><span class="card-title">✏️ Compose Email</span></div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-label">To</label><input type="email" class="form-control" placeholder="recipient@email.com"></div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">CC</label><input type="email" class="form-control" placeholder="cc@email.com"></div>
+          <div class="form-group"><label class="form-label">BCC</label><input type="email" class="form-control" placeholder="bcc@email.com"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Subject</label><input type="text" class="form-control" placeholder="Email subject…"></div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <div class="compose-toolbar">
+            <button title="Bold"><b>B</b></button><button title="Italic"><i>I</i></button><button title="Underline"><u>U</u></button>
+            <button title="Link">🔗</button><button title="Image">🖼️</button><button title="Template">📝</button>
+          </div>
+          <div class="compose-body" contenteditable="true" placeholder="Write your message here…"></div>
+        </div>
+        <div class="flex-between" style="margin-top:8px">
+          <div class="flex gap-3">
+            <div class="toggle-wrap"><div class="toggle" id="scheduleToggle" onclick="toggleSchedule()"></div><span style="font-size:13px">Schedule Send</span></div>
+            <div id="scheduleFields" style="display:none;gap:8px" class="flex">
+              <input type="date" class="form-control" style="width:150px">
+              <input type="time" class="form-control" style="width:110px">
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-outline" onclick="showToast('Draft saved','info')">Save Draft</button>
+            <button class="btn btn-primary" onclick="showToast('Email sent successfully!','success')">Send Email ✉️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email Templates -->
+  <div id="emailtab-etemplates" class="tab-content">
+    <div class="flex-between mb-4"><span style="font-size:14px;font-weight:600">Email Templates</span><button class="btn btn-primary btn-sm">+ New Template</button></div>
+    <div class="grid-3">
+      <div class="template-card"><div class="flex-between"><strong style="font-size:13.5px">Welcome Email</strong><span class="badge badge-primary">Email</span></div><div class="template-preview">Dear {name}, Welcome to Packrs courier! Your account is now active. Your Vendor ID is {vendor_id}…</div><div class="flex gap-2"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-primary btn-sm" onclick="showSection('emails',null);switchTab('email','compose',null)">Use</button></div></div>
+      <div class="template-card"><div class="flex-between"><strong style="font-size:13.5px">Invoice Template</strong><span class="badge badge-primary">Email</span></div><div class="template-preview">Dear {name}, Please find attached your invoice #{invoice_id} for Rs {amount} due on {due_date}…</div><div class="flex gap-2"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-primary btn-sm">Use</button></div></div>
+      <div class="template-card"><div class="flex-between"><strong style="font-size:13.5px">Monthly Report</strong><span class="badge badge-primary">Email</span></div><div class="template-preview">Hi {name}, Here is your monthly delivery report for {month}. Total packages: {count}…</div><div class="flex gap-2"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-primary btn-sm">Use</button></div></div>
+      <div class="template-card"><div class="flex-between"><strong style="font-size:13.5px">Delivery Update</strong><span class="badge badge-primary">Email</span></div><div class="template-preview">Your package #{pkg_id} has been {status}. Expected delivery: {date}. Track at {link}…</div><div class="flex gap-2"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-primary btn-sm">Use</button></div></div>
+      <div class="template-card"><div class="flex-between"><strong style="font-size:13.5px">Promotional Offer</strong><span class="badge badge-primary">Email</span></div><div class="template-preview">Exclusive offer for valued clients! Get {discount}% off all deliveries this {month}. Use code {code}…</div><div class="flex gap-2"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-primary btn-sm">Use</button></div></div>
+    </div>
+  </div>
+
+  <!-- Email Automation -->
+  <div id="emailtab-eautomation" class="tab-content">
+    <div class="flex-between mb-4"><span style="font-size:14px;font-weight:600">Email Automation Workflows</span><button class="btn btn-primary btn-sm">+ New Workflow</button></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card"><div class="card-body" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><div class="toggle on" onclick="this.classList.toggle('on')"></div><div style="flex:1"><strong>New Client Onboarding</strong><div style="font-size:12px;color:var(--text-secondary)">Trigger: client_added → Send Welcome Email → Wait 1 day → Send Getting Started Guide</div></div><span class="badge badge-success">Active</span><button class="btn btn-outline btn-sm">Edit</button></div></div>
+      <div class="card"><div class="card-body" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><div class="toggle on" onclick="this.classList.toggle('on')"></div><div style="flex:1"><strong>Payment Follow-up</strong><div style="font-size:12px;color:var(--text-secondary)">Trigger: invoice_unpaid (7 days) → Send Reminder → Wait 3 days → Send Final Notice</div></div><span class="badge badge-success">Active</span><button class="btn btn-outline btn-sm">Edit</button></div></div>
+      <div class="card"><div class="card-body" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><div class="toggle" onclick="this.classList.toggle('on')"></div><div style="flex:1"><strong>Monthly Newsletter</strong><div style="font-size:12px;color:var(--text-secondary)">Trigger: Monthly (1st) → Send Newsletter to all active clients</div></div><span class="badge badge-gray">Inactive</span><button class="btn btn-outline btn-sm">Edit</button></div></div>
+      <div class="card"><div class="card-body" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><div class="toggle on" onclick="this.classList.toggle('on')"></div><div style="flex:1"><strong>Delivery Confirmation</strong><div style="font-size:12px;color:var(--text-secondary)">Trigger: delivery_completed → Send Delivery Confirmation → Request Feedback (3 days)</div></div><span class="badge badge-success">Active</span><button class="btn btn-outline btn-sm">Edit</button></div></div>
+    </div>
+  </div>
+
+  <!-- Sync Settings -->
+  <div id="emailtab-sync" class="tab-content">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title">📥 IMAP Settings (Incoming)</span></div>
+        <div class="card-body">
+          <div class="form-group"><label class="form-label">Email Provider</label><select class="form-control" onchange="fillProvider(this.value)"><option value="">Select Provider</option><option value="gmail">Gmail</option><option value="outlook">Outlook / Hotmail</option><option value="yahoo">Yahoo Mail</option><option value="custom">Custom IMAP</option></select></div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">IMAP Server</label><input type="text" class="form-control" id="imapHost" placeholder="imap.gmail.com"></div>
+            <div class="form-group"><label class="form-label">Port</label><input type="number" class="form-control" id="imapPort" placeholder="993"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Email Address</label><input type="email" class="form-control" placeholder="your@email.com"></div>
+          <div class="form-group"><label class="form-label">Password / App Password</label><input type="password" class="form-control" placeholder="••••••••••••"></div>
+          <div class="form-group"><div class="toggle-wrap"><div class="toggle on"></div><span style="font-size:13px">Use SSL/TLS</span></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">📤 SMTP Settings (Outgoing)</span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">SMTP Server</label><input type="text" class="form-control" id="smtpHost" placeholder="smtp.gmail.com"></div>
+            <div class="form-group"><label class="form-label">Port</label><input type="number" class="form-control" id="smtpPort" placeholder="587"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Sync Frequency</label><select class="form-control"><option>Real-time (IDLE)</option><option>Every 5 minutes</option><option>Every 15 minutes</option><option>Every 1 hour</option></select></div>
+          <div class="form-group"><div class="toggle-wrap"><div class="toggle on"></div><span style="font-size:13px">Auto-sync enabled</span></div></div>
+          <div class="form-group"><div class="toggle-wrap"><div class="toggle on"></div><span style="font-size:13px">Auto-tag emails from clients</span></div></div>
+          <div class="flex gap-2" style="margin-top:8px">
+            <button class="btn btn-outline" onclick="testConnection()">🔌 Test Connection</button>
+            <button class="btn btn-primary" onclick="showToast('Email settings saved!','success')">Save & Connect</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ DELIVERY ═══════════ -->
+<div id="sec-delivery" class="section" style="display:none">
+  <div class="integration-status">
+    <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">🚚</span><div><strong>Delivery Management System — Connected</strong><div style="font-size:12px;color:#065f46">Auto vendor-sync active · Last sync: 2 min ago</div></div></div>
+    <button class="btn btn-success btn-sm" onclick="showToast('Force sync initiated…','success')">🔄 Force Sync</button>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">📦 Recent Orders</span><button class="btn btn-primary btn-sm" onclick="showToast('Add order form coming…','info')">+ New Order</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Order ID</th><th>Client</th><th>Vendor ID</th><th>Status</th><th>Rider</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td><strong>PKG-4821</strong></td><td>Shree Boutique</td><td><span class="badge badge-primary">PKVND-0031</span></td><td><span class="badge badge-success">Delivered</span></td><td>Ramesh K.</td><td>Rs 450</td></tr>
+            <tr><td><strong>PKG-4820</strong></td><td>Himalayan Threads</td><td><span class="badge badge-primary">PKVND-0012</span></td><td><span class="badge badge-warning">In Transit</span></td><td>Bikash T.</td><td>Rs 320</td></tr>
+            <tr><td><strong>PKG-4819</strong></td><td>Kumari Garments</td><td><span class="badge badge-primary">PKVND-0030</span></td><td><span class="badge badge-info">Picked Up</span></td><td>Sanjay R.</td><td>Rs 280</td></tr>
+            <tr><td><strong>PKG-4818</strong></td><td>Sunrise Fashion</td><td><span class="badge badge-primary">PKVND-0008</span></td><td><span class="badge badge-danger">Pending</span></td><td>Unassigned</td><td>Rs 550</td></tr>
+            <tr><td><strong>PKG-4817</strong></td><td>Newari Threads</td><td><span class="badge badge-primary">PKVND-0005</span></td><td><span class="badge badge-success">Delivered</span></td><td>Dinesh P.</td><td>Rs 390</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">📋 Sync Log</span></div>
+      <div class="card-body" style="padding:12px 20px">
+        <div id="syncLogBody" style="font-size:13px;display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ VENDORS ═══════════ -->
+<div id="sec-vendors" class="section" style="display:none">
+  <div class="sync-banner"><span class="dot"></span><div><strong>Auto Vendor Creation Active</strong> — New clients are automatically registered as vendors with sequential PKVND-XXXX IDs</div></div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">🏪 Vendor Registry</span><button class="btn btn-outline btn-sm" onclick="showToast('Syncing vendor registry…','info')">🔄 Sync Registry</button></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Vendor ID</th><th>Vendor Name</th><th>Client</th><th>Region</th><th>Total Orders</th><th>Balance</th><th>Status</th></tr></thead>
+        <tbody id="vendorTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CAMPAIGNS ═══════════ -->
+<div id="sec-campaigns" class="section" style="display:none">
+  <div class="flex-between mb-4"><span style="font-size:16px;font-weight:700">📢 Campaigns</span><button class="btn btn-primary" onclick="showToast('Campaign builder opening…','info')">+ New Campaign</button></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-body"><div class="flex-between mb-4"><strong>March Flash Sale</strong><span class="badge badge-success">Sent</span></div><div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Sent Mar 15, 2026 · 248 recipients</div><div class="flex gap-4" style="font-size:13px"><div><div style="font-weight:700;font-size:18px;color:var(--primary)">94.3%</div><div style="color:var(--text-secondary)">Delivery Rate</div></div><div><div style="font-weight:700;font-size:18px;color:var(--success)">42.1%</div><div style="color:var(--text-secondary)">Open Rate</div></div><div><div style="font-weight:700;font-size:18px;color:var(--info)">12.8%</div><div style="color:var(--text-secondary)">Click Rate</div></div></div></div></div>
+    <div class="card"><div class="card-body"><div class="flex-between mb-4"><strong>Welcome New Clients</strong><span class="badge badge-warning">Scheduled</span></div><div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Scheduled Apr 1, 2026 · 31 recipients</div><div class="flex gap-4" style="font-size:13px"><div><div style="font-weight:700;font-size:18px;color:var(--text-secondary)">—</div><div style="color:var(--text-secondary)">Delivery Rate</div></div><div><div style="font-weight:700;font-size:18px;color:var(--text-secondary)">—</div><div style="color:var(--text-secondary)">Open Rate</div></div></div></div></div>
+  </div>
+</div>
+
+<!-- ═══════════ TRACKING ═══════════ -->
+<div id="sec-tracking" class="section" style="display:none">
+  <div class="card">
+    <div class="card-header"><span class="card-title">📍 Package Tracking</span></div>
+    <div class="card-body">
+      <div class="flex gap-3 mb-4"><input type="text" class="form-control" placeholder="Enter Package ID (e.g. PKG-4821)" style="max-width:300px"><button class="btn btn-primary" onclick="showToast('Tracking PKG-4821: In Transit — Kathmandu Ring Road','info')">Track</button></div>
+      <div class="card" style="background:var(--bg)"><div class="card-body"><div style="font-size:13px;color:var(--text-secondary)">Enter a package ID above to track its status</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SETTINGS ═══════════ -->
+<div id="sec-settings" class="section" style="display:none">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">🔑 API Integrations</span></div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-label">Delivery System API Endpoint</label><input type="text" class="form-control" value="https://api.packrs.com/v1/delivery"></div>
+        <div class="form-group"><label class="form-label">API Key</label><div class="api-key-row"><input type="password" class="form-control" value="pk_live_xxxxxxxxxxxxxxxxxxxx"><button class="btn btn-outline btn-sm" onclick="showToast('API key revealed','info')">Show</button></div></div>
+        <div class="form-group"><label class="form-label">Webhook URL</label><input type="text" class="form-control" value="https://crm.packrs.com/webhooks/delivery"></div>
+        <button class="btn btn-primary" onclick="showToast('Settings saved!','success')">Save Settings</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">⚙️ General Settings</span></div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-label">Auto Vendor ID Format</label><input type="text" class="form-control" value="PKVND-{0000}"></div>
+        <div class="form-group"><div class="toggle-wrap" style="margin-bottom:12px"><div class="toggle on"></div><span style="font-size:13px">Auto-sync new clients to Delivery System</span></div></div>
+        <div class="form-group"><div class="toggle-wrap" style="margin-bottom:12px"><div class="toggle on"></div><span style="font-size:13px">Send welcome message on client creation</span></div></div>
+        <div class="form-group"><div class="toggle-wrap"><div class="toggle on"></div><span style="font-size:13px">Enable real-time email sync</span></div></div>
+        <button class="btn btn-primary" style="margin-top:12px" onclick="showToast('Settings saved!','success')">Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- end page-body -->
+</div><!-- end main-content -->
+</div><!-- end app-shell -->
+
+<!-- ═══════════════════════════════════════════════════
+     MODAL: ADD CLIENT
+═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="addClientModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">👤 Add New Client</span>
+      <button class="modal-close" onclick="closeModal('addClientModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Auto-Generated Vendor ID</label>
+        <div class="vendor-id-box">
+          <span class="vid" id="generatedVendorId">PKVND-0032</span>
+          <button class="generate-btn" onclick="regenerateVendorId()">🔄 Regenerate</button>
+        </div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">This ID will be used across the CRM and Delivery Management System</div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Full Name *</label><input type="text" class="form-control" id="clientName" placeholder="e.g. Ramesh Shrestha"></div>
+        <div class="form-group"><label class="form-label">Business Name *</label><input type="text" class="form-control" id="clientBusiness" placeholder="e.g. Shree Boutique"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Phone Number *</label><input type="tel" class="form-control" id="clientPhone" placeholder="98XXXXXXXX"></div>
+        <div class="form-group"><label class="form-label">Email Address</label><input type="email" class="form-control" id="clientEmail" placeholder="client@business.com"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">City / Region *</label><select class="form-control" id="clientRegion"><option>Kathmandu</option><option>Pokhara</option><option>Chitwan</option><option>Butwal</option><option>Biratnagar</option><option>Lalitpur</option><option>Bhaktapur</option><option>Dharan</option></select></div>
+        <div class="form-group"><label class="form-label">Client Type</label><select class="form-control" id="clientType"><option>Retail</option><option>Wholesale</option><option>Partner</option><option>Corporate</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Address</label><input type="text" class="form-control" id="clientAddress" placeholder="Street address…"></div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" id="clientNotes" placeholder="Any additional notes…" rows="2"></textarea></div>
+      <div class="card" style="background:var(--primary-light);border-color:var(--primary);margin-top:8px">
+        <div class="card-body" style="padding:12px 16px">
+          <div class="toggle-wrap"><div class="toggle on" id="deliverySyncToggle" onclick="this.classList.toggle('on')"></div><strong style="font-size:13px">Sync to Delivery Management System</strong></div>
+          <div style="font-size:12px;color:var(--primary-dark);margin-top:6px">✅ Client will be automatically registered as a vendor in the Delivery System with Vendor ID <strong id="syncVendorId">PKVND-0032</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addClientModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitNewClient()">Create Client + Vendor ID</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════
+const SEED_CLIENTS = [
+  {id:'PKVND-0001',name:'Ramesh Shrestha',business:'Himalayan Threads',phone:'9841234567',email:'ramesh@himalayan.com',region:'Kathmandu',type:'Wholesale',status:'Active',deliveries:142},
+  {id:'PKVND-0002',name:'Sita Tamang',business:'Kumari Garments',phone:'9852345678',email:'sita@kumari.com',region:'Lalitpur',type:'Retail',status:'Active',deliveries:87},
+  {id:'PKVND-0003',name:'Bikash Gurung',business:'Pokhara Fashion Hub',phone:'9863456789',email:'bikash@pokharafashion.com',region:'Pokhara',type:'Wholesale',status:'Active',deliveries:203},
+  {id:'PKVND-0004',name:'Anita Rai',business:'Sunrise Clothing',phone:'9874567890',email:'anita@sunrise.com',region:'Biratnagar',type:'Retail',status:'Pending',deliveries:12},
+  {id:'PKVND-0005',name:'Dipesh Karki',business:'Newari Threads',phone:'9885678901',email:'dipesh@newari.com',region:'Bhaktapur',type:'Partner',status:'Active',deliveries:318},
+  {id:'PKVND-0006',name:'Priya Poudel',business:'Trendy Boutique',phone:'9896789012',email:'priya@trendy.com',region:'Kathmandu',type:'Retail',status:'Active',deliveries:56},
+  {id:'PKVND-0007',name:'Suresh Maharjan',business:'Kathmandu Style Co.',phone:'9807890123',email:'suresh@ktmstyle.com',region:'Kathmandu',type:'Wholesale',status:'Active',deliveries:189},
+  {id:'PKVND-0008',name:'Manisha Thapa',business:'Chitwan Fashion',phone:'9818901234',email:'manisha@chitwanfash.com',region:'Chitwan',type:'Retail',status:'Inactive',deliveries:34},
+  {id:'PKVND-0009',name:'Rajesh Bhandari',business:'Butwal Garments',phone:'9829012345',email:'rajesh@butwalgarments.com',region:'Butwal',type:'Wholesale',status:'Active',deliveries:124},
+  {id:'PKVND-0010',name:'Sabina Limbu',business:'Dharan Boutique',phone:'9840123456',email:'sabina@dharan.com',region:'Dharan',type:'Retail',status:'Active',deliveries:78},
+  {id:'PKVND-0011',name:'Nabin Adhikari',business:'Pokhara Streetwear',phone:'9851234567',email:'nabin@streetwear.com',region:'Pokhara',type:'Retail',status:'Pending',deliveries:8},
+  {id:'PKVND-0012',name:'Gita Lama',business:'Nepali Craft Store',phone:'9862345678',email:'gita@nepalicrafts.com',region:'Kathmandu',type:'Partner',status:'Active',deliveries:267},
+];
+
+const TEMPLATES = [
+  {name:'Welcome Message',channel:'WhatsApp',preview:'Namaste {name}! Welcome to Packrs Courier. Your Vendor ID is {vendor_id}. We are happy to serve you!',vars:'{name},{vendor_id}'},
+  {name:'Order Confirmation',channel:'SMS',preview:'Dear {name}, your order #{order_id} has been confirmed. Total: Rs {amount}. Track at packrs.com/track/{id}',vars:'{name},{order_id},{amount}'},
+  {name:'Delivery Update',channel:'WhatsApp',preview:'Hi {name}! Your package #{pkg_id} is out for delivery. Rider: {rider_name} ({phone}). ETA: {time}',vars:'{name},{pkg_id},{rider_name}'},
+  {name:'Payment Reminder',channel:'SMS',preview:'Dear {name}, your invoice of Rs {amount} is due on {date}. Please clear dues to avoid service interruption.',vars:'{name},{amount},{date}'},
+  {name:'Promotional Offer',channel:'WhatsApp',preview:'Exclusive for you, {name}! Get 15% off all deliveries this month. Use code PACKRS15. Valid till {expiry}.',vars:'{name},{expiry}'},
+  {name:'Feedback Request',channel:'SMS',preview:'Hi {name}, how was your recent delivery experience? Rate us: packrs.com/rate/{id}. Thank you!',vars:'{name},{id}'},
+];
+
+const MSG_HISTORY = [
+  {date:'2026-03-27 09:14',recipient:'Ramesh Shrestha',channel:'WhatsApp',msg:'Order confirmed PKG-4821…',status:'Delivered'},
+  {date:'2026-03-27 09:10',recipient:'Sita Tamang',channel:'SMS',msg:'Payment reminder Rs 2400…',status:'Delivered'},
+  {date:'2026-03-27 08:55',recipient:'Bikash Gurung',channel:'WhatsApp',msg:'Delivery dispatched PKG-4820…',status:'Delivered'},
+  {date:'2026-03-27 08:42',recipient:'Anita Rai',channel:'SMS',msg:'Welcome to Packrs! Vendor ID…',status:'Delivered'},
+  {date:'2026-03-26 17:30',recipient:'Dipesh Karki',channel:'WhatsApp',msg:'Exclusive March offer 15% off…',status:'Delivered'},
+  {date:'2026-03-26 16:00',recipient:'Bulk (48)',channel:'SMS',msg:'Order confirmation sent to 48…',status:'Delivered'},
+  {date:'2026-03-26 14:30',recipient:'Priya Poudel',channel:'WhatsApp',msg:'Your package has been picked…',status:'Failed'},
+  {date:'2026-03-26 12:00',recipient:'Suresh Maharjan',channel:'SMS',msg:'Invoice #2841 due Mar 30…',status:'Delivered'},
+];
+
+const EMAILS_INBOX = [
+  {from:'Bikash Gurung',email:'bikash@pokharafashion.com',subject:'Bulk order inquiry for April',preview:'Hi, I wanted to discuss a bulk order for April…',time:'10:23 AM',unread:true,color:'#3aafa9'},
+  {from:'Sita Tamang',email:'sita@kumari.com',subject:'Re: Invoice #2841',preview:'Thank you for the invoice. I will transfer today…',time:'9:47 AM',unread:true,color:'#e05c7a'},
+  {from:'Delivery System',email:'noreply@packrs.com',subject:'Auto-sync report — 23 orders updated',preview:'Daily sync completed successfully. 23 new orders…',time:'8:00 AM',unread:true,color:'#10b981'},
+  {from:'Rajesh Bhandari',email:'rajesh@butwalgarments.com',subject:'New pickup request',preview:'Please arrange a pickup from our Butwal warehouse…',time:'Yesterday',unread:false,color:'#f59e0b'},
+  {from:'Gita Lama',email:'gita@nepalicrafts.com',subject:'Monthly statement review',preview:'Could we schedule a call to review March statement?',time:'Yesterday',unread:false,color:'#7c3aed'},
+  {from:'Anita Rai',email:'anita@sunrise.com',subject:'Welcome email received!',preview:'Thank you for the welcome. Looking forward to…',time:'Mar 26',unread:false,color:'#3b82f6'},
+];
+
+const SYNC_LOG_ENTRIES = [
+  '10:25 AM — Auto-sync: 3 new emails received',
+  '10:20 AM — Vendor PKVND-0031 pushed to Delivery System',
+  '09:15 AM — Bulk SMS: 48 messages dispatched',
+  '09:00 AM — IMAP sync: 12 emails fetched',
+  '08:30 AM — Delivery sync: 5 orders updated',
+  '08:00 AM — Daily sync report generated',
+];
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let clients = JSON.parse(localStorage.getItem('crm_clients') || 'null') || [...SEED_CLIENTS];
+let nextVendorNum = clients.length > 0
+  ? Math.max(...clients.map(c => parseInt(c.id.replace('PKVND-','')))) + 1
+  : 1;
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderClientsTable(clients);
+  renderVendorTable(clients);
+  renderTemplates();
+  renderMsgHistory();
+  renderEmailList();
+  renderSyncLog();
+  updateVendorId();
+});
+
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
+const SECTION_TITLES = {
+  dashboard:'CRM Dashboard',clients:'Client Management',vendors:'Vendor Registry',
+  messages:'Message Automation',emails:'Email Management',campaigns:'Campaigns',
+  delivery:'Delivery Integration',tracking:'Package Tracking',settings:'Settings'
+};
+
+function showSection(name, linkEl) {
+  document.querySelectorAll('.section').forEach(s => s.style.display='none');
+  const sec = document.getElementById('sec-'+name);
+  if (sec) sec.style.display='block';
+  document.getElementById('pageTitle').textContent = SECTION_TITLES[name] || name;
+  document.getElementById('pageBreadcrumb').textContent = 'Packrs / CRM / ' + (SECTION_TITLES[name]||name);
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  if (linkEl) linkEl.classList.add('active');
+}
+
+function switchTab(group, tabName, btnEl) {
+  document.querySelectorAll(`[id^="${group}tab-"]`).forEach(t => t.classList.remove('active'));
+  const tab = document.getElementById(`${group}tab-${tabName}`);
+  if (tab) tab.classList.add('active');
+  if (btnEl) {
+    btnEl.closest('.tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+  }
+}
+
+// ══════════════════════════════════════════
+//  CLIENT TABLE
+// ══════════════════════════════════════════
+function renderClientsTable(data) {
+  const tbody = document.getElementById('clientsTableBody');
+  document.getElementById('clientTableCount').textContent = `(${data.length})`;
+  document.getElementById('clientBadge').textContent = data.length;
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td><input type="checkbox"></td>
+      <td><span class="badge badge-primary">${c.id}</span></td>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.business}</td>
+      <td>${c.phone}</td>
+      <td>${c.region}</td>
+      <td><span class="badge badge-gray">${c.type}</span></td>
+      <td>${statusBadge(c.status)}</td>
+      <td><strong>${c.deliveries}</strong></td>
+      <td>
+        <div class="flex gap-2">
+          <button class="btn btn-outline btn-sm" onclick="showToast('Viewing ${c.name}','info')">👁</button>
+          <button class="btn btn-outline btn-sm" onclick="showToast('Edit ${c.name}','info')">✏️</button>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Message sent to ${c.name}','success')">💬</button>
+          <button class="btn btn-ghost btn-sm" onclick="deleteClient('${c.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function statusBadge(s) {
+  const map = {Active:'badge-success',Inactive:'badge-gray',Pending:'badge-warning'};
+  return `<span class="badge ${map[s]||'badge-gray'}">${s}</span>`;
+}
+
+function filterClients(q='') {
+  const filtered = clients.filter(c =>
+    c.name.toLowerCase().includes(q.toLowerCase()) ||
+    c.business.toLowerCase().includes(q.toLowerCase()) ||
+    c.id.toLowerCase().includes(q.toLowerCase())
+  );
+  renderClientsTable(filtered);
+}
+
+function deleteClient(id) {
+  if (!confirm('Remove this client?')) return;
+  clients = clients.filter(c => c.id !== id);
+  localStorage.setItem('crm_clients', JSON.stringify(clients));
+  renderClientsTable(clients);
+  renderVendorTable(clients);
+  showToast('Client removed','warning');
+}
+
+function toggleAll(cb) {
+  document.querySelectorAll('#clientsTableBody input[type=checkbox]').forEach(c => c.checked = cb.checked);
+}
+
+// ══════════════════════════════════════════
+//  VENDOR TABLE
+// ══════════════════════════════════════════
+function renderVendorTable(data) {
+  const tbody = document.getElementById('vendorTableBody');
+  if (!tbody) return;
+  document.getElementById('vendorCount').textContent = data.filter(c=>c.status==='Active').length;
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td><span class="badge badge-primary">${c.id}</span></td>
+      <td><strong>${c.business}</strong></td>
+      <td>${c.name}</td>
+      <td>${c.region}</td>
+      <td>${c.deliveries}</td>
+      <td>Rs ${(c.deliveries * 350).toLocaleString()}</td>
+      <td>${statusBadge(c.status)}</td>
+    </tr>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  ADD CLIENT
+// ══════════════════════════════════════════
+function updateVendorId() {
+  const vid = 'PKVND-' + String(nextVendorNum).padStart(4,'0');
+  const el = document.getElementById('generatedVendorId');
+  const el2 = document.getElementById('syncVendorId');
+  if (el) el.textContent = vid;
+  if (el2) el2.textContent = vid;
+}
+
+function regenerateVendorId() {
+  nextVendorNum++;
+  updateVendorId();
+  showToast('New Vendor ID generated','info');
+}
+
+function submitNewClient() {
+  const name = document.getElementById('clientName').value.trim();
+  const business = document.getElementById('clientBusiness').value.trim();
+  const phone = document.getElementById('clientPhone').value.trim();
+  if (!name || !business || !phone) { showToast('Please fill required fields (Name, Business, Phone)','error'); return; }
+  const vid = 'PKVND-' + String(nextVendorNum).padStart(4,'0');
+  const newClient = {
+    id: vid, name, business, phone,
+    email: document.getElementById('clientEmail').value,
+    region: document.getElementById('clientRegion').value,
+    type: document.getElementById('clientType').value,
+    status: 'Active', deliveries: 0
+  };
+  clients.unshift(newClient);
+  localStorage.setItem('crm_clients', JSON.stringify(clients));
+  nextVendorNum++;
+  updateVendorId();
+  renderClientsTable(clients);
+  renderVendorTable(clients);
+  closeModal('addClientModal');
+  const syncOn = document.getElementById('deliverySyncToggle').classList.contains('on');
+  showToast(`✅ Client added! Vendor ID ${vid} created${syncOn?' + synced to Delivery System':''}`, 'success');
+  if (syncOn) {
+    setTimeout(() => addSyncLogEntry(`Vendor ${vid} (${business}) pushed to Delivery System`), 800);
+  }
+  ['clientName','clientBusiness','clientPhone','clientEmail','clientNotes'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value='';
+  });
+}
+
+// ══════════════════════════════════════════
+//  TEMPLATES
+// ══════════════════════════════════════════
+function renderTemplates() {
+  const grid = document.getElementById('templateCards');
+  if (!grid) return;
+  grid.innerHTML = TEMPLATES.map(t => `
+    <div class="template-card">
+      <div class="flex-between" style="margin-bottom:8px">
+        <strong style="font-size:13.5px">${t.name}</strong>
+        <span class="badge ${t.channel==='WhatsApp'?'badge-success':t.channel==='SMS'?'badge-info':'badge-purple'}">${t.channel}</span>
+      </div>
+      <div class="template-preview">${t.preview}</div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-bottom:10px">Variables: <code>${t.vars}</code></div>
+      <div class="flex gap-2">
+        <button class="btn btn-outline btn-sm" onclick="showToast('Editing ${t.name}…','info')">Edit</button>
+        <button class="btn btn-primary btn-sm" onclick="showToast('${t.name} loaded in composer','success')">Use Template</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  MSG HISTORY
+// ══════════════════════════════════════════
+function renderMsgHistory() {
+  const tbody = document.getElementById('msgHistoryBody');
+  if (!tbody) return;
+  tbody.innerHTML = MSG_HISTORY.map(m => `
+    <tr>
+      <td style="font-size:12px;color:var(--text-secondary)">${m.date}</td>
+      <td><strong>${m.recipient}</strong></td>
+      <td><span class="badge ${m.channel==='WhatsApp'?'badge-success':m.channel==='SMS'?'badge-info':'badge-purple'}">${m.channel}</span></td>
+      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px">${m.msg}</td>
+      <td><span class="badge ${m.status==='Delivered'?'badge-success':'badge-danger'}">${m.status}</span></td>
+    </tr>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  EMAILS
+// ══════════════════════════════════════════
+function renderEmailList() {
+  const list = document.getElementById('emailList');
+  if (!list) return;
+  list.innerHTML = EMAILS_INBOX.map(e => `
+    <div class="email-list-item ${e.unread?'unread':''}" onclick="showToast('Opening email from ${e.from}','info')">
+      <div class="email-avatar" style="background:${e.color}">${e.from[0]}</div>
+      <div style="flex:1;min-width:0">
+        <div class="flex-between"><strong style="font-size:13px">${e.from}</strong><span style="font-size:11px;color:var(--text-secondary)">${e.time}</span></div>
+        <div style="font-size:13px;font-weight:${e.unread?'600':'400'}">${e.subject}</div>
+        <div style="font-size:12px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.preview}</div>
+      </div>
+      ${e.unread?'<div style="width:8px;height:8px;background:var(--primary);border-radius:50%;flex-shrink:0;margin-top:4px"></div>':''}
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  SYNC LOG
+// ══════════════════════════════════════════
+function renderSyncLog() {
+  const el = document.getElementById('syncLogBody');
+  if (!el) return;
+  el.innerHTML = SYNC_LOG_ENTRIES.map(e => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-light)">
+      <span style="color:var(--success);font-size:12px">✓</span>
+      <span style="font-size:13px">${e}</span>
+    </div>`).join('');
+}
+
+function addSyncLogEntry(msg) {
+  const now = new Date();
+  const time = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  SYNC_LOG_ENTRIES.unshift(`${time} — ${msg}`);
+  renderSyncLog();
+}
+
+// ══════════════════════════════════════════
+//  MODALS
+// ══════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+function showToast(msg, type='info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icons = {success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  toast.innerHTML = `<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
+}
+
+// ══════════════════════════════════════════
+//  MISC ACTIONS
+// ══════════════════════════════════════════
+function simulateSync() {
+  showToast('Email sync started…','info');
+  setTimeout(() => {
+    showToast('✅ 7 new emails synced successfully','success');
+    addSyncLogEntry('IMAP sync: 7 new emails fetched');
+  }, 1800);
+}
+
+function testConnection() {
+  showToast('Testing connection…','info');
+  setTimeout(() => showToast('✅ Connection successful! IMAP ready','success'), 2000);
+}
+
+function toggleSchedule() {
+  const t = document.getElementById('scheduleToggle');
+  t.classList.toggle('on');
+  const f = document.getElementById('scheduleFields');
+  f.style.display = t.classList.contains('on') ? 'flex' : 'none';
+}
+
+function fillProvider(val) {
+  const hosts = {gmail:{imap:'imap.gmail.com',smtp:'smtp.gmail.com',iport:993,sport:587},outlook:{imap:'outlook.office365.com',smtp:'smtp.office365.com',iport:993,sport:587},yahoo:{imap:'imap.mail.yahoo.com',smtp:'smtp.mail.yahoo.com',iport:993,sport:465}};
+  const h = hosts[val];
+  if (!h) return;
+  document.getElementById('imapHost').value = h.imap;
+  document.getElementById('imapPort').value = h.iport;
+  document.getElementById('smtpHost').value = h.smtp;
+  document.getElementById('smtpPort').value = h.sport;
+  showToast(`${val.charAt(0).toUpperCase()+val.slice(1)} settings loaded`, 'success');
+}
+</script>
+</body>
+</html>
