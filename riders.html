@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riders — Packrs Courier</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --teal:#3aafa9;--teal-dark:#2b7a78;--teal-light:#def2f1;
+      --red:#e05c7a;--bg:#f0f4f4;--white:#fff;
+      --text:#1a1a2e;--muted:#6b7280;--border:#d1e0df;
+      --shadow:0 2px 8px rgba(0,0,0,.08);--nav:220px;--hdr:56px;
+    }
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text)}
+
+    /* HEADER */
+    header{position:fixed;top:0;left:var(--nav);right:0;height:var(--hdr);background:var(--white);display:flex;align-items:center;gap:16px;padding:0 20px;box-shadow:var(--shadow);z-index:200}
+    .logo{font-size:1.1rem;font-weight:800;letter-spacing:2px;color:var(--teal-dark);text-transform:uppercase;flex:1}
+    .menu-btn{display:none;background:none;border:none;font-size:1.2rem;cursor:pointer}
+    .hdr-right{display:flex;align-items:center;gap:16px}
+    .notif-btn{position:relative;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+    .notif-badge{position:absolute;top:-4px;right:-5px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .user-chip{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .avatar{width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem}
+    .user-name{font-size:.82rem;font-weight:700}
+    .user-role{font-size:.65rem;color:var(--muted);letter-spacing:1px}
+    @media(max-width:768px){header{left:0}.menu-btn{display:block}}
+
+    /* SIDENAV */
+    .sidenav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--teal-dark);color:#fff;z-index:300;overflow-y:auto;display:flex;flex-direction:column;transition:transform .25s}
+    .sn-brand{padding:16px;font-size:1rem;font-weight:800;letter-spacing:2px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .sn-links{list-style:none;padding:10px 0;flex:1}
+    .sn-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;font-weight:600;transition:background .15s,color .15s;border-left:3px solid transparent}
+    .sn-item:hover,.sn-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#fff}
+    .sn-icon{width:17px;height:17px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .sn-footer{padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}
+    @media(max-width:768px){.sidenav{transform:translateX(-100%)}.sidenav.open{transform:translateX(0)}}
+
+    /* PAGE */
+    .page-body{margin-left:var(--nav);padding-top:var(--hdr);min-height:100vh}
+    .page-inner{padding:20px;display:flex;flex-direction:column;gap:16px}
+    @media(max-width:768px){.page-body{margin-left:0}}
+
+    /* TITLE ROW */
+    .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
+    .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
+    .btn-add{background:var(--teal);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;white-space:nowrap}
+    .btn-add:hover{background:var(--teal-dark)}
+
+    /* STAT CARDS */
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.stat-grid{grid-template-columns:1fr 1fr}}
+    .stat-card{background:var(--teal);color:#fff;border-radius:12px;padding:18px 20px 14px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+    .stat-card::after{content:'';position:absolute;bottom:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1)}
+    .stat-card.red{background:var(--red)}
+    .stat-label{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.85}
+    .stat-value{font-size:2rem;font-weight:800;line-height:1.1;margin:6px 0 8px}
+    .stat-subs{display:flex;flex-direction:column;gap:2px}
+    .stat-sub{font-size:.72rem;opacity:.85;display:flex;justify-content:space-between}
+    .stat-more{display:block;text-align:right;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7);text-decoration:none;margin-top:10px;letter-spacing:.5px;position:relative;z-index:1;transition:color .15s}
+    .stat-more:hover{color:#fff}
+
+    /* PANELS */
+    .panels-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:900px){.panels-row{grid-template-columns:1fr}}
+    .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+    .panel-hdr{background:var(--teal-dark);color:#fff;padding:13px 20px;font-size:.88rem;font-weight:800;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between}
+    .panel-body{padding:16px 20px}
+
+    /* FILTER BAR */
+    .filter-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 20px;background:var(--teal-light);border-bottom:1px solid var(--border)}
+    .filter-bar label{font-size:.75rem;font-weight:700;color:var(--teal-dark);white-space:nowrap}
+    .filter-bar input[type=date],.filter-bar input[type=search]{padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;color:var(--text);background:var(--white);outline:none}
+    .filter-bar input:focus{border-color:var(--teal)}
+    .btn-filter{background:var(--teal);color:#fff;border:none;padding:6px 14px;border-radius:7px;font-size:.78rem;font-weight:700;cursor:pointer}
+    .btn-filter:hover{background:var(--teal-dark)}
+    .btn-reset{background:transparent;color:var(--muted);border:1.5px solid var(--border);padding:5px 12px;border-radius:7px;font-size:.78rem;font-weight:700;cursor:pointer}
+    .btn-reset:hover{color:var(--red);border-color:var(--red)}
+    .filter-msg{font-size:.68rem;color:var(--muted);margin-left:auto}
+
+    /* TABLE */
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.8rem}
+    thead th{background:var(--teal-light);color:var(--teal-dark);font-weight:700;padding:10px 12px;text-align:left;white-space:nowrap;border-bottom:2px solid var(--border)}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+    tbody tr:hover{background:#f8fbfb}
+    tbody td{padding:10px 12px;color:var(--text);white-space:nowrap}
+    tr.hidden{display:none}
+
+    /* BADGES */
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700}
+    .b-green{background:#dcfce7;color:#16a34a}
+    .b-red{background:#fce4ec;color:#e05c7a}
+    .b-gray{background:#f3f4f6;color:#6b7280}
+    .b-blue{background:#dbeafe;color:#2563eb}
+    .rating{color:#f59e0b;font-weight:700;font-size:.78rem}
+
+    /* ACTION BTNS */
+    .act-btns{display:flex;gap:4px}
+    .act-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s}
+    .act-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .act-view{color:#0284c7;border-color:#bae6fd}.act-view:hover{background:#e0f2fe}
+    .act-edit{color:#d97706;border-color:#fde68a}.act-edit:hover{background:#fef3c7}
+    .act-del{color:#e05c7a;border-color:#fecdd3}.act-del:hover{background:#fce4ec}
+    .act-assign{color:#7c3aed;border-color:#ddd6fe}.act-assign:hover{background:#ede9fe}
+
+    /* PAGINATION */
+    .pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--border);font-size:.8rem;color:var(--muted);flex-wrap:wrap;gap:8px}
+    .pag-btns{display:flex;gap:6px}
+    .pag-btn{background:none;border:1.5px solid var(--border);border-radius:6px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;color:var(--teal-dark);transition:background .12s}
+    .pag-btn:hover{background:var(--teal-light)}
+
+    /* CHART */
+    .chart-wrap{position:relative;height:220px}
+
+    /* MODAL */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center}
+    .modal-bg.open{display:flex}
+    .modal{background:var(--white);border-radius:12px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+    .modal-head{background:var(--teal-dark);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-radius:12px 12px 0 0}
+    .modal-head h3{font-size:.9rem;font-weight:800}
+    .modal-x{background:none;border:none;color:rgba(255,255,255,.8);font-size:1.3rem;cursor:pointer;line-height:1}
+    .modal-x:hover{color:#fff}
+    .modal-body{padding:20px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .form-full{grid-column:1/-1}
+    .form-group{display:flex;flex-direction:column;gap:4px}
+    .form-group label{font-size:.72rem;font-weight:700;color:var(--muted)}
+    .form-group input,.form-group select,.form-group textarea{padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;color:var(--text);outline:none;transition:border .15s;font-family:inherit}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal)}
+    .modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+    .btn-save{background:var(--teal);color:#fff;border:none;padding:8px 20px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.82rem}
+    .btn-save:hover{background:var(--teal-dark)}
+    .btn-cancel{background:none;color:var(--muted);border:1.5px solid var(--border);padding:8px 16px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.82rem}
+  </style>
+</head>
+<body>
+
+<!-- SIDENAV -->
+<nav class="sidenav" id="sidenav">
+  <div class="sn-brand">&#9992; PACKRS</div>
+  <ul class="sn-links">
+    <li><a href="index.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
+    <li><a href="packages.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li><a href="riders.html" class="sn-item active">
+      <svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Riders</span></a></li>
+    <li><a href="clients.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
+    <li><a href="invoices.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoices</span></a></li>
+    <li><a href="accounts.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Accounts</span></a></li>
+    <li><a href="reports.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Reports</span></a></li>
+    <li><a href="settings.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a></li>
+  </ul>
+  <div class="sn-footer">
+    <a href="#" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span></a>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <button class="menu-btn" onclick="document.getElementById('sidenav').classList.toggle('open')">&#9776;</button>
+  <div class="logo">&#9992; Packrs Courier</div>
+  <div class="hdr-right">
+    <button class="notif-btn">&#128276;<span class="notif-badge">2</span></button>
+    <div class="user-chip">
+      <div class="avatar">AM</div>
+      <div><div class="user-name">Amit Maharjan</div><div class="user-role">ADMIN</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- PAGE -->
+<div class="page-body">
+  <div class="page-inner">
+
+    <!-- Title -->
+    <div class="title-row">
+      <div>
+        <div class="page-title">Riders</div>
+        <div class="page-sub">Manage delivery riders and track performance</div>
+      </div>
+      <button class="btn-add" onclick="document.getElementById('addModal').classList.add('open')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Rider
+      </button>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Riders</div>
+        <div class="stat-value">12</div>
+        <div class="stat-subs">
+          <div class="stat-sub"><span>Active</span><span>9</span></div>
+          <div class="stat-sub"><span>Inactive</span><span>3</span></div>
+        </div>
+        <a href="#" class="stat-more">VIEW MORE ›</a>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Deliveries Today</div>
+        <div class="stat-value">47</div>
+        <div class="stat-subs">
+          <div class="stat-sub"><span>Completed</span><span>47</span></div>
+          <div class="stat-sub"><span>Pending</span><span>12</span></div>
+        </div>
+        <a href="#" class="stat-more">VIEW MORE ›</a>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">This Month</div>
+        <div class="stat-value">1,240</div>
+        <div class="stat-subs">
+          <div class="stat-sub"><span>Last Month</span><span>1,105</span></div>
+          <div class="stat-sub"><span>Growth</span><span>+12.2%</span></div>
+        </div>
+        <a href="#" class="stat-more">VIEW MORE ›</a>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Top Performer</div>
+        <div class="stat-value" style="font-size:1.2rem;margin-top:8px">Amit M.</div>
+        <div class="stat-subs">
+          <div class="stat-sub"><span>Packages</span><span>280</span></div>
+          <div class="stat-sub"><span>Rating</span><span>&#9733; 4.9</span></div>
+        </div>
+        <a href="#" class="stat-more">VIEW MORE ›</a>
+      </div>
+    </div>
+
+    <!-- Chart + Quick Stats -->
+    <div class="panels-row">
+      <div class="panel">
+        <div class="panel-hdr">Monthly Deliveries per Rider</div>
+        <div class="panel-body">
+          <div class="chart-wrap"><canvas id="riderChart"></canvas></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-hdr">Delivery Status This Month</div>
+        <div class="panel-body">
+          <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Riders Table -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span>Riders Leaderboard</span>
+        <span style="font-size:.75rem;opacity:.75">12 riders</span>
+      </div>
+      <div class="filter-bar">
+        <label>Search:</label>
+        <input type="search" id="riderSearch" placeholder="Name or zone..." oninput="searchRiders()" style="min-width:160px" />
+        <label>From:</label><input type="date" id="rFrom" value="2025-04-01" />
+        <label>To:</label><input type="date" id="rTo" value="2025-04-20" />
+        <button class="btn-filter" onclick="filterRiders()">Filter</button>
+        <button class="btn-reset" onclick="resetRiders()">Reset</button>
+        <span class="filter-msg" id="rMsg"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Rider Name</th><th>Phone</th><th>Zone</th><th>Today</th><th>This Month</th><th>Total</th><th>Rating</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="riderBody">
+            <tr data-date="2025-04-20"><td>1</td><td><strong>Amit Maharjan</strong></td><td>9801234567</td><td>Kathmandu</td><td>12</td><td>280</td><td>1,200</td><td><span class="rating">&#9733; 4.9</span></td><td><span class="badge b-green">Active</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-20"><td>2</td><td><strong>Sandesh Dangol</strong></td><td>9807654321</td><td>Pokhara</td><td>8</td><td>210</td><td>980</td><td><span class="rating">&#9733; 4.7</span></td><td><span class="badge b-green">Active</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-19"><td>3</td><td><strong>Rohan Maharjan</strong></td><td>9803456789</td><td>Chitwan</td><td>7</td><td>195</td><td>860</td><td><span class="rating">&#9733; 4.8</span></td><td><span class="badge b-green">Active</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-19"><td>4</td><td><strong>Dinesh Dangol</strong></td><td>9809876543</td><td>Bharawa</td><td>6</td><td>180</td><td>740</td><td><span class="rating">&#9733; 4.5</span></td><td><span class="badge b-green">Active</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-18"><td>5</td><td><strong>Nikesh Maharjan</strong></td><td>9802345678</td><td>Damar</td><td>5</td><td>160</td><td>620</td><td><span class="rating">&#9733; 4.6</span></td><td><span class="badge b-green">Active</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-18"><td>6</td><td><strong>Suresh Tamang</strong></td><td>9808765432</td><td>Kathmandu</td><td>4</td><td>140</td><td>500</td><td><span class="rating">&#9733; 4.3</span></td><td><span class="badge b-green">Active</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-17"><td>7</td><td><strong>Prakash Shrestha</strong></td><td>9804567890</td><td>Pokhara</td><td>3</td><td>95</td><td>380</td><td><span class="rating">&#9733; 4.1</span></td><td><span class="badge b-gray">Inactive</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-16"><td>8</td><td><strong>Bijay Karki</strong></td><td>9806543210</td><td>Chitwan</td><td>2</td><td>80</td><td>260</td><td><span class="rating">&#9733; 3.9</span></td><td><span class="badge b-gray">Inactive</span></td><td class="act-btns">BTNS</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span>Showing 1–8 of 12 riders</span>
+        <div class="pag-btns">
+          <button class="pag-btn">&#8249; Prev</button>
+          <button class="pag-btn">Next &#8250;</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD RIDER MODAL -->
+<div class="modal-bg" id="addModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Add New Rider</h3>
+      <button class="modal-x" onclick="document.getElementById('addModal').classList.remove('open')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Full Name</label><input type="text" placeholder="e.g. Ram Shrestha" /></div>
+        <div class="form-group"><label>Phone Number</label><input type="text" placeholder="98XXXXXXXX" /></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="rider@email.com" /></div>
+        <div class="form-group"><label>Zone</label>
+          <select><option>Kathmandu</option><option>Pokhara</option><option>Chitwan</option><option>Bharawa</option><option>Damar</option></select>
+        </div>
+        <div class="form-group"><label>Vehicle Type</label>
+          <select><option>Bike</option><option>Scooter</option><option>Van</option></select>
+        </div>
+        <div class="form-group"><label>License Number</label><input type="text" placeholder="License #" /></div>
+        <div class="form-group form-full"><label>Address</label><input type="text" placeholder="Full address" /></div>
+        <div class="form-group form-full"><label>Notes</label><textarea rows="2" placeholder="Any additional info..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="document.getElementById('addModal').classList.remove('open')">Cancel</button>
+      <button class="btn-save" onclick="alert('Rider saved!');document.getElementById('addModal').classList.remove('open')">Save Rider</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Inject action buttons into BTNS placeholders
+document.querySelectorAll('.act-btns').forEach(td => {
+  td.innerHTML = `
+    <div style="display:flex;gap:4px">
+      <button class="act-btn act-view" title="View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button class="act-btn act-edit" title="Edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      <button class="act-btn act-assign" title="Assign Package" style="color:#7c3aed;border-color:#ddd6fe"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></button>
+      <button class="act-btn act-del" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
+    </div>`;
+});
+
+// Filter by date
+function filterRiders() {
+  const from = document.getElementById('rFrom').value;
+  const to   = document.getElementById('rTo').value;
+  const msg  = document.getElementById('rMsg');
+  let count  = 0;
+  document.querySelectorAll('#riderBody tr').forEach(tr => {
+    const d = tr.dataset.date;
+    if (d >= from && d <= to) { tr.classList.remove('hidden'); count++; }
+    else tr.classList.add('hidden');
+  });
+  msg.textContent = count + ' record(s) found';
+}
+
+function resetRiders() {
+  document.getElementById('rFrom').value = '2025-04-01';
+  document.getElementById('rTo').value   = '2025-04-20';
+  document.getElementById('rMsg').textContent = '';
+  document.getElementById('riderSearch').value = '';
+  document.querySelectorAll('#riderBody tr').forEach(tr => tr.classList.remove('hidden'));
+}
+
+// Search
+function searchRiders() {
+  const q = document.getElementById('riderSearch').value.toLowerCase();
+  document.querySelectorAll('#riderBody tr').forEach(tr => {
+    tr.classList.toggle('hidden', !tr.textContent.toLowerCase().includes(q));
+  });
+}
+
+// Bar chart
+new Chart(document.getElementById('riderChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Amit', 'Sandesh', 'Rohan', 'Dinesh', 'Nikesh', 'Suresh', 'Prakash', 'Bijay'],
+    datasets: [{ label: 'Deliveries', data: [280,210,195,180,160,140,95,80],
+      backgroundColor: '#3aafa9', borderRadius: 5, borderSkipped: false }]
+  },
+  options: { responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#e5e7eb'},beginAtZero:true,ticks:{font:{size:9}}}}
+  }
+});
+
+// Doughnut chart
+new Chart(document.getElementById('statusChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Delivered','Ongoing','Canceled'],
+    datasets: [{ data: [1100,140,60], backgroundColor: ['#3aafa9','#f59e0b','#e05c7a'], borderWidth: 2, borderColor:'#fff' }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, cutout:'60%',
+    plugins:{ legend:{ position:'bottom', labels:{ font:{ size:10 }, padding:12 } } }
+  }
+});
+</script>
+</body>
+</html>

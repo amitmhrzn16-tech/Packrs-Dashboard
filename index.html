@@ -40,6 +40,7 @@
       box-shadow: var(--shadow);
       position: sticky;
       top: 0;
+      left: 220px;
       z-index: 100;
     }
 
@@ -113,6 +114,7 @@
       padding: 20px;
       max-width: 1400px;
       margin: 0 auto;
+      margin-left: 220px;
     }
 
     .main-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
@@ -255,6 +257,65 @@
       font-weight: 700;
       padding: 2px 8px;
       margin-top: 6px;
+    }
+
+    .card-link {
+      position: absolute;
+      bottom: 10px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      color: rgba(255,255,255,.75);
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-decoration: none;
+      transition: color .15s;
+      z-index: 1;
+    }
+
+    .card-link:hover { color: #fff; }
+
+    .card-link svg {
+      width: 11px;
+      height: 11px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* money card view-more link */
+    .money-card { position: relative; }
+
+    .mc-link {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      color: var(--teal);
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .4px;
+      text-decoration: none;
+      opacity: .7;
+      transition: opacity .15s;
+    }
+
+    .mc-link:hover { opacity: 1; }
+
+    .mc-link svg {
+      width: 11px;
+      height: 11px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     /* ── MONEY CARDS ────────────────────────────────── */
@@ -416,6 +477,86 @@
       flex-shrink: 0;
     }
 
+    /* ── DATE FILTER BAR ────────────────────────────── */
+    .date-filter-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--teal-light);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .date-filter-bar label {
+      font-size: .68rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+      white-space: nowrap;
+    }
+
+    .date-filter-bar input[type="date"] {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: .7rem;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+
+    .date-filter-bar input[type="date"]:focus { border-color: var(--teal); }
+
+    .btn-filter {
+      padding: 4px 12px;
+      background: var(--teal-dark);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: .68rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .5px;
+      transition: background .15s;
+    }
+
+    .btn-filter:hover { background: var(--teal); }
+
+    .btn-reset {
+      padding: 4px 10px;
+      background: none;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: .68rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: color .15s, border-color .15s;
+    }
+
+    .btn-reset:hover { color: var(--red); border-color: var(--red); }
+
+    .filter-result-msg {
+      font-size: .65rem;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    tr.row-hidden { display: none; }
+
+    /* ── SIDENAV ─────────────────────────────────────── */
+    .sidenav{position:fixed;top:0;left:0;width:220px;height:100vh;background:#2b7a78;color:#fff;z-index:300;overflow-y:auto;display:flex;flex-direction:column;transition:transform .25s}
+    .sn-brand{padding:16px;font-size:1rem;font-weight:800;letter-spacing:2px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .sn-links{list-style:none;padding:10px 0;flex:1}
+    .sn-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;font-weight:600;transition:background .15s,color .15s;border-left:3px solid transparent}
+    .sn-item:hover,.sn-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#fff}
+    .sn-icon{width:17px;height:17px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .sn-footer{padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}
+    .menu-btn{display:none;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text)}
+    @media(max-width:768px){.sidenav{transform:translateX(-100%)}.sidenav.open{transform:translateX(0)}.wrapper{margin-left:0!important}header{left:0!important;padding-left:16px!important}.menu-btn{display:block}}
+
     /* ── RESPONSIVE ─────────────────────────────────── */
     @media (max-width: 1100px) {
       .cards-grid, .money-grid { grid-template-columns: repeat(2, 1fr); }
@@ -434,8 +575,24 @@
 </head>
 <body>
 
+<nav class="sidenav" id="sidenav">
+  <div class="sn-brand">&#9992; PACKRS</div>
+  <ul class="sn-links">
+    <li><a href="index.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
+    <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Riders</span></a></li>
+    <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
+    <li><a href="invoices.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoices</span></a></li>
+    <li><a href="accounts.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Accounts</span></a></li>
+    <li><a href="reports.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Reports</span></a></li>
+    <li><a href="settings.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a></li>
+  </ul>
+  <div class="sn-footer"><a href="#" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span></a></div>
+</nav>
+
 <!-- ══ HEADER ══════════════════════════════════════════ -->
 <header>
+  <button class="menu-btn" onclick="document.getElementById('sidenav').classList.toggle('open')">&#9776;</button>
   <div class="logo">&#9992; Packrs Courier</div>
   <div class="header-right">
     <a href="crm.html" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:#3aafa9;color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;margin-right:6px">👥 CRM</a>
@@ -471,6 +628,7 @@
           <span>International &ndash; 1</span>
         </div>
         <span class="card-badge">Last month: 200</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Warehouse Packages</div>
@@ -481,6 +639,7 @@
           <span>International &ndash; 1</span>
         </div>
         <span class="card-badge">In Warehouse</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Ongoing Packages</div>
@@ -491,6 +650,7 @@
           <span>International &ndash; 1</span>
         </div>
         <span class="card-badge">In Transit</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Delivered Packages</div>
@@ -501,6 +661,7 @@
           <span>International &ndash; 1</span>
         </div>
         <span class="card-badge">Delivered</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
     </div>
 
@@ -515,6 +676,7 @@
           <span>International &ndash; 1</span>
         </div>
         <span class="card-badge">Canceled</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Clients Added</div>
@@ -523,6 +685,7 @@
           <span>New this period</span>
         </div>
         <span class="card-badge">Last month: 200</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Points Collected</div>
@@ -531,6 +694,7 @@
           <span>Loyalty points</span>
         </div>
         <span class="card-badge">Last month: 10,000</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
       <div class="stat-card">
         <div class="card-title">Total Delivery Charges Earned</div>
@@ -539,27 +703,32 @@
           <span>Current period</span>
         </div>
         <span class="card-badge">Last month: Rs 5,000,000</span>
+        <a href="#" class="card-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
       </div>
     </div>
 
     <!-- Row 3: Money Cards -->
     <div class="money-grid">
       <div class="money-card">
+        <a href="#" class="mc-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
         <div class="mc-title">Total COD Amount</div>
         <div class="mc-value">Rs 16,703</div>
         <div class="mc-sub">Packages number: 142</div>
       </div>
       <div class="money-card">
+        <a href="#" class="mc-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
         <div class="mc-title">Total Ready to Billed Amount</div>
         <div class="mc-value">Rs 16,703</div>
         <div class="mc-sub">Packages number: 98</div>
       </div>
       <div class="money-card">
+        <a href="#" class="mc-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
         <div class="mc-title">Total Invoiced Amount</div>
         <div class="mc-value">Rs 16,703</div>
         <div class="mc-sub">Packages number: 76</div>
       </div>
       <div class="money-card">
+        <a href="#" class="mc-link" title="View more">VIEW MORE <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
         <div class="mc-title">Total Pending Amount</div>
         <div class="mc-value">Rs 16,703</div>
         <div class="mc-sub">Packages Number: 54</div>
@@ -572,6 +741,15 @@
       <!-- Accounts Summary -->
       <div class="panel">
         <div class="panel-header">Accounts Summary</div>
+        <div class="date-filter-bar">
+          <label>From:</label>
+          <input type="date" id="accFrom" value="2025-04-01" />
+          <label>To:</label>
+          <input type="date" id="accTo" value="2025-04-20" />
+          <button class="btn-filter" onclick="filterTable('accountsBody','accFrom','accTo','accMsg')">Filter</button>
+          <button class="btn-reset"  onclick="resetTable('accountsBody','accFrom','accTo','accMsg','2025-04-01','2025-04-20')">Reset</button>
+          <span class="filter-result-msg" id="accMsg"></span>
+        </div>
         <div class="panel-body">
           <table>
             <thead>
@@ -581,14 +759,15 @@
                 <th>Income</th>
                 <th>Expense</th>
                 <th>Closing Balance</th>
+                <th>Date</th>
               </tr>
             </thead>
-            <tbody>
-              <tr><td>1</td><td>Cash</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td></tr>
-              <tr><td>2</td><td>Laxmi Bank</td><td>Rs 10,000</td><td>Rs 9,000</td><td class="badge-up">Rs 5,000</td></tr>
-              <tr><td>3</td><td>Petty Cash</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td></tr>
-              <tr><td>4</td><td>Nabil Bank</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td></tr>
-              <tr><td>5</td><td>Due</td><td>Rs 1,000</td><td>Rs 5,000</td><td class="badge-down">-Rs 4,000</td></tr>
+            <tbody id="accountsBody">
+              <tr data-date="2025-04-20"><td>1</td><td>Cash</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td><td>Apr 20</td></tr>
+              <tr data-date="2025-04-18"><td>2</td><td>Laxmi Bank</td><td>Rs 10,000</td><td>Rs 9,000</td><td class="badge-up">Rs 5,000</td><td>Apr 18</td></tr>
+              <tr data-date="2025-04-15"><td>3</td><td>Petty Cash</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td><td>Apr 15</td></tr>
+              <tr data-date="2025-04-10"><td>4</td><td>Nabil Bank</td><td>Rs 10,000</td><td>Rs 5,000</td><td class="badge-up">Rs 5,000</td><td>Apr 10</td></tr>
+              <tr data-date="2025-04-05"><td>5</td><td>Due</td><td>Rs 1,000</td><td>Rs 5,000</td><td class="badge-down">-Rs 4,000</td><td>Apr 05</td></tr>
             </tbody>
           </table>
           <button class="btn-view" onclick="alert('Viewing full accounts...')">VIEW MORE</button>
@@ -598,6 +777,15 @@
       <!-- Riders Leader Board -->
       <div class="panel">
         <div class="panel-header">Riders Leader Board</div>
+        <div class="date-filter-bar">
+          <label>From:</label>
+          <input type="date" id="riderFrom" value="2025-04-01" />
+          <label>To:</label>
+          <input type="date" id="riderTo" value="2025-04-20" />
+          <button class="btn-filter" onclick="filterTable('ridersBody','riderFrom','riderTo','riderMsg')">Filter</button>
+          <button class="btn-reset"  onclick="resetTable('ridersBody','riderFrom','riderTo','riderMsg','2025-04-01','2025-04-20')">Reset</button>
+          <span class="filter-result-msg" id="riderMsg"></span>
+        </div>
         <div class="panel-body">
           <table>
             <thead>
@@ -606,14 +794,15 @@
                 <th>Rider Name</th>
                 <th>Total Packages</th>
                 <th>Last Month</th>
+                <th>Date</th>
               </tr>
             </thead>
-            <tbody>
-              <tr><td>1</td><td>Amit Maharjan</td><td>60</td><td class="badge-up">+8</td></tr>
-              <tr><td>2</td><td>Sandesh Dangol</td><td>30</td><td class="badge-down">-10</td></tr>
-              <tr><td>3</td><td>Rohan Maharjan</td><td>20</td><td class="badge-up">+25</td></tr>
-              <tr><td>4</td><td>Dinesh Dangol</td><td>10</td><td class="badge-up">+1</td></tr>
-              <tr><td>5</td><td>Nikesh Maharjan</td><td>5</td><td class="badge-down">-2</td></tr>
+            <tbody id="ridersBody">
+              <tr data-date="2025-04-20"><td>1</td><td>Amit Maharjan</td><td>60</td><td class="badge-up">+8</td><td>Apr 20</td></tr>
+              <tr data-date="2025-04-18"><td>2</td><td>Sandesh Dangol</td><td>30</td><td class="badge-down">-10</td><td>Apr 18</td></tr>
+              <tr data-date="2025-04-15"><td>3</td><td>Rohan Maharjan</td><td>20</td><td class="badge-up">+25</td><td>Apr 15</td></tr>
+              <tr data-date="2025-04-12"><td>4</td><td>Dinesh Dangol</td><td>10</td><td class="badge-up">+1</td><td>Apr 12</td></tr>
+              <tr data-date="2025-04-08"><td>5</td><td>Nikesh Maharjan</td><td>5</td><td class="badge-down">-2</td><td>Apr 08</td></tr>
             </tbody>
           </table>
           <button class="btn-view" onclick="alert('Viewing all riders...')">VIEW MORE</button>
@@ -637,6 +826,15 @@
       <!-- Top Clients -->
       <div class="panel">
         <div class="panel-header">Top Clients</div>
+        <div class="date-filter-bar">
+          <label>From:</label>
+          <input type="date" id="clientFrom" value="2025-04-01" />
+          <label>To:</label>
+          <input type="date" id="clientTo" value="2025-04-20" />
+          <button class="btn-filter" onclick="filterTable('clientsBody','clientFrom','clientTo','clientMsg')">Filter</button>
+          <button class="btn-reset"  onclick="resetTable('clientsBody','clientFrom','clientTo','clientMsg','2025-04-01','2025-04-20')">Reset</button>
+          <span class="filter-result-msg" id="clientMsg"></span>
+        </div>
         <div class="panel-body">
           <table>
             <thead>
@@ -645,14 +843,15 @@
                 <th>Vendor Name</th>
                 <th>Total Packages</th>
                 <th>Last Month</th>
+                <th>Date</th>
               </tr>
             </thead>
-            <tbody>
-              <tr><td>1</td><td>Deza Collection</td><td>50</td><td class="badge-up">+98</td></tr>
-              <tr><td>2</td><td>Amazing Dresup</td><td>30</td><td class="badge-down">-10</td></tr>
-              <tr><td>3</td><td>Daliya Solutions</td><td>20</td><td class="badge-up">+09</td></tr>
-              <tr><td>4</td><td>Ama Ko Achar</td><td>10</td><td class="badge-up">+1</td></tr>
-              <tr><td>5</td><td>ABC</td><td>5</td><td class="badge-up">+4</td></tr>
+            <tbody id="clientsBody">
+              <tr data-date="2025-04-20"><td>1</td><td>Deza Collection</td><td>50</td><td class="badge-up">+98</td><td>Apr 20</td></tr>
+              <tr data-date="2025-04-17"><td>2</td><td>Amazing Dresup</td><td>30</td><td class="badge-down">-10</td><td>Apr 17</td></tr>
+              <tr data-date="2025-04-14"><td>3</td><td>Daliya Solutions</td><td>20</td><td class="badge-up">+09</td><td>Apr 14</td></tr>
+              <tr data-date="2025-04-10"><td>4</td><td>Ama Ko Achar</td><td>10</td><td class="badge-up">+1</td><td>Apr 10</td></tr>
+              <tr data-date="2025-04-06"><td>5</td><td>ABC</td><td>5</td><td class="badge-up">+4</td><td>Apr 06</td></tr>
             </tbody>
           </table>
           <button class="btn-view" onclick="alert('Viewing all clients...')">VIEW MORE</button>
@@ -746,6 +945,37 @@
 </div><!-- /wrapper -->
 
 <script>
+// ── DATE FILTER ───────────────────────────────────────
+function filterTable(tbodyId, fromId, toId, msgId) {
+  const from  = document.getElementById(fromId).value;
+  const to    = document.getElementById(toId).value;
+  const tbody = document.getElementById(tbodyId);
+  const msg   = document.getElementById(msgId);
+
+  if (!from || !to) { msg.textContent = 'Select both dates.'; return; }
+  if (from > to)    { msg.textContent = 'From > To — invalid range.'; return; }
+
+  let visible = 0;
+  tbody.querySelectorAll('tr').forEach(row => {
+    const d = row.dataset.date;
+    if (d >= from && d <= to) {
+      row.classList.remove('row-hidden');
+      visible++;
+    } else {
+      row.classList.add('row-hidden');
+    }
+  });
+
+  msg.textContent = visible + ' record' + (visible !== 1 ? 's' : '') + ' found';
+}
+
+function resetTable(tbodyId, fromId, toId, msgId, defaultFrom, defaultTo) {
+  document.getElementById(fromId).value = defaultFrom;
+  document.getElementById(toId).value   = defaultTo;
+  document.getElementById(msgId).textContent = '';
+  document.getElementById(tbodyId).querySelectorAll('tr').forEach(r => r.classList.remove('row-hidden'));
+}
+
 // ── CALENDAR ──────────────────────────────────────────
 (function(){
   const grid       = document.getElementById('calGrid');
