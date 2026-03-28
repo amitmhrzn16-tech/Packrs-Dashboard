@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vendor Delivery Report — Packrs Courier</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--teal:#3aafa9;--teal-dark:#2b7a78;--teal-light:#def2f1;--red:#e05c7a;--bg:#f0f4f4;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--border:#d1e0df;--shadow:0 2px 8px rgba(0,0,0,.08);--nav:220px;--hdr:56px}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text)}
+
+    /* HEADER */
+    header{position:fixed;top:0;left:var(--nav);right:0;height:var(--hdr);background:var(--white);display:flex;align-items:center;gap:16px;padding:0 20px;box-shadow:var(--shadow);z-index:200}
+    @media(max-width:768px){header{left:0}}
+
+    /* SIDENAV */
+    .sidenav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--teal-dark);color:#fff;z-index:300;overflow-y:auto;display:flex;flex-direction:column;transition:transform .25s}
+    .sn-brand{padding:18px 20px;font-size:1.2rem;font-weight:800;letter-spacing:.5px;border-bottom:1px solid rgba(255,255,255,.15)}
+    .sn-list{list-style:none;padding:12px 0;margin:0;flex:1}
+    .sn-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.88rem;transition:background .15s;cursor:pointer}
+    .sn-item:hover,.sn-item.active{background:rgba(255,255,255,.18);color:#fff}
+    .sn-icon{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .sn-footer{border-top:1px solid rgba(255,255,255,.15);padding:12px 0}
+    .menu-btn{display:none;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text)}
+    @media(max-width:768px){.sidenav{transform:translateX(-100%)}.sidenav.open{transform:translateX(0)}.menu-btn{display:block}}
+
+    /* PAGE BODY */
+    .page-body{margin-left:220px;padding-top:56px;min-height:100vh;background:var(--bg)}
+    @media(max-width:768px){.page-body{margin-left:0}}
+    .page-inner{padding:20px;display:flex;flex-direction:column;gap:18px}
+
+    /* PAGE TITLE */
+    .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
+    .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
+
+    /* CONTROLS CARD */
+    .controls-card{background:var(--white);border-radius:12px;box-shadow:var(--shadow);padding:18px 20px}
+    .controls-row{display:flex;align-items:flex-end;flex-wrap:wrap;gap:12px}
+    .ctrl-group{display:flex;flex-direction:column;gap:4px}
+    .ctrl-group label{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .ctrl-group select,
+    .ctrl-group input[type="date"]{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;color:var(--text);background:var(--white);outline:none;font-family:inherit;min-width:160px}
+    .ctrl-group select:focus,
+    .ctrl-group input[type="date"]:focus{border-color:var(--teal)}
+    .btn-generate{background:var(--teal);color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap;align-self:flex-end}
+    .btn-generate:hover{background:var(--teal-dark)}
+    .btn-print{background:transparent;color:var(--teal);border:2px solid var(--teal);padding:8px 18px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;align-self:flex-end}
+    .btn-print:hover{background:var(--teal-light)}
+
+    /* SUMMARY STAT CARDS */
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.stat-grid{grid-template-columns:1fr 1fr}}
+    .stat-card{background:var(--white);border-radius:12px;box-shadow:var(--shadow);padding:18px 20px;border-left:4px solid var(--teal);position:relative;overflow:hidden}
+    .stat-card.sc-teal{border-left-color:#3aafa9}
+    .stat-card.sc-green{border-left-color:#16a34a}
+    .stat-card.sc-orange{border-left-color:#d97706}
+    .stat-card.sc-purple{border-left-color:#7c3aed}
+    .stat-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+    .stat-value{font-size:1.9rem;font-weight:800;line-height:1.1;margin:6px 0 4px}
+    .stat-card.sc-teal .stat-value{color:#3aafa9}
+    .stat-card.sc-green .stat-value{color:#16a34a}
+    .stat-card.sc-orange .stat-value{color:#d97706}
+    .stat-card.sc-purple .stat-value{color:#7c3aed}
+    .stat-sub{font-size:.72rem;color:var(--muted)}
+
+    /* SECTION PANELS */
+    .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+    .panel-hdr{padding:13px 20px;color:#fff;font-size:.88rem;font-weight:800;letter-spacing:.4px;display:flex;align-items:center;justify-content:space-between}
+    .ph-teal{background:var(--teal-dark)}
+    .ph-blue{background:#1d4ed8}
+    .ph-green{background:#15803d}
+    .ph-orange{background:#b45309}
+    .ph-purple{background:#6d28d9}
+    .ph-red{background:#be123c}
+
+    /* TABLE */
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.8rem}
+    thead th{background:var(--teal-light);color:var(--teal-dark);font-weight:700;padding:10px 12px;text-align:left;white-space:nowrap;border-bottom:2px solid var(--border);cursor:pointer;user-select:none;position:relative}
+    thead th:hover{background:#c8e6e5}
+    .sort-indicator{font-size:.65rem;margin-left:4px;color:var(--muted)}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+    tbody tr:hover{background:#f8fbfb}
+    tbody td{padding:10px 12px;color:var(--text);white-space:nowrap}
+
+    /* BADGES */
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700}
+    .b-green{background:#dcfce7;color:#16a34a}
+    .b-blue{background:#dbeafe;color:#1d4ed8}
+    .b-orange{background:#fef3c7;color:#d97706}
+    .b-red{background:#fce4ec;color:#e05c7a}
+    .b-gray{background:#f3f4f6;color:#6b7280}
+    .b-purple{background:#ede9fe;color:#7c3aed}
+    .b-teal{background:var(--teal-light);color:var(--teal-dark)}
+
+    /* ACTION BUTTONS */
+    .btn-reassign{background:var(--teal);color:#fff;border:none;padding:4px 12px;border-radius:6px;font-size:.73rem;font-weight:700;cursor:pointer;transition:background .15s}
+    .btn-reassign:hover{background:var(--teal-dark)}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--teal-dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:.85rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.18);z-index:999;transform:translateY(80px);opacity:0;transition:transform .3s ease,opacity .3s ease;pointer-events:none}
+    .toast.show{transform:translateY(0);opacity:1}
+
+    /* PRINT STYLES */
+    @media print{
+      .sidenav,.menu-btn,header,.controls-card,.btn-print,.btn-generate,.btn-reassign{display:none!important}
+      .page-body{margin-left:0!important;padding-top:0!important}
+      body{background:#fff!important;color:#000!important}
+      .page-inner{padding:0!important;gap:12px!important}
+      .title-row{margin-bottom:8px}
+      .stat-card{box-shadow:none!important;border:1px solid #ccc!important}
+      .stat-value{color:#000!important;-webkit-print-color-adjust:exact}
+      .panel{box-shadow:none!important;border:1px solid #ccc!important;break-inside:avoid}
+      .panel-hdr{background:#2b7a78!important;-webkit-print-color-adjust:exact}
+      thead th{background:#def2f1!important;-webkit-print-color-adjust:exact}
+      .badge{-webkit-print-color-adjust:exact}
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDENAV -->
+<nav class="sidenav" id="sidenav">
+  <div class="sn-brand">📦 Packrs</div>
+  <ul class="sn-list">
+    <li><a href="index.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
+    <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Riders</span></a></li>
+    <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
+    <li><a href="invoices.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoices</span></a></li>
+    <li><a href="accounts.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Accounts</span></a></li>
+    <li><a href="reports.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Reports</span></a></li>
+    <li><a href="vendor-report.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg><span>Vendor Report</span></a></li>
+    <li><a href="settings.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a></li>
+  </ul>
+  <div class="sn-footer"><a href="#" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span></a></div>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <button class="menu-btn" onclick="document.getElementById('sidenav').classList.toggle('open')">&#9776;</button>
+  <span style="font-weight:700;color:var(--teal);font-size:1.05rem;">Vendor Delivery Report</span>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:12px;">
+    <span style="font-size:.85rem;color:var(--muted);">Admin</span>
+    <div style="width:32px;height:32px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;">A</div>
+  </div>
+</header>
+
+<!-- PAGE BODY -->
+<main class="page-body">
+  <div class="page-inner">
+
+    <!-- TITLE ROW -->
+    <div class="title-row">
+      <div>
+        <div class="page-title">Vendor Delivery Report</div>
+        <div class="page-sub">Analyze delivery performance, COD collection, and rider stats by vendor</div>
+      </div>
+    </div>
+
+    <!-- CONTROLS CARD -->
+    <div class="controls-card">
+      <div class="controls-row">
+        <div class="ctrl-group">
+          <label>Vendor</label>
+          <select id="vendorSelect">
+            <option value="all">All Vendors</option>
+            <option value="a">Vendor A – Kathmandu</option>
+            <option value="b">Vendor B – Lalitpur</option>
+            <option value="c">Vendor C – Bhaktapur</option>
+            <option value="d">Vendor D – Pokhara</option>
+            <option value="e">Vendor E – Chitwan</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <label>Date From</label>
+          <input type="date" id="dateFrom" value="2026-03-01" />
+        </div>
+        <div class="ctrl-group">
+          <label>Date To</label>
+          <input type="date" id="dateTo" value="2026-03-28" />
+        </div>
+        <button class="btn-generate" onclick="generateReport()">Generate Report</button>
+        <button class="btn-print" onclick="window.print()">🖨 Print / Download PDF</button>
+      </div>
+    </div>
+
+    <!-- SUMMARY STATS -->
+    <div class="stat-grid">
+      <div class="stat-card sc-teal">
+        <div class="stat-label">Total Assigned</div>
+        <div class="stat-value" id="statAssigned">348</div>
+        <div class="stat-sub">Packages assigned to vendor</div>
+      </div>
+      <div class="stat-card sc-green">
+        <div class="stat-label">Total Delivered</div>
+        <div class="stat-value" id="statDelivered">281</div>
+        <div class="stat-sub">Successfully delivered</div>
+      </div>
+      <div class="stat-card sc-orange">
+        <div class="stat-label">Total Pending</div>
+        <div class="stat-value" id="statPending">42</div>
+        <div class="stat-sub">Awaiting delivery</div>
+      </div>
+      <div class="stat-card sc-purple">
+        <div class="stat-label">Delivery Rate</div>
+        <div class="stat-value" id="statRate">80.7%</div>
+        <div class="stat-sub">Overall success rate</div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: Package Summary by Status -->
+    <div class="panel">
+      <div class="panel-hdr ph-teal">
+        <span>Package Summary by Status</span>
+        <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s1VendorLabel">All Vendors</span>
+      </div>
+      <div class="table-wrap">
+        <table id="table1">
+          <thead>
+            <tr>
+              <th onclick="sortTable('table1',0)">Status <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table1',1)">Count <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table1',2)">Percentage <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table1',3)">Amount (Rs) <span class="sort-indicator">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody1"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Delivery Performance by Area -->
+    <div class="panel">
+      <div class="panel-hdr ph-blue">
+        <span>Delivery Performance by Area</span>
+        <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s2VendorLabel">All Vendors</span>
+      </div>
+      <div class="table-wrap">
+        <table id="table2">
+          <thead>
+            <tr>
+              <th onclick="sortTable('table2',0)">Area / Zone <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table2',1)">Assigned <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table2',2)">Delivered <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table2',3)">Pending <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table2',4)">Success Rate <span class="sort-indicator">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody2"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Daily Delivery Trend -->
+    <div class="panel">
+      <div class="panel-hdr ph-green">
+        <span>Daily Delivery Trend (Last 7 Days)</span>
+        <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s3VendorLabel">All Vendors</span>
+      </div>
+      <div class="table-wrap">
+        <table id="table3">
+          <thead>
+            <tr>
+              <th onclick="sortTable('table3',0)">Date <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table3',1)">Assigned <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table3',2)">Delivered <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table3',3)">Failed <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table3',4)">Notes <span class="sort-indicator">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody3"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Top Riders Performance -->
+    <div class="panel">
+      <div class="panel-hdr ph-orange">
+        <span>Top Riders Performance</span>
+        <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s4VendorLabel">All Vendors</span>
+      </div>
+      <div class="table-wrap">
+        <table id="table4">
+          <thead>
+            <tr>
+              <th onclick="sortTable('table4',0)">Rider Name <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table4',1)">Assigned <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table4',2)">Delivered <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table4',3)">Pending <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table4',4)">Rating <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table4',5)">Status <span class="sort-indicator">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody4"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 5: COD Collection Summary -->
+    <div class="panel">
+      <div class="panel-hdr ph-purple">
+        <span>COD Collection Summary</span>
+        <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s5VendorLabel">All Vendors</span>
+      </div>
+      <div class="table-wrap">
+        <table id="table5">
+          <thead>
+            <tr>
+              <th onclick="sortTable('table5',0)">Package ID <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table5',1)">Client <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table5',2)">Amount (Rs) <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table5',3)">Collected <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table5',4)">Status <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table5',5)">Date <span class="sort-indicator">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody5"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 6: Returns & Failed Deliveries -->
+    <div class="panel">
+      <div class="panel-hdr ph-red">
+        <span>Returns &amp; Failed Deliveries</span>
+        <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s6VendorLabel">All Vendors</span>
+      </div>
+      <div class="table-wrap">
+        <table id="table6">
+          <thead>
+            <tr>
+              <th onclick="sortTable('table6',0)">Package ID <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table6',1)">Reason <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table6',2)">Area <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table6',3)">Rider <span class="sort-indicator">↕</span></th>
+              <th onclick="sortTable('table6',4)">Date <span class="sort-indicator">↕</span></th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tbody6"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /page-inner -->
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ─── SORT UTILITY ─────────────────────────────────────────────────────────
+  const sortState = {};
+  function sortTable(tableId, colIndex) {
+    const table = document.getElementById(tableId);
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const key = tableId + '-' + colIndex;
+    const asc = !sortState[key];
+    sortState[key] = asc;
+
+    // Reset all indicators in this table
+    table.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '↕');
+    const ths = table.querySelectorAll('thead th');
+    ths[colIndex].querySelector('.sort-indicator').textContent = asc ? '↑' : '↓';
+
+    rows.sort((a, b) => {
+      const aText = a.cells[colIndex]?.textContent.trim() || '';
+      const bText = b.cells[colIndex]?.textContent.trim() || '';
+      const aNum = parseFloat(aText.replace(/[^0-9.\-]/g, ''));
+      const bNum = parseFloat(bText.replace(/[^0-9.\-]/g, ''));
+      if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+      return asc ? aText.localeCompare(bText) : bText.localeCompare(aText);
+    });
+    rows.forEach(r => tbody.appendChild(r));
+  }
+
+  // ─── TOAST ────────────────────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ─── RANDOM HELPER ────────────────────────────────────────────────────────
+  function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  // ─── VENDOR NAMES ─────────────────────────────────────────────────────────
+  const vendorNames = {
+    all: 'All Vendors',
+    a: 'Vendor A – Kathmandu',
+    b: 'Vendor B – Lalitpur',
+    c: 'Vendor C – Bhaktapur',
+    d: 'Vendor D – Pokhara',
+    e: 'Vendor E – Chitwan'
+  };
+
+  // ─── GENERATE REPORT ──────────────────────────────────────────────────────
+  function generateReport() {
+    const vendor = document.getElementById('vendorSelect').value;
+    const vName = vendorNames[vendor];
+
+    // Update vendor labels
+    ['s1','s2','s3','s4','s5','s6'].forEach(p => {
+      document.getElementById(p + 'VendorLabel').textContent = vName;
+    });
+
+    // --- Summary Stats ---
+    const assigned = rnd(280, 420);
+    const delivered = rnd(Math.floor(assigned * 0.65), Math.floor(assigned * 0.92));
+    const pending = rnd(10, Math.floor((assigned - delivered) * 0.7));
+    const rate = ((delivered / assigned) * 100).toFixed(1) + '%';
+    document.getElementById('statAssigned').textContent = assigned;
+    document.getElementById('statDelivered').textContent = delivered;
+    document.getElementById('statPending').textContent = pending;
+    document.getElementById('statRate').textContent = rate;
+
+    // --- Section 1: Package Summary by Status ---
+    const s1Total = assigned;
+    const s1Del = delivered;
+    const s1Transit = rnd(8, 30);
+    const s1Pend = pending;
+    const s1Ret = rnd(5, 20);
+    const s1Can = s1Total - s1Del - s1Transit - s1Pend - s1Ret < 0 ? 0 : s1Total - s1Del - s1Transit - s1Pend - s1Ret;
+    const s1Rows = [
+      { status: 'Delivered',   badge: 'b-green',  count: s1Del,     amt: s1Del * rnd(180,350) },
+      { status: 'In Transit',  badge: 'b-blue',   count: s1Transit, amt: s1Transit * rnd(150,300) },
+      { status: 'Pending',     badge: 'b-orange',  count: s1Pend,    amt: s1Pend * rnd(100,250) },
+      { status: 'Returned',    badge: 'b-red',    count: s1Ret,     amt: s1Ret * rnd(80,200) },
+      { status: 'Cancelled',   badge: 'b-gray',   count: s1Can,     amt: 0 },
+    ];
+    const tb1 = document.getElementById('tbody1');
+    tb1.innerHTML = '';
+    s1Rows.forEach(r => {
+      const pct = ((r.count / s1Total) * 100).toFixed(1) + '%';
+      tb1.innerHTML += `<tr>
+        <td><span class="badge ${r.badge}">${r.status}</span></td>
+        <td>${r.count}</td>
+        <td>${pct}</td>
+        <td>Rs ${r.amt.toLocaleString()}</td>
+      </tr>`;
+    });
+
+    // --- Section 2: Delivery Performance by Area ---
+    const areas = ['Kathmandu', 'Lalitpur', 'Bhaktapur', 'Kirtipur', 'Patan'];
+    const tb2 = document.getElementById('tbody2');
+    tb2.innerHTML = '';
+    areas.forEach(area => {
+      const asgn = rnd(30, 90);
+      const del = rnd(Math.floor(asgn * 0.6), asgn);
+      const pend = asgn - del;
+      const sr = ((del / asgn) * 100).toFixed(1) + '%';
+      tb2.innerHTML += `<tr>
+        <td>${area}</td>
+        <td>${asgn}</td>
+        <td>${del}</td>
+        <td>${pend}</td>
+        <td><span class="badge ${parseFloat(sr) >= 80 ? 'b-green' : parseFloat(sr) >= 60 ? 'b-orange' : 'b-red'}">${sr}</span></td>
+      </tr>`;
+    });
+
+    // --- Section 3: Daily Delivery Trend ---
+    const tb3 = document.getElementById('tbody3');
+    tb3.innerHTML = '';
+    const notes = ['Normal operations', 'Heavy traffic delay', 'Public holiday', 'Peak demand', 'Weather disruption', 'All clear', 'Partial outage'];
+    const today = new Date('2026-03-28');
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const dayAsgn = rnd(30, 70);
+      const dayDel = rnd(Math.floor(dayAsgn * 0.55), dayAsgn);
+      const dayFail = rnd(0, dayAsgn - dayDel);
+      tb3.innerHTML += `<tr>
+        <td>${dateStr}</td>
+        <td>${dayAsgn}</td>
+        <td>${dayDel}</td>
+        <td>${dayFail}</td>
+        <td style="color:var(--muted);font-size:.75rem;">${pick(notes)}</td>
+      </tr>`;
+    }
+
+    // --- Section 4: Top Riders Performance ---
+    const riderNames = ['Sanjay Tamang', 'Rajan Shrestha', 'Bikash Rai', 'Deepak Gurung', 'Anuj Thapa'];
+    const tb4 = document.getElementById('tbody4');
+    tb4.innerHTML = '';
+    riderNames.forEach((name, i) => {
+      const asgn = rnd(40, 100);
+      const del = rnd(Math.floor(asgn * 0.6), asgn);
+      const pend = asgn - del;
+      const rating = (3.5 + Math.random() * 1.5).toFixed(1);
+      const active = i < 4;
+      const stars = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
+      tb4.innerHTML += `<tr>
+        <td style="font-weight:600;">${name}</td>
+        <td>${asgn}</td>
+        <td>${del}</td>
+        <td>${pend}</td>
+        <td title="${rating}/5" style="color:#d97706;letter-spacing:1px;font-size:.8rem;">${stars} <span style="color:var(--muted);font-size:.72rem;">${rating}</span></td>
+        <td><span class="badge ${active ? 'b-green' : 'b-gray'}">${active ? 'Active' : 'Inactive'}</span></td>
+      </tr>`;
+    });
+
+    // --- Section 5: COD Collection Summary ---
+    const clients = ['Himalayan Store', 'Everest Mart', 'Valley Gifts', 'Nepal Traders', 'Sunrise Shop', 'Kathmandu Crafts'];
+    const tb5 = document.getElementById('tbody5');
+    tb5.innerHTML = '';
+    const codStatuses = [
+      { label: 'Collected', badge: 'b-green' },
+      { label: 'Pending',   badge: 'b-orange' },
+      { label: 'Partial',   badge: 'b-blue' },
+    ];
+    for (let i = 0; i < 6; i++) {
+      const pkgId = 'PKG-' + (2400 + rnd(1, 300));
+      const client = clients[i];
+      const amt = rnd(500, 5000);
+      const collected = rnd(300, amt);
+      const st = pick(codStatuses);
+      const dDate = new Date(today);
+      dDate.setDate(dDate.getDate() - rnd(0, 10));
+      tb5.innerHTML += `<tr>
+        <td style="font-weight:600;color:var(--teal-dark);">${pkgId}</td>
+        <td>${client}</td>
+        <td>Rs ${amt.toLocaleString()}</td>
+        <td>Rs ${collected.toLocaleString()}</td>
+        <td><span class="badge ${st.badge}">${st.label}</span></td>
+        <td>${dDate.toISOString().split('T')[0]}</td>
+      </tr>`;
+    }
+
+    // --- Section 6: Returns & Failed Deliveries ---
+    const reasons = ['Recipient absent', 'Wrong address', 'Refused delivery', 'Damaged package', 'Incorrect phone number', 'Area inaccessible'];
+    const areaList = ['Kathmandu', 'Lalitpur', 'Bhaktapur', 'Kirtipur', 'Patan'];
+    const tb6 = document.getElementById('tbody6');
+    tb6.innerHTML = '';
+    for (let i = 0; i < 6; i++) {
+      const pkgId = 'PKG-' + (1800 + rnd(1, 200));
+      const reason = reasons[i % reasons.length];
+      const area = pick(areaList);
+      const rider = pick(riderNames);
+      const dDate = new Date(today);
+      dDate.setDate(dDate.getDate() - rnd(1, 12));
+      tb6.innerHTML += `<tr>
+        <td style="font-weight:600;color:var(--red);">${pkgId}</td>
+        <td>${reason}</td>
+        <td>${area}</td>
+        <td>${rider}</td>
+        <td>${dDate.toISOString().split('T')[0]}</td>
+        <td><button class="btn-reassign" onclick="showToast('${pkgId} queued for reassignment')">Reassign</button></td>
+      </tr>`;
+    }
+
+    showToast('Report generated for ' + vName);
+  }
+
+  // Run on page load with defaults
+  generateReport();
+</script>
+</body>
+</html>
