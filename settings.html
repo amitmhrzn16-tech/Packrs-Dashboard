@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings — Packrs</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:       #3aafa9;
+      --teal-dark:  #2b7a78;
+      --teal-light: #def2f1;
+      --red:        #e05c7a;
+      --bg:         #f0f4f4;
+      --white:      #fff;
+      --text:       #1a1a2e;
+      --muted:      #6b7280;
+      --border:     #d1e0df;
+      --shadow:     0 2px 8px rgba(0,0,0,.08);
+      --nav:        220px;
+      --hdr:        56px;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── SIDENAV ───────────────────────────────────── */
+    .sidenav {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--nav);
+      height: 100vh;
+      background: var(--teal-dark);
+      display: flex;
+      flex-direction: column;
+      z-index: 200;
+      overflow-y: auto;
+    }
+
+    .sn-brand {
+      padding: 0 20px;
+      height: var(--hdr);
+      display: flex;
+      align-items: center;
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      flex-shrink: 0;
+    }
+
+    .sn-links {
+      list-style: none;
+      padding: 12px 0;
+      flex: 1;
+    }
+
+    .sn-links li { margin: 2px 0; }
+
+    .sn-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      color: rgba(255,255,255,.78);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 500;
+      border-radius: 0;
+      transition: background .2s, color .2s;
+    }
+
+    .sn-item:hover {
+      background: rgba(255,255,255,.1);
+      color: #fff;
+    }
+
+    .sn-item.active {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .sn-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .sn-footer {
+      padding: 12px 0;
+      border-top: 1px solid rgba(255,255,255,.12);
+      flex-shrink: 0;
+    }
+
+    /* ── HEADER ────────────────────────────────────── */
+    header {
+      position: fixed;
+      top: 0;
+      left: var(--nav);
+      right: 0;
+      height: var(--hdr);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      box-shadow: var(--shadow);
+      z-index: 100;
+    }
+
+    .hdr-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .hdr-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hdr-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 700;
+    }
+
+    .hdr-name {
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ── PAGE BODY ─────────────────────────────────── */
+    .page-body {
+      margin-left: var(--nav);
+      padding-top: var(--hdr);
+      min-height: 100vh;
+    }
+
+    .page-inner {
+      padding: 28px 28px 40px;
+    }
+
+    .page-heading {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    /* ── TAB NAV ───────────────────────────────────── */
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: .875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid var(--teal);
+      background: transparent;
+      color: var(--teal);
+      transition: background .2s, color .2s;
+    }
+
+    .tab-btn.active {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: var(--teal-light);
+    }
+
+    /* ── PANELS ────────────────────────────────────── */
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .panel {
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── FORM GRID ─────────────────────────────────── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-group label {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: .875rem;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      transition: border-color .2s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--teal);
+    }
+
+    .form-group input[readonly] {
+      background: #f5f5f5;
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 20px;
+      border-radius: 6px;
+      font-size: .875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background .2s, transform .1s;
+    }
+
+    .btn:active { transform: scale(.98); }
+
+    .btn-teal {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .btn-teal:hover { background: var(--teal-dark); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+
+    .btn-danger {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .form-actions {
+      margin-top: 20px;
+    }
+
+    /* ── TOGGLE SWITCH ─────────────────────────────── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toggle-row:last-child { border-bottom: none; }
+
+    .toggle-label {
+      font-size: .85rem;
+      font-weight: 600;
+    }
+
+    .toggle-desc {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #d1d5db;
+      border-radius: 24px;
+      transition: .3s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .3s;
+    }
+
+    .toggle input:checked + .toggle-slider { background: var(--teal); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+    /* ── TABLE ─────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .875rem;
+    }
+
+    table th {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    table tbody tr:last-child td { border-bottom: none; }
+    table tbody tr:hover { background: #fafafa; }
+
+    /* ── BADGES ────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .badge-teal   { background: var(--teal-light);       color: var(--teal-dark); }
+    .badge-blue   { background: #dbeafe;                  color: #1d4ed8; }
+    .badge-orange { background: #fef3c7;                  color: #b45309; }
+    .badge-gray   { background: #f3f4f6;                  color: #374151; }
+    .badge-green  { background: #d1fae5;                  color: #065f46; }
+    .badge-red    { background: #fee2e2;                  color: #991b1b; }
+
+    /* ── ACTION BUTTONS ────────────────────────────── */
+    .act-btn {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: .75rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background .2s;
+    }
+
+    .act-edit   { background: var(--teal-light); color: var(--teal-dark); margin-right: 4px; }
+    .act-edit:hover { background: var(--teal); color: #fff; }
+    .act-delete { background: #fee2e2; color: #991b1b; }
+    .act-delete:hover { background: var(--red); color: #fff; }
+
+    /* ── NOTIFICATION CHECKBOXES ───────────────────── */
+    .notif-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .notif-row:last-child { border-bottom: none; }
+
+    .notif-row input[type="checkbox"] {
+      margin-top: 2px;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--teal);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .notif-label {
+      font-size: .85rem;
+      font-weight: 600;
+    }
+
+    .notif-desc {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── PROFILE PHOTO ─────────────────────────────── */
+    .profile-photo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    /* ── SECTION DIVIDER ───────────────────────────── */
+    .section-divider {
+      font-size: .8rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin: 20px 0 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── USERS TOP ROW ─────────────────────────────── */
+    .tab-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+
+    /* ── MODAL ─────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 28px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.18);
+      animation: fadeUp .22s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: var(--muted);
+      line-height: 1;
+    }
+
+    .modal-close:hover { color: var(--text); }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* ── PASSWORD SECTION ──────────────────────────── */
+    .password-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ── LOGIN HISTORY STATUS ──────────────────────── */
+    .status-success { color: #065f46; font-weight: 600; }
+    .status-failed  { color: #991b1b; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<!-- ── SIDENAV ────────────────────────────────────────── -->
+<nav class="sidenav" id="sidenav">
+  <div class="sn-brand">✈ PACKRS</div>
+  <ul class="sn-links">
+    <li><a href="index.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </a></li>
+    <li><a href="packages.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <span>Packages</span>
+    </a></li>
+    <li><a href="riders.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Riders</span>
+    </a></li>
+    <li><a href="clients.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <span>Clients</span>
+    </a></li>
+    <li><a href="invoices.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Invoices</span>
+    </a></li>
+    <li><a href="accounts.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      <span>Accounts</span>
+    </a></li>
+    <li><a href="reports.html" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+      <span>Reports</span>
+    </a></li>
+    <li><a href="settings.html" class="sn-item active">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
+    </a></li>
+  </ul>
+  <div class="sn-footer">
+    <a href="#" class="sn-item">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span>Logout</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ── HEADER ─────────────────────────────────────────── -->
+<header>
+  <span class="hdr-title">Settings</span>
+  <div class="hdr-right">
+    <div class="hdr-avatar">AM</div>
+    <span class="hdr-name">Amit Maharjan</span>
+  </div>
+</header>
+
+<!-- ── PAGE BODY ──────────────────────────────────────── -->
+<div class="page-body">
+  <div class="page-inner">
+    <h1 class="page-heading">Settings</h1>
+
+    <!-- TAB NAVIGATION -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('general', this)">General</button>
+      <button class="tab-btn" onclick="switchTab('profile', this)">Profile</button>
+      <button class="tab-btn" onclick="switchTab('users', this)">Users</button>
+      <button class="tab-btn" onclick="switchTab('notifications', this)">Notifications</button>
+      <button class="tab-btn" onclick="switchTab('security', this)">Security</button>
+    </div>
+
+    <!-- ── TAB 1: GENERAL ──────────────────────────────── -->
+    <div id="tab-general" class="tab-pane active">
+
+      <!-- Company Information -->
+      <div class="panel">
+        <div class="panel-title">Company Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Company Name</label>
+            <input type="text" value="Packrs Courier Pvt. Ltd." />
+          </div>
+          <div class="form-group">
+            <label>Company Email</label>
+            <input type="email" value="info@packrscourier.com.np" />
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" value="+977-1-4567890" />
+          </div>
+          <div class="form-group">
+            <label>Website</label>
+            <input type="text" value="www.packrscourier.com.np" />
+          </div>
+          <div class="form-group full">
+            <label>Address</label>
+            <textarea>Kathmandu, Nepal</textarea>
+          </div>
+          <div class="form-group">
+            <label>Default Currency</label>
+            <select>
+              <option value="NPR" selected>NPR</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Timezone</label>
+            <select>
+              <option value="Asia/Kathmandu" selected>Asia/Kathmandu</option>
+              <option value="UTC">UTC</option>
+              <option value="Asia/Kolkata">Asia/Kolkata</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Per Package Rate (Rs)</label>
+            <input type="number" value="175" />
+          </div>
+          <div class="form-group">
+            <label>COD Charge (%)</label>
+            <input type="number" step="0.1" value="2.5" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-teal">Save</button>
+        </div>
+      </div>
+
+      <!-- System Preferences -->
+      <div class="panel">
+        <div class="panel-title">System Preferences</div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Dark Mode</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Email Notifications</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">SMS Notifications</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Auto Generate Invoice</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Show Analytics on Dashboard</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-teal">Save Preferences</button>
+        </div>
+      </div>
+
+    </div><!-- /tab-general -->
+
+    <!-- ── TAB 2: PROFILE ──────────────────────────────── -->
+    <div id="tab-profile" class="tab-pane">
+
+      <div class="panel">
+        <div class="panel-title">Profile Information</div>
+
+        <div class="profile-photo-wrap">
+          <div class="profile-avatar">AM</div>
+          <button class="btn btn-outline" style="font-size:.8rem;padding:6px 14px;">Change Photo</button>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" value="Amit Maharjan" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" value="amit@packrscourier.com.np" />
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" value="9801234567" />
+          </div>
+          <div class="form-group">
+            <label>Role</label>
+            <input type="text" value="Admin" readonly />
+          </div>
+        </div>
+
+        <div class="section-divider">Change Password</div>
+
+        <div class="password-fields">
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <input type="password" placeholder="••••••••" />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-teal">Save Profile</button>
+        </div>
+      </div>
+
+    </div><!-- /tab-profile -->
+
+    <!-- ── TAB 3: USERS ────────────────────────────────── -->
+    <div id="tab-users" class="tab-pane">
+
+      <div class="tab-top-row">
+        <button class="btn btn-teal" onclick="openModal()">+ Add User</button>
+      </div>
+
+      <div class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>S.N</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Last Login</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Amit Maharjan</td>
+                <td>amit@packrs.com.np</td>
+                <td><span class="badge badge-teal">Admin</span></td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td>Apr 20 2025</td>
+                <td>
+                  <button class="act-btn act-edit">Edit</button>
+                  <button class="act-btn act-delete">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Sandesh Dangol</td>
+                <td>sandesh@packrs.com.np</td>
+                <td><span class="badge badge-blue">Manager</span></td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td>Apr 19 2025</td>
+                <td>
+                  <button class="act-btn act-edit">Edit</button>
+                  <button class="act-btn act-delete">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Rohan Maharjan</td>
+                <td>rohan@packrs.com.np</td>
+                <td><span class="badge badge-orange">Staff</span></td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td>Apr 18 2025</td>
+                <td>
+                  <button class="act-btn act-edit">Edit</button>
+                  <button class="act-btn act-delete">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Dinesh Dangol</td>
+                <td>dinesh@packrs.com.np</td>
+                <td><span class="badge badge-orange">Staff</span></td>
+                <td><span class="badge badge-red">Inactive</span></td>
+                <td>Apr 10 2025</td>
+                <td>
+                  <button class="act-btn act-edit">Edit</button>
+                  <button class="act-btn act-delete">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Nikesh Maharjan</td>
+                <td>nikesh@packrs.com.np</td>
+                <td><span class="badge badge-gray">Viewer</span></td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td>Apr 15 2025</td>
+                <td>
+                  <button class="act-btn act-edit">Edit</button>
+                  <button class="act-btn act-delete">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /tab-users -->
+
+    <!-- ── TAB 4: NOTIFICATIONS ────────────────────────── -->
+    <div id="tab-notifications" class="tab-pane">
+
+      <div class="panel">
+        <div class="panel-title">Notification Preferences</div>
+
+        <div class="notif-row">
+          <input type="checkbox" id="notif-1" checked />
+          <label for="notif-1">
+            <div class="notif-label">New Package Added</div>
+            <div class="notif-desc">Get notified when a new package is created</div>
+          </label>
+        </div>
+
+        <div class="notif-row">
+          <input type="checkbox" id="notif-2" checked />
+          <label for="notif-2">
+            <div class="notif-label">Package Delivered</div>
+            <div class="notif-desc">Alert when delivery is confirmed</div>
+          </label>
+        </div>
+
+        <div class="notif-row">
+          <input type="checkbox" id="notif-3" checked />
+          <label for="notif-3">
+            <div class="notif-label">Package Canceled</div>
+            <div class="notif-desc">Alert on cancellation</div>
+          </label>
+        </div>
+
+        <div class="notif-row">
+          <input type="checkbox" id="notif-4" checked />
+          <label for="notif-4">
+            <div class="notif-label">New Client Registered</div>
+            <div class="notif-desc">When a new client signs up</div>
+          </label>
+        </div>
+
+        <div class="notif-row">
+          <input type="checkbox" id="notif-5" checked />
+          <label for="notif-5">
+            <div class="notif-label">Invoice Generated</div>
+            <div class="notif-desc">When an invoice is created</div>
+          </label>
+        </div>
+
+        <div class="notif-row">
+          <input type="checkbox" id="notif-6" checked />
+          <label for="notif-6">
+            <div class="notif-label">Payment Received</div>
+            <div class="notif-desc">When a payment is recorded</div>
+          </label>
+        </div>
+
+        <div class="notif-row">
+          <input type="checkbox" id="notif-7" checked />
+          <label for="notif-7">
+            <div class="notif-label">Low Balance Alert</div>
+            <div class="notif-desc">When account balance drops below threshold</div>
+          </label>
+        </div>
+
+        <div class="notif-row">
+          <input type="checkbox" id="notif-8" checked />
+          <label for="notif-8">
+            <div class="notif-label">System Updates</div>
+            <div class="notif-desc">Platform updates and maintenance notices</div>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-teal">Save Preferences</button>
+        </div>
+      </div>
+
+    </div><!-- /tab-notifications -->
+
+    <!-- ── TAB 5: SECURITY ─────────────────────────────── -->
+    <div id="tab-security" class="tab-pane">
+
+      <!-- Change Password -->
+      <div class="panel">
+        <div class="panel-title">Change Password</div>
+        <div class="password-fields">
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" placeholder="••••••••" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-teal">Update Password</button>
+        </div>
+      </div>
+
+      <!-- Session & Security -->
+      <div class="panel">
+        <div class="panel-title">Session &amp; Security</div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Two-Factor Authentication</div>
+            <div class="toggle-desc">Add an extra layer of security to your account</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div style="margin-top:16px;">
+          <div class="form-group" style="max-width:260px;">
+            <label>Session Timeout</label>
+            <select>
+              <option>15 min</option>
+              <option>30 min</option>
+              <option selected>1 hour</option>
+              <option>4 hours</option>
+              <option>Never</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-teal">Save</button>
+        </div>
+      </div>
+
+      <!-- Login History -->
+      <div class="panel">
+        <div class="panel-title">Login History</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date / Time</th>
+                <th>IP Address</th>
+                <th>Device</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Apr 20 2025, 10:32 AM</td>
+                <td>192.168.1.1</td>
+                <td>Chrome / Windows</td>
+                <td><span class="status-success">Success</span></td>
+              </tr>
+              <tr>
+                <td>Apr 19 2025, 09:15 AM</td>
+                <td>192.168.1.1</td>
+                <td>Chrome / Windows</td>
+                <td><span class="status-success">Success</span></td>
+              </tr>
+              <tr>
+                <td>Apr 18 2025, 08:44 AM</td>
+                <td>10.0.0.2</td>
+                <td>Firefox / Mac</td>
+                <td><span class="status-success">Success</span></td>
+              </tr>
+              <tr>
+                <td>Apr 15 2025, 11:20 PM</td>
+                <td>203.45.67.89</td>
+                <td>Chrome / Android</td>
+                <td><span class="status-failed">Failed</span></td>
+              </tr>
+              <tr>
+                <td>Apr 14 2025, 07:30 AM</td>
+                <td>192.168.1.1</td>
+                <td>Safari / iPhone</td>
+                <td><span class="status-success">Success</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /tab-security -->
+
+  </div><!-- /page-inner -->
+</div><!-- /page-body -->
+
+<!-- ── ADD USER MODAL ──────────────────────────────────── -->
+<div class="modal-overlay" id="addUserModal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Add New User</span>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" placeholder="Enter full name" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="Enter email address" />
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select>
+          <option value="">Select role</option>
+          <option value="admin">Admin</option>
+          <option value="manager">Manager</option>
+          <option value="staff">Staff</option>
+          <option value="viewer">Viewer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••" />
+      </div>
+      <div class="form-group full">
+        <label>Confirm Password</label>
+        <input type="password" placeholder="••••••••" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-teal">Add User</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function openModal() {
+    document.getElementById('addUserModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('addUserModal').classList.remove('open');
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('addUserModal')) {
+      closeModal();
+    }
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+
+</body>
+</html>
