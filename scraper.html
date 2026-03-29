@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Packrs Scraper — Social Media Business Intelligence</title>
+<link rel="stylesheet" href="css/shared.css">
+<style>
+/* Platform colors */
+:root{--tiktok:#010101;--tiktok-red:#ff0050;--ig-purple:#833ab4;--ig-orange:#fcb045;--gmaps:#4285f4;--gmaps-green:#34a853;--gmaps-red:#ea4335;}
+.platform-tab{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:var(--radius);cursor:pointer;border:2px solid var(--border);transition:all 0.15s;background:#fff;}
+.platform-tab:hover{box-shadow:var(--shadow);}
+.platform-tab.active-tt{border-color:var(--tiktok-red);background:#fff5f7;}
+.platform-tab.active-ig{border-color:var(--ig-purple);background:#faf5ff;}
+.platform-tab.active-gm{border-color:var(--gmaps);background:#eff6ff;}
+.platform-icon{font-size:28px;}
+.platform-label{font-size:14px;font-weight:700;}
+.platform-count{font-size:12px;color:var(--text-secondary);}
+/* TikTok card */
+.tt-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;transition:box-shadow 0.15s;}
+.tt-card:hover{box-shadow:var(--shadow);}
+.tt-card-header{background:linear-gradient(135deg,#010101,#1a1a2e);color:#fff;padding:14px;display:flex;align-items:center;gap:10px;}
+.tt-avatar{width:42px;height:42px;border-radius:50%;background:var(--tiktok-red);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;}
+.tt-card-body{padding:14px;}
+.tt-stat{display:flex;flex-direction:column;align-items:center;}
+.tt-stat .val{font-size:16px;font-weight:800;}
+.tt-stat .lbl{font-size:10px;color:var(--text-secondary);text-transform:uppercase;}
+.hashtag{display:inline-block;background:#f3f4f6;color:var(--text-secondary);padding:2px 8px;border-radius:12px;font-size:11px;margin:2px;}
+/* Instagram card */
+.ig-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;transition:box-shadow 0.15s;}
+.ig-card:hover{box-shadow:var(--shadow);}
+.ig-card-header{background:linear-gradient(135deg,var(--ig-purple),#fd1d1d,var(--ig-orange));color:#fff;padding:14px;display:flex;align-items:center;gap:10px;}
+.ig-avatar{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;border:2px solid rgba(255,255,255,0.5);}
+/* Google Maps card */
+.gm-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:16px;transition:box-shadow 0.15s;display:flex;gap:14px;}
+.gm-card:hover{box-shadow:var(--shadow);}
+.gm-pin{width:44px;height:44px;background:#fef2f2;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.stars{color:#fbbf24;font-size:13px;letter-spacing:1px;}
+/* Scraping progress */
+.job-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-light);}
+.job-row:last-child{border-bottom:none;}
+.job-platform{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.pulse{animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+/* Saved leads */
+.lead-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border-light);transition:background 0.12s;}
+.lead-row:hover{background:var(--bg);}
+.lead-row input[type=checkbox]{margin-right:4px;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <a href="index.html">
+      <span class="logo-icon">🔍</span>
+      <span class="logo-text">Packrs Scraper<span class="logo-sub">Business Intelligence</span></span>
+    </a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Platforms</div>
+    <ul class="sidebar-nav">
+      <li><a href="#" class="active" onclick="showSec('dashboard',this)"><span class="nav-icon">🏠</span> Dashboard</a></li>
+      <li><a href="#" onclick="showSec('tiktok',this)"><span class="nav-icon">🎵</span> TikTok Scraper</a></li>
+      <li><a href="#" onclick="showSec('instagram',this)"><span class="nav-icon">📸</span> Instagram Scraper</a></li>
+      <li><a href="#" onclick="showSec('googlemaps',this)"><span class="nav-icon">🗺️</span> Google Maps</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Manage</div>
+    <ul class="sidebar-nav">
+      <li><a href="#" onclick="showSec('savedleads',this)"><span class="nav-icon">💾</span> Saved Leads <span class="nav-badge" id="savedBadge">0</span></a></li>
+      <li><a href="#" onclick="showSec('crmimport',this)"><span class="nav-icon">📥</span> CRM Import</a></li>
+      <li><a href="#" onclick="showSec('scraperSettings',this)"><span class="nav-icon">⚙️</span> Settings</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-section">
+    <ul class="sidebar-nav">
+      <li><a href="crm.html"><span class="nav-icon">👥</span> Back to CRM</a></li>
+      <li><a href="index.html"><span class="nav-icon">🏠</span> Main Dashboard</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="avatar">A</div>
+      <div class="user-info"><div class="name">Amit Maharjan</div><div class="role">ADMIN</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-content">
+  <header class="top-header">
+    <div class="page-title">
+      <h1 id="scraperTitle">Scraper Dashboard</h1>
+      <div class="breadcrumb">Packrs / Scraper / Dashboard</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="showToast('Starting new scrape job…','info')">▶ New Scrape Job</button>
+      <button class="header-btn" onclick="showToast('No alerts','info')">🔔</button>
+      <a href="crm.html" class="btn btn-outline btn-sm">← CRM</a>
+    </div>
+  </header>
+
+  <div class="page-body">
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div id="sec-dashboard" class="section">
+  <div class="stats-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
+    <div class="stat-card"><div class="stat-icon teal">🎯</div><div><div class="stat-value" id="totalLeads">1247</div><div class="stat-label">Total Leads Found</div></div></div>
+    <div class="stat-card"><div class="stat-icon red">🎵</div><div><div class="stat-value" id="ttCount">423</div><div class="stat-label">TikTok Businesses</div></div></div>
+    <div class="stat-card"><div class="stat-icon purple">📸</div><div><div class="stat-value" id="igCount">389</div><div class="stat-label">Instagram Profiles</div></div></div>
+    <div class="stat-card"><div class="stat-icon green">🗺️</div><div><div class="stat-value" id="gmCount">435</div><div class="stat-label">Google Maps Listings</div></div></div>
+    <div class="stat-card"><div class="stat-icon amber">📥</div><div><div class="stat-value" id="importedCount">89</div><div class="stat-label">Imported to CRM</div></div></div>
+    <div class="stat-card"><div class="stat-icon blue">⚙️</div><div><div class="stat-value" style="display:flex;align-items:center;gap:6px"><span>3</span><span class="pulse" style="width:8px;height:8px;background:#10b981;border-radius:50%;display:inline-block"></span></div><div class="stat-label">Jobs Running</div></div></div>
+  </div>
+
+  <!-- Platform quick select -->
+  <div class="grid-3" style="margin-bottom:20px">
+    <div class="platform-tab active-tt" onclick="showSec('tiktok',null)">
+      <span class="platform-icon">🎵</span>
+      <div><div class="platform-label" style="color:var(--tiktok-red)">TikTok</div><div class="platform-count">423 businesses found</div></div>
+      <span style="margin-left:auto;font-size:18px">→</span>
+    </div>
+    <div class="platform-tab active-ig" onclick="showSec('instagram',null)">
+      <span class="platform-icon">📸</span>
+      <div><div class="platform-label" style="color:var(--ig-purple)">Instagram</div><div class="platform-count">389 profiles found</div></div>
+      <span style="margin-left:auto;font-size:18px">→</span>
+    </div>
+    <div class="platform-tab active-gm" onclick="showSec('googlemaps',null)">
+      <span class="platform-icon">🗺️</span>
+      <div><div class="platform-label" style="color:var(--gmaps)">Google Maps</div><div class="platform-count">435 listings found</div></div>
+      <span style="margin-left:auto;font-size:18px">→</span>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Active Jobs -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">⚙️ Active Scraping Jobs</span></div>
+      <div class="card-body" style="padding:12px 20px" id="activeJobsBody"></div>
+    </div>
+    <!-- Recent Leads -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">🎯 Recent Leads</span><button class="btn btn-outline btn-sm" onclick="showSec('savedleads',null)">View All</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Business</th><th>Platform</th><th>Followers</th><th>Location</th><th>Action</th></tr></thead>
+          <tbody id="recentLeadsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TIKTOK ══════════ -->
+<div id="sec-tiktok" class="section" style="display:none">
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><span class="card-title" style="color:var(--tiktok-red)">🎵 TikTok Scraper Configuration</span></div>
+    <div class="card-body">
+      <div class="form-grid-3">
+        <div class="form-group"><label class="form-label">Hashtag Search</label><input type="text" class="form-control" id="ttHashtag" placeholder="#clothingnepal" value="#clothingnepal"></div>
+        <div class="form-group"><label class="form-label">Username Search</label><input type="text" class="form-control" placeholder="@username"></div>
+        <div class="form-group"><label class="form-label">Region</label><select class="form-control"><option>Nepal</option><option>India</option><option>Global</option></select></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Min Followers</label><input type="number" class="form-control" placeholder="500" value="500"></div>
+        <div class="form-group"><label class="form-label">Min Engagement Rate (%)</label><input type="number" class="form-control" placeholder="1.0" value="1.0" step="0.1"></div>
+        <div class="form-group"><label class="form-label">Category</label><select class="form-control"><option>All</option><option>Clothing</option><option>Fashion</option><option>Boutique</option><option>Accessories</option><option>Streetwear</option></select></div>
+        <div class="form-group"><label class="form-label">Date Range</label><select class="form-control"><option>Last 30 days</option><option>Last 7 days</option><option>Last 90 days</option><option>All time</option></select></div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-primary" onclick="startScrape('tiktok')" id="ttScrapeBtn">▶ Start Scraping</button>
+        <button class="btn btn-outline" onclick="showToast('Scheduler opening…','info')">🕐 Schedule Scrape</button>
+      </div>
+      <div id="ttProgress" style="display:none;margin-top:14px">
+        <div style="font-size:13px;margin-bottom:6px;font-weight:600">Scraping TikTok <span id="ttPct">0</span>%</div>
+        <div class="progress"><div class="progress-bar" id="ttBar" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flex-between mb-4">
+    <span style="font-size:14px;font-weight:700">TikTok Results <span id="ttResultCount" style="color:var(--text-secondary);font-weight:400">(12)</span></span>
+    <div class="flex gap-2">
+      <select class="form-control" style="width:150px"><option>Sort: Followers</option><option>Sort: Engagement</option><option>Sort: Recent</option></select>
+      <button class="btn btn-outline btn-sm" onclick="exportCSV('tiktok')">⬇ Export CSV</button>
+    </div>
+  </div>
+  <div class="grid-3" id="ttResultGrid"></div>
+</div>
+
+<!-- ══════════ INSTAGRAM ══════════ -->
+<div id="sec-instagram" class="section" style="display:none">
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><span class="card-title" style="background:linear-gradient(135deg,#833ab4,#fd1d1d);-webkit-background-clip:text;-webkit-text-fill-color:transparent">📸 Instagram Scraper Configuration</span></div>
+    <div class="card-body">
+      <div class="form-grid-3">
+        <div class="form-group"><label class="form-label">Hashtag Search</label><input type="text" class="form-control" placeholder="#nepaliclothing" value="#nepaliclothing"></div>
+        <div class="form-group"><label class="form-label">Username Search</label><input type="text" class="form-control" placeholder="@boutiquename"></div>
+        <div class="form-group"><label class="form-label">Location Tag</label><input type="text" class="form-control" placeholder="Kathmandu, Nepal"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Min Followers</label><input type="number" class="form-control" value="200"></div>
+        <div class="form-group"><label class="form-label">Max Followers</label><input type="number" class="form-control" value="500000"></div>
+        <div class="form-group"><label class="form-label">Category</label><select class="form-control"><option>Clothing Store</option><option>Fashion Brand</option><option>Boutique</option><option>Thrift Store</option></select></div>
+        <div class="form-group"><label class="form-label">Business Account Only</label><div class="toggle-wrap" style="margin-top:8px"><div class="toggle on"></div><span style="font-size:13px">Business accounts only</span></div></div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-primary" onclick="startScrape('instagram')" style="background:linear-gradient(135deg,#833ab4,#fd1d1d)">▶ Start Scraping</button>
+        <button class="btn btn-outline" onclick="showToast('Scheduler opening…','info')">🕐 Schedule</button>
+      </div>
+      <div id="igProgress" style="display:none;margin-top:14px">
+        <div style="font-size:13px;margin-bottom:6px;font-weight:600">Scraping Instagram <span id="igPct">0</span>%</div>
+        <div class="progress"><div class="progress-bar" id="igBar" style="width:0%;background:linear-gradient(90deg,#833ab4,#fd1d1d)"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flex-between mb-4">
+    <span style="font-size:14px;font-weight:700">Instagram Results <span id="igResultCount" style="color:var(--text-secondary);font-weight:400">(12)</span></span>
+    <div class="flex gap-2">
+      <button class="btn btn-outline btn-sm" onclick="exportCSV('instagram')">⬇ Export CSV</button>
+    </div>
+  </div>
+  <div class="grid-3" id="igResultGrid"></div>
+</div>
+
+<!-- ══════════ GOOGLE MAPS ══════════ -->
+<div id="sec-googlemaps" class="section" style="display:none">
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><span class="card-title" style="color:var(--gmaps)">🗺️ Google Maps Scraper Configuration</span></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Search Keyword</label><input type="text" class="form-control" placeholder="clothing store" value="clothing store"></div>
+        <div class="form-group"><label class="form-label">City / Location</label><input type="text" class="form-control" placeholder="Kathmandu" value="Kathmandu"></div>
+        <div class="form-group"><label class="form-label">Radius (km)</label><select class="form-control"><option>5 km</option><option>10 km</option><option>25 km</option><option>50 km</option></select></div>
+        <div class="form-group"><label class="form-label">Min Rating</label><select class="form-control"><option>Any</option><option>3+ stars</option><option>4+ stars</option><option>4.5+ stars</option></select></div>
+        <div class="form-group"><label class="form-label">Business Type</label><select class="form-control"><option>Clothing Store</option><option>Boutique</option><option>Fashion Designer</option><option>Tailor</option><option>Thrift Store</option></select></div>
+        <div class="form-group">
+          <label class="form-label">Filters</label>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+            <div class="toggle-wrap"><div class="toggle on"></div><span style="font-size:13px">Has phone number</span></div>
+            <div class="toggle-wrap"><div class="toggle"></div><span style="font-size:13px">Has website</span></div>
+            <div class="toggle-wrap"><div class="toggle"></div><span style="font-size:13px">Open now only</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-primary" onclick="startScrape('googlemaps')" style="background:var(--gmaps)">▶ Start Scraping</button>
+        <button class="btn btn-outline" onclick="exportCSV('googlemaps')">⬇ Export CSV</button>
+      </div>
+      <div id="gmProgress" style="display:none;margin-top:14px">
+        <div style="font-size:13px;margin-bottom:6px;font-weight:600">Scraping Google Maps <span id="gmPct">0</span>%</div>
+        <div class="progress"><div class="progress-bar" id="gmBar" style="width:0%;background:var(--gmaps)"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flex-between mb-4">
+    <span style="font-size:14px;font-weight:700">Google Maps Results <span id="gmResultCount" style="color:var(--text-secondary);font-weight:400">(12)</span></span>
+    <button class="btn btn-outline btn-sm" onclick="exportCSV('googlemaps')">⬇ Export CSV</button>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px" id="gmResultList"></div>
+</div>
+
+<!-- ══════════ SAVED LEADS ══════════ -->
+<div id="sec-savedleads" class="section" style="display:none">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">💾 Saved Leads</span>
+      <div class="flex gap-2">
+        <button class="btn btn-primary btn-sm" onclick="importSelected()">📥 Import Selected to CRM</button>
+        <button class="btn btn-outline btn-sm" onclick="exportCSV('saved')">⬇ Export CSV</button>
+      </div>
+    </div>
+    <div class="tabs" style="padding:0 20px;margin-bottom:0;border-bottom:1px solid var(--border-light)">
+      <button class="tab-btn active" onclick="filterSaved('all',this)">All</button>
+      <button class="tab-btn" onclick="filterSaved('tiktok',this)">🎵 TikTok</button>
+      <button class="tab-btn" onclick="filterSaved('instagram',this)">📸 Instagram</button>
+      <button class="tab-btn" onclick="filterSaved('googlemaps',this)">🗺️ Google Maps</button>
+    </div>
+    <div>
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border-light);background:var(--bg);display:flex;align-items:center;gap:12px;font-size:12px;font-weight:600;color:var(--text-secondary)">
+        <input type="checkbox" onchange="toggleAllLeads(this)"> <span>SELECT ALL</span>
+        <span style="margin-left:auto">BUSINESS</span><span style="margin-left:auto">PLATFORM</span><span style="margin-left:auto">FOLLOWERS</span><span style="margin-left:auto">LOCATION</span><span style="margin-left:auto">STATUS</span><span style="margin-left:auto">ACTIONS</span>
+      </div>
+      <div id="savedLeadsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CRM IMPORT ══════════ -->
+<div id="sec-crmimport" class="section" style="display:none">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">📋 Leads Ready to Import</span></div>
+      <div class="card-body" id="importReadyList" style="max-height:400px;overflow-y:auto"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">⚙️ Import Configuration</span></div>
+      <div class="card-body">
+        <div style="font-size:13px;font-weight:600;margin-bottom:10px">Field Mapping</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;font-size:13px">
+          <div class="flex-between"><span>Business Name →</span><span class="badge badge-primary">Client Name</span></div>
+          <div class="flex-between"><span>Location →</span><span class="badge badge-primary">Region</span></div>
+          <div class="flex-between"><span>Phone →</span><span class="badge badge-primary">Phone Number</span></div>
+          <div class="flex-between"><span>Website →</span><span class="badge badge-primary">Website</span></div>
+          <div class="flex-between"><span>Followers →</span><span class="badge badge-gray">Notes</span></div>
+        </div>
+        <div style="height:1px;background:var(--border);margin-bottom:16px"></div>
+        <div class="form-group"><div class="toggle-wrap"><div class="toggle on"></div><span style="font-size:13px">Auto-generate Vendor ID (PKVND-XXXX)</span></div></div>
+        <div class="form-group"><div class="toggle-wrap"><div class="toggle on"></div><span style="font-size:13px">Auto-sync to Delivery System</span></div></div>
+        <div class="form-group"><label class="form-label">Default Client Type</label><select class="form-control"><option>Retail</option><option>Wholesale</option><option>Partner</option></select></div>
+        <div class="form-group"><label class="form-label">Apply Tags</label><input type="text" class="form-control" value="scraped, clothing, online-business"></div>
+        <button class="btn btn-primary w-full" onclick="runImport()" style="margin-top:8px">📥 Import Selected to CRM</button>
+        <div id="importProgress" style="display:none;margin-top:12px">
+          <div class="progress"><div class="progress-bar" id="importBar" style="width:0%"></div></div>
+          <div style="font-size:12px;margin-top:6px;color:var(--text-secondary)" id="importStatus">Importing…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <div class="card-header"><span class="card-title">📜 Import History</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Platform</th><th>Leads Imported</th><th>Vendor IDs Created</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Mar 27, 2026</td><td>🗺️ Google Maps</td><td>15</td><td>15</td><td><span class="badge badge-success">Completed</span></td></tr>
+          <tr><td>Mar 25, 2026</td><td>📸 Instagram</td><td>28</td><td>28</td><td><span class="badge badge-success">Completed</span></td></tr>
+          <tr><td>Mar 20, 2026</td><td>🎵 TikTok</td><td>46</td><td>46</td><td><span class="badge badge-success">Completed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SETTINGS ══════════ -->
+<div id="sec-scraperSettings" class="section" style="display:none">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">🔑 API Keys</span></div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-label">TikTok API Key</label><input type="password" class="form-control" placeholder="tt_api_xxxxxxxxxxxxxxxx"></div>
+        <div class="form-group"><label class="form-label">Instagram Basic Display API</label><input type="password" class="form-control" placeholder="ig_api_xxxxxxxxxxxxxxxx"></div>
+        <div class="form-group"><label class="form-label">Google Places API Key</label><input type="password" class="form-control" placeholder="AIzaSy…"></div>
+        <button class="btn btn-primary" onclick="showToast('API keys saved!','success')">Save API Keys</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">⚙️ Scraping Settings</span></div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-label">Concurrent Jobs (max)</label><input type="range" min="1" max="5" value="3" class="form-control" style="padding:6px 0"></div>
+        <div class="form-group"><label class="form-label">Request Delay (ms)</label><input type="number" class="form-control" value="1500" placeholder="1500"></div>
+        <div class="form-group"><div class="toggle-wrap"><div class="toggle on"></div><span style="font-size:13px">Rotate User Agents</span></div></div>
+        <div class="form-group"><div class="toggle-wrap"><div class="toggle on"></div><span style="font-size:13px">Auto-retry on failure</span></div></div>
+        <div class="form-group"><label class="form-label">Auto-import threshold (min followers)</label><input type="number" class="form-control" value="1000" placeholder="1000"></div>
+        <button class="btn btn-primary" onclick="showToast('Scraper settings saved!','success')">Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- end page-body -->
+</div><!-- end main-content -->
+</div><!-- end app-shell -->
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">📥 Import to CRM</span><button class="modal-close" onclick="closeModal('importModal')">✕</button></div>
+    <div class="modal-body">
+      <div style="font-size:13.5px;margin-bottom:12px">Importing: <strong id="importModalBiz"></strong></div>
+      <div class="vendor-id-box" style="background:var(--primary-light);border:1.5px dashed var(--primary);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <span style="font-size:18px;font-weight:800;color:var(--primary)" id="importVendorId">PKVND-0045</span>
+        <span class="badge badge-success">Auto-generated</span>
+      </div>
+      <div class="form-group"><label class="form-label">Client Type</label><select class="form-control"><option>Retail</option><option>Wholesale</option><option>Partner</option></select></div>
+      <div class="form-group"><label class="form-label">Region</label><select class="form-control"><option>Kathmandu</option><option>Pokhara</option><option>Chitwan</option><option>Butwal</option><option>Biratnagar</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('importModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmImport()">Import + Create Vendor ID</button>
+    </div>
+  </div>
+</div>
+<script>
+// ═══════════════════════════════
+//  SAMPLE DATA
+// ═══════════════════════════════
+const TT_DATA = [
+  {handle:'@fashionhubktm',name:'Fashion Hub KTM',followers:'48.2K',following:'892',likes:'1.2M',engagement:'6.8%',hashtags:['#clothingnepal','#ktmfashion','#nepalistyle'],videos:284,location:'Kathmandu',platform:'tiktok',saved:false},
+  {handle:'@nepalboutique',name:'Nepal Boutique',followers:'32.1K',following:'541',likes:'820K',engagement:'5.2%',hashtags:['#nepalboutique','#fashion','#onlineshopping'],videos:198,location:'Lalitpur',platform:'tiktok',saved:false},
+  {handle:'@kathmandustyle',name:'Kathmandu Style Co.',followers:'89.4K',following:'1.2K',likes:'3.4M',engagement:'7.9%',hashtags:['#kathmandustyle','#nepali','#clothing'],videos:512,location:'Kathmandu',platform:'tiktok',saved:false},
+  {handle:'@pokharafashion',name:'Pokhara Fashion Hub',followers:'21.7K',following:'678',likes:'540K',engagement:'4.1%',hashtags:['#pokharafashion','#nepal','#boutique'],videos:142,location:'Pokhara',platform:'tiktok',saved:false},
+  {handle:'@onlinekapada',name:'Online Kapada Store',followers:'15.3K',following:'423',likes:'380K',engagement:'3.8%',hashtags:['#kapada','#nepaliclothing','#trending'],videos:97,location:'Kathmandu',platform:'tiktok',saved:false},
+  {handle:'@trendynepal',name:'Trendy Nepal',followers:'67.8K',following:'934',likes:'2.1M',engagement:'8.2%',hashtags:['#trendynepal','#fashion','#streetwear'],videos:389,location:'Bhaktapur',platform:'tiktok',saved:false},
+  {handle:'@himalayanthreads',name:'Himalayan Threads',followers:'12.9K',following:'345',likes:'290K',engagement:'3.4%',hashtags:['#himalayan','#handmade','#nepali'],videos:78,location:'Kathmandu',platform:'tiktok',saved:false},
+  {handle:'@kumarigarments',name:'Kumari Garments',followers:'28.4K',following:'712',likes:'710K',engagement:'5.9%',hashtags:['#kumari','#garments','#wholesale'],videos:201,location:'Lalitpur',platform:'tiktok',saved:false},
+  {handle:'@newcastlefashion',name:'Newcastle Fashion NP',followers:'9.8K',following:'234',likes:'198K',engagement:'2.9%',hashtags:['#fashion','#nepal','#clothing'],videos:54,location:'Chitwan',platform:'tiktok',saved:false},
+  {handle:'@sunriseclothing',name:'Sunrise Clothing',followers:'41.6K',following:'889',likes:'1.5M',engagement:'7.1%',hashtags:['#sunrise','#clothing','#nepali'],videos:312,location:'Biratnagar',platform:'tiktok',saved:false},
+  {handle:'@streetwearktm',name:'Streetwear KTM',followers:'73.2K',following:'1.1K',likes:'2.8M',engagement:'8.9%',hashtags:['#streetwear','#ktm','#hypebeast'],videos:445,location:'Kathmandu',platform:'tiktok',saved:false},
+  {handle:'@newarithreads',name:'Newari Threads Nepal',followers:'18.5K',following:'567',likes:'460K',engagement:'4.5%',hashtags:['#newari','#traditional','#nepali'],videos:123,location:'Bhaktapur',platform:'tiktok',saved:false},
+];
+
+const IG_DATA = [
+  {handle:'@shree_boutique',name:'Shree Boutique',followers:'24.1K',following:'834',posts:'412',engagement:'4.2%',avgLikes:'1.02K',bio:'Premium clothing & accessories 👗 Kathmandu DM to order',location:'Kathmandu',website:'shreeboutique.com',platform:'instagram',saved:false},
+  {handle:'@himalayan_fashion',name:'Himalayan Fashion',followers:'56.7K',following:'1.2K',posts:'891',engagement:'6.1%',avgLikes:'3.46K',bio:'Authentic Nepali fashion brand 🏔️ Worldwide shipping',location:'Kathmandu',website:'himalayanfashion.com',platform:'instagram',saved:false},
+  {handle:'@kumari_clothes',name:'Kumari Clothing Store',followers:'18.3K',following:'567',posts:'284',engagement:'3.8%',avgLikes:'695',bio:'Traditional & modern Nepali wear 🌸 Lalitpur',location:'Lalitpur',website:'',platform:'instagram',saved:false},
+  {handle:'@pokhara_style',name:'Pokhara Style House',followers:'31.4K',following:'789',posts:'534',engagement:'5.2%',avgLikes:'1.63K',bio:'Fashion for the hills 🏞️ DM for orders | Pokhara',location:'Pokhara',website:'pokharastyle.com',platform:'instagram',saved:false},
+  {handle:'@nepali_streetwear',name:'Nepali Streetwear Co.',followers:'82.3K',following:'2.1K',posts:'1.2K',engagement:'7.4%',avgLikes:'6.09K',bio:'Street culture meets Nepali identity 🔥',location:'Kathmandu',website:'nepalstreet.co',platform:'instagram',saved:false},
+  {handle:'@sunrise_fashion',name:'Sunrise Fashion Nepal',followers:'14.8K',following:'423',posts:'198',engagement:'3.1%',avgLikes:'459',bio:'Latest trends delivered to your door 📦 Biratnagar',location:'Biratnagar',website:'',platform:'instagram',saved:false},
+  {handle:'@ktm_boutique',name:'KTM Boutique',followers:'42.6K',following:'967',posts:'678',engagement:'5.8%',avgLikes:'2.47K',bio:'Exclusive pieces for the modern Nepali woman 👠',location:'Kathmandu',website:'ktmboutique.com',platform:'instagram',saved:false},
+  {handle:'@newari_handmade',name:'Newari Handmade',followers:'9.7K',following:'312',posts:'156',engagement:'4.6%',avgLikes:'446',bio:'Traditional Newari clothing & crafts 🪔 Bhaktapur',location:'Bhaktapur',website:'',platform:'instagram',saved:false},
+  {handle:'@trendy_chitwan',name:'Trendy Chitwan',followers:'22.4K',following:'678',posts:'342',engagement:'4.0%',avgLikes:'896',bio:'Your fashion destination in Chitwan 🌿',location:'Chitwan',website:'',platform:'instagram',saved:false},
+  {handle:'@fashion_dharaan',name:'Fashion Hub Dharan',followers:'16.9K',following:'534',posts:'267',engagement:'3.5%',avgLikes:'592',bio:'Eastern Nepal fashion hub | Dharan',location:'Dharan',website:'',platform:'instagram',saved:false},
+  {handle:'@butwal_clothing',name:'Butwal Clothing Co.',followers:'35.2K',following:'891',posts:'523',engagement:'5.4%',avgLikes:'1.9K',bio:'Wholesale & retail | Butwal, Nepal 🌟',location:'Butwal',website:'butwalclothing.com',platform:'instagram',saved:false},
+  {handle:'@traditional_nepal',name:'Traditional Nepal Wear',followers:'48.9K',following:'1.4K',posts:'789',engagement:'6.3%',avgLikes:'3.08K',bio:'Celebrating Nepali culture through fashion 🇳🇵',location:'Kathmandu',website:'traditionalnepal.com',platform:'instagram',saved:false},
+];
+
+const GM_DATA = [
+  {name:'Shree Boutique & Clothing',rating:4.8,reviews:247,category:'Clothing Store',address:'New Road, Kathmandu 44600',phone:'01-4234567',website:'shreeboutique.com',hours:'Open · Closes 8PM',photos:34,price:'₹₹',platform:'googlemaps',saved:false},
+  {name:'Himalayan Fashion House',rating:4.6,reviews:189,category:'Fashion Brand',address:'Thamel, Kathmandu 44600',phone:'9841234567',website:'himalayanfashion.com',hours:'Open · Closes 9PM',photos:56,price:'₹₹₹',platform:'googlemaps',saved:false},
+  {name:'Kumari Garments & Textiles',rating:4.4,reviews:312,category:'Wholesale Clothing',address:'Pulchowk, Lalitpur 44700',phone:'9852345678',website:'',hours:'Open · Closes 7PM',photos:12,price:'₹₹',platform:'googlemaps',saved:false},
+  {name:'Pokhara Style Center',rating:4.7,reviews:156,category:'Clothing Store',address:'Lakeside, Pokhara 33700',phone:'9863456789',website:'pokharastyle.com',hours:'Open · Closes 8PM',photos:28,price:'₹₹',platform:'googlemaps',saved:false},
+  {name:'Sunrise Fashion & Accessories',rating:4.3,reviews:94,category:'Boutique',address:'Main Road, Biratnagar 56613',phone:'9874567890',website:'',hours:'Open · Closes 7:30PM',photos:8,price:'₹',platform:'googlemaps',saved:false},
+  {name:'New Kathmandu Threads',rating:4.9,reviews:421,category:'Fashion Designer',address:'Durbar Marg, Kathmandu',phone:'9885678901',website:'nktthreads.com',hours:'Open · Closes 9PM',photos:67,price:'₹₹₹',platform:'googlemaps',saved:false},
+  {name:'Butwal Garment Wholesale',rating:4.2,reviews:78,category:'Wholesale Clothing',address:'Traffic Chowk, Butwal 32907',phone:'9896789012',website:'',hours:'Closed · Opens 10AM',photos:5,price:'₹',platform:'googlemaps',saved:false},
+  {name:'Newari Heritage Clothing',rating:4.8,reviews:203,category:'Traditional Clothing',address:'Dattatreya Square, Bhaktapur',phone:'9807890123',website:'newariheritage.com',hours:'Open · Closes 6PM',photos:45,price:'₹₹',platform:'googlemaps',saved:false},
+  {name:'Chitwan Fashion Mall',rating:4.1,reviews:134,category:'Clothing Store',address:'Bharatpur, Chitwan',phone:'9818901234',website:'',hours:'Open · Closes 9PM',photos:22,price:'₹₹',platform:'googlemaps',saved:false},
+  {name:'Dharan Style House',rating:4.5,reviews:167,category:'Boutique',address:'BP Chowk, Dharan 56700',phone:'9829012345',website:'',hours:'Open · Closes 8PM',photos:18,price:'₹₹',platform:'googlemaps',saved:false},
+  {name:'Lalitpur Clothing Store',rating:4.6,reviews:289,category:'Clothing Store',address:'Patan Dhoka, Lalitpur',phone:'9840123456',website:'lalitpurclothing.com',hours:'Open · Closes 7PM',photos:31,price:'₹₹',platform:'googlemaps',saved:false},
+  {name:'Thamel Fashion Bazaar',rating:4.7,reviews:376,category:'Fashion Store',address:'Thamel Marg, Kathmandu',phone:'9851234567',website:'thamelfashion.com',hours:'Open · Closes 10PM',photos:89,price:'₹₹',platform:'googlemaps',saved:false},
+];
+
+// ═══════════════════════════════
+//  STATE
+// ═══════════════════════════════
+let savedLeads = JSON.parse(localStorage.getItem('scraper_saved') || '[]');
+let importedCount = parseInt(localStorage.getItem('scraper_imported') || '89');
+let nextImportVendorNum = 45;
+let currentImportLead = null;
+
+const ACTIVE_JOBS = [
+  {platform:'🎵',query:'#clothingnepal',progress:67,color:'var(--tiktok-red)'},
+  {platform:'📸',query:'boutique kathmandu',progress:43,color:'var(--ig-purple)'},
+  {platform:'🗺️',query:'clothing store Pokhara',progress:88,color:'var(--gmaps)'},
+];
+
+// ═══════════════════════════════
+//  INIT
+// ═══════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderActiveJobs();
+  renderRecentLeads();
+  renderTTGrid();
+  renderIGGrid();
+  renderGMList();
+  renderSavedLeads(savedLeads);
+  renderImportReady();
+  updateSavedBadge();
+  animateJobs();
+});
+
+// ═══════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════
+const TITLES = {
+  dashboard:'Scraper Dashboard',tiktok:'TikTok Scraper',instagram:'Instagram Scraper',
+  googlemaps:'Google Maps Scraper',savedleads:'Saved Leads',crmimport:'CRM Import',scraperSettings:'Settings'
+};
+function showSec(name, el) {
+  document.querySelectorAll('.section').forEach(s => s.style.display='none');
+  const s = document.getElementById('sec-'+name);
+  if (s) s.style.display='block';
+  document.getElementById('scraperTitle').textContent = TITLES[name]||name;
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+// ═══════════════════════════════
+//  ACTIVE JOBS
+// ═══════════════════════════════
+function renderActiveJobs() {
+  const el = document.getElementById('activeJobsBody');
+  if (!el) return;
+  el.innerHTML = ACTIVE_JOBS.map((j,i) => `
+    <div class="job-row">
+      <div class="job-platform" style="background:${j.color}20">${j.platform}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px">${j.query}</div>
+        <div class="progress" style="height:5px"><div class="progress-bar" id="jobBar${i}" style="width:${j.progress}%;background:${j.color}"></div></div>
+      </div>
+      <span style="font-size:13px;font-weight:700;width:36px;text-align:right" id="jobPct${i}">${j.progress}%</span>
+      <span class="badge badge-success pulse">Running</span>
+      <button class="btn btn-ghost btn-sm" onclick="stopJob(${i})">■</button>
+    </div>`).join('');
+}
+
+function animateJobs() {
+  ACTIVE_JOBS.forEach((job, i) => {
+    const interval = setInterval(() => {
+      if (job.progress >= 100) { clearInterval(interval); job.progress = 100; return; }
+      job.progress = Math.min(100, job.progress + Math.random() * 2);
+      const bar = document.getElementById('jobBar'+i);
+      const pct = document.getElementById('jobPct'+i);
+      if (bar) bar.style.width = job.progress.toFixed(0) + '%';
+      if (pct) pct.textContent = job.progress.toFixed(0) + '%';
+    }, 3000);
+  });
+}
+
+function stopJob(i) { ACTIVE_JOBS[i].progress = 100; showToast(`Job stopped`, 'warning'); renderActiveJobs(); }
+
+// ═══════════════════════════════
+//  RECENT LEADS
+// ═══════════════════════════════
+function renderRecentLeads() {
+  const tbody = document.getElementById('recentLeadsBody');
+  if (!tbody) return;
+  const recent = [...TT_DATA.slice(0,4), ...IG_DATA.slice(0,3), ...GM_DATA.slice(0,3)];
+  tbody.innerHTML = recent.map(l => `
+    <tr>
+      <td><strong>${l.name}</strong></td>
+      <td>${platformBadge(l.platform)}</td>
+      <td>${l.followers || (l.rating+'★ ('+l.reviews+')')}</td>
+      <td style="font-size:12px">${l.location||l.address?.split(',')[0]}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="openImportModal('${l.name}')">Import</button></td>
+    </tr>`).join('');
+}
+
+function platformBadge(p) {
+  if (p==='tiktok') return '<span class="badge" style="background:#fff5f7;color:var(--tiktok-red)">🎵 TikTok</span>';
+  if (p==='instagram') return '<span class="badge" style="background:#faf5ff;color:var(--ig-purple)">📸 Instagram</span>';
+  return '<span class="badge" style="background:#eff6ff;color:var(--gmaps)">🗺️ Google Maps</span>';
+}
+
+// ═══════════════════════════════
+//  TIKTOK GRID
+// ═══════════════════════════════
+function renderTTGrid() {
+  const grid = document.getElementById('ttResultGrid');
+  if (!grid) return;
+  document.getElementById('ttResultCount').textContent = `(${TT_DATA.length})`;
+  grid.innerHTML = TT_DATA.map((t,i) => `
+    <div class="tt-card">
+      <div class="tt-card-header">
+        <div class="tt-avatar">${t.name[0]}</div>
+        <div>
+          <div style="font-size:13px;font-weight:700">${t.handle}</div>
+          <div style="font-size:12px;opacity:0.8">${t.name}</div>
+          <div style="font-size:11px;opacity:0.6">📍 ${t.location}</div>
+        </div>
+        <div style="margin-left:auto;color:var(--tiktok-red);font-size:20px">🎵</div>
+      </div>
+      <div class="tt-card-body">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+          <div class="tt-stat"><span class="val">${t.followers}</span><span class="lbl">Followers</span></div>
+          <div class="tt-stat"><span class="val">${t.engagement}</span><span class="lbl">Engage</span></div>
+          <div class="tt-stat"><span class="val">${t.videos}</span><span class="lbl">Videos</span></div>
+          <div class="tt-stat"><span class="val">${t.likes}</span><span class="lbl">Likes</span></div>
+        </div>
+        <div style="margin-bottom:10px">${t.hashtags.map(h=>`<span class="hashtag">${h}</span>`).join('')}</div>
+        <div class="flex gap-2">
+          <button class="btn btn-outline btn-sm" onclick="showToast('Opening TikTok profile…','info')">View</button>
+          <button class="btn btn-outline btn-sm" id="ttSave${i}" onclick="saveLead(TT_DATA[${i}],'ttSave${i}')">${t.saved?'✓ Saved':'Save Lead'}</button>
+          <button class="btn btn-primary btn-sm" onclick="openImportModal('${t.name}')">Import CRM</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════
+//  INSTAGRAM GRID
+// ═══════════════════════════════
+function renderIGGrid() {
+  const grid = document.getElementById('igResultGrid');
+  if (!grid) return;
+  document.getElementById('igResultCount').textContent = `(${IG_DATA.length})`;
+  grid.innerHTML = IG_DATA.map((t,i) => `
+    <div class="ig-card">
+      <div class="ig-card-header">
+        <div class="ig-avatar">${t.name[0]}</div>
+        <div>
+          <div style="font-size:13px;font-weight:700">${t.handle}</div>
+          <div style="font-size:12px;opacity:0.8">${t.name}</div>
+          <div style="font-size:11px;opacity:0.7">📍 ${t.location}</div>
+        </div>
+        <div style="margin-left:auto;font-size:20px">📸</div>
+      </div>
+      <div style="padding:14px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <div class="tt-stat"><span class="val">${t.followers}</span><span class="lbl">Followers</span></div>
+          <div class="tt-stat"><span class="val">${t.posts}</span><span class="lbl">Posts</span></div>
+          <div class="tt-stat"><span class="val">${t.engagement}</span><span class="lbl">Engage</span></div>
+          <div class="tt-stat"><span class="val">${t.avgLikes}</span><span class="lbl">Avg Likes</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;font-style:italic">${t.bio}</div>
+        ${t.website?`<div style="font-size:12px;color:var(--info)">🔗 ${t.website}</div>`:''}
+        <div class="flex gap-2" style="margin-top:10px">
+          <button class="btn btn-outline btn-sm">View</button>
+          <button class="btn btn-outline btn-sm" id="igSave${i}" onclick="saveLead(IG_DATA[${i}],'igSave${i}')">${t.saved?'✓ Saved':'Save Lead'}</button>
+          <button class="btn btn-primary btn-sm" onclick="openImportModal('${t.name}')">Import CRM</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════
+//  GOOGLE MAPS LIST
+// ═══════════════════════════════
+function renderGMList() {
+  const list = document.getElementById('gmResultList');
+  if (!list) return;
+  document.getElementById('gmResultCount').textContent = `(${GM_DATA.length})`;
+  list.innerHTML = GM_DATA.map((g,i) => `
+    <div class="gm-card">
+      <div class="gm-pin">📍</div>
+      <div style="flex:1">
+        <div class="flex-between">
+          <strong style="font-size:14px">${g.name}</strong>
+          <div style="font-size:12px;color:var(--text-secondary)">${g.price} · ${g.photos} photos</div>
+        </div>
+        <div class="flex gap-3" style="margin:4px 0;flex-wrap:wrap">
+          <span class="stars">${'★'.repeat(Math.floor(g.rating))}${'☆'.repeat(5-Math.floor(g.rating))}</span>
+          <span style="font-size:12px;font-weight:600">${g.rating}</span>
+          <span style="font-size:12px;color:var(--text-secondary)">(${g.reviews} reviews)</span>
+          <span class="badge badge-gray">${g.category}</span>
+        </div>
+        <div style="font-size:12.5px;color:var(--text-secondary)">📍 ${g.address}</div>
+        <div class="flex gap-4" style="margin-top:4px;font-size:12px">
+          ${g.phone?`<span>📞 ${g.phone}</span>`:''}
+          ${g.website?`<span>🔗 ${g.website}</span>`:''}
+          <span style="color:${g.hours.includes('Open')?'var(--success)':'var(--danger)'}">${g.hours}</span>
+        </div>
+      </div>
+      <div class="flex" style="flex-direction:column;gap:6px;flex-shrink:0">
+        <button class="btn btn-outline btn-sm" onclick="showToast('Opening Google Maps…','info')">View Maps</button>
+        <button class="btn btn-outline btn-sm" id="gmSave${i}" onclick="saveLead(GM_DATA[${i}],'gmSave${i}')">${g.saved?'✓ Saved':'Save Lead'}</button>
+        <button class="btn btn-primary btn-sm" onclick="openImportModal('${g.name}')">Import CRM</button>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════
+//  SAVE LEAD
+// ═══════════════════════════════
+function saveLead(lead, btnId) {
+  if (lead.saved) { showToast('Already saved!','warning'); return; }
+  lead.saved = true;
+  savedLeads.push({...lead, savedAt: new Date().toLocaleDateString()});
+  localStorage.setItem('scraper_saved', JSON.stringify(savedLeads));
+  updateSavedBadge();
+  renderSavedLeads(savedLeads);
+  renderImportReady();
+  const btn = document.getElementById(btnId);
+  if (btn) { btn.textContent = '✓ Saved'; btn.disabled = true; }
+  showToast(`${lead.name} saved to leads!`, 'success');
+}
+
+function updateSavedBadge() {
+  const el = document.getElementById('savedBadge');
+  if (el) el.textContent = savedLeads.length;
+}
+
+// ═══════════════════════════════
+//  SAVED LEADS LIST
+// ═══════════════════════════════
+function renderSavedLeads(data) {
+  const el = document.getElementById('savedLeadsList');
+  if (!el) return;
+  if (data.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">💾</div><h3>No saved leads yet</h3><p>Save leads from TikTok, Instagram or Google Maps</p></div>';
+    return;
+  }
+  el.innerHTML = data.map((l,i) => `
+    <div class="lead-row">
+      <input type="checkbox" class="lead-check">
+      <span style="font-size:18px">${l.platform==='tiktok'?'🎵':l.platform==='instagram'?'📸':'🗺️'}</span>
+      <div style="flex:1"><strong style="font-size:13px">${l.name}</strong><div style="font-size:11px;color:var(--text-secondary)">${l.location||l.address?.split(',')[0]||''}</div></div>
+      <span style="font-size:13px;width:80px">${l.followers||((l.rating||'')+'★')}</span>
+      <span class="badge ${l.saved?'badge-success':'badge-gray'}" style="width:80px;justify-content:center">${l.saved?'Saved':'—'}</span>
+      <div class="flex gap-2">
+        <button class="btn btn-primary btn-sm" onclick="openImportModal('${l.name}')">Import CRM</button>
+        <button class="btn btn-ghost btn-sm" onclick="removeLead(${i})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function filterSaved(platform, el) {
+  const filtered = platform==='all' ? savedLeads : savedLeads.filter(l=>l.platform===platform);
+  renderSavedLeads(filtered);
+  if (el) { el.closest('.tabs').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+}
+
+function toggleAllLeads(cb) { document.querySelectorAll('.lead-check').forEach(c=>c.checked=cb.checked); }
+
+function removeLead(i) { savedLeads.splice(i,1); localStorage.setItem('scraper_saved',JSON.stringify(savedLeads)); renderSavedLeads(savedLeads); updateSavedBadge(); }
+
+// ═══════════════════════════════
+//  IMPORT READY
+// ═══════════════════════════════
+function renderImportReady() {
+  const el = document.getElementById('importReadyList');
+  if (!el) return;
+  const ready = savedLeads.filter(l => !l.imported);
+  if (ready.length===0) { el.innerHTML='<div style="font-size:13px;color:var(--text-secondary);text-align:center;padding:20px">No leads ready. Save leads from scrapers first.</div>'; return; }
+  el.innerHTML = ready.map((l,i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-light)">
+      <input type="checkbox" checked>
+      <span>${l.platform==='tiktok'?'🎵':l.platform==='instagram'?'📸':'🗺️'}</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600">${l.name}</div><div style="font-size:11px;color:var(--text-secondary)">${l.location||''} · ${l.followers||((l.rating||'')+'★')}</div></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════
+//  CRM IMPORT
+// ═══════════════════════════════
+function openImportModal(name) {
+  currentImportLead = name;
+  document.getElementById('importModalBiz').textContent = name;
+  document.getElementById('importVendorId').textContent = 'PKVND-' + String(nextImportVendorNum).padStart(4,'0');
+  openModal('importModal');
+}
+
+function confirmImport() {
+  const vid = 'PKVND-' + String(nextImportVendorNum).padStart(4,'0');
+  nextImportVendorNum++;
+  importedCount++;
+  localStorage.setItem('scraper_imported', importedCount);
+  document.getElementById('importedCount').textContent = importedCount;
+  closeModal('importModal');
+  showToast(`✅ ${currentImportLead} imported to CRM! Vendor ID: ${vid}`, 'success');
+}
+
+function runImport() {
+  const prog = document.getElementById('importProgress');
+  const bar = document.getElementById('importBar');
+  const status = document.getElementById('importStatus');
+  prog.style.display='block';
+  let pct = 0;
+  const interval = setInterval(() => {
+    pct += 10;
+    bar.style.width = pct+'%';
+    status.textContent = `Importing… ${pct}%`;
+    if (pct >= 100) {
+      clearInterval(interval);
+      status.textContent = `✅ Import complete! ${savedLeads.length} clients created with Vendor IDs`;
+      importedCount += savedLeads.length;
+      document.getElementById('importedCount').textContent = importedCount;
+      showToast(`✅ ${savedLeads.length} leads imported to CRM with Vendor IDs!`, 'success');
+    }
+  }, 300);
+}
+
+// ═══════════════════════════════
+//  SCRAPE SIMULATION
+// ═══════════════════════════════
+function startScrape(platform) {
+  const progressDiv = document.getElementById(platform==='tiktok'?'ttProgress':platform==='instagram'?'igProgress':'gmProgress');
+  const pctEl = document.getElementById(platform==='tiktok'?'ttPct':platform==='instagram'?'igPct':'gmPct');
+  const barEl = document.getElementById(platform==='tiktok'?'ttBar':platform==='instagram'?'igBar':'gmBar');
+  const btn = document.getElementById(platform+'ScrapeBtn');
+  if (progressDiv) progressDiv.style.display='block';
+  if (btn) { btn.disabled=true; btn.textContent='Scraping…'; }
+  showToast(`Starting ${platform} scrape…`, 'info');
+  let pct = 0;
+  const iv = setInterval(() => {
+    pct += Math.random()*8+2;
+    if (pct>=100) { pct=100; clearInterval(iv);
+      showToast(`✅ Scraping complete! Found ${platform==='tiktok'?TT_DATA.length:platform==='instagram'?IG_DATA.length:GM_DATA.length} businesses`, 'success');
+      if (btn) { btn.disabled=false; btn.textContent='▶ Start Scraping'; }
+    }
+    if (pctEl) pctEl.textContent = Math.floor(pct);
+    if (barEl) barEl.style.width = pct+'%';
+  }, 400);
+}
+
+// ═══════════════════════════════
+//  CSV EXPORT
+// ═══════════════════════════════
+function exportCSV(platform) {
+  let data = platform==='tiktok'?TT_DATA:platform==='instagram'?IG_DATA:platform==='googlemaps'?GM_DATA:savedLeads;
+  let csv = 'Business Name,Platform,Followers/Rating,Location,Website\n';
+  data.forEach(d => {
+    csv += `"${d.name}","${d.platform}","${d.followers||d.rating||''}","${d.location||d.address||''}","${d.website||''}"\n`;
+  });
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`packrs_${platform}_leads.csv`; a.click();
+  URL.revokeObjectURL(url);
+  showToast(`CSV exported (${data.length} records)`, 'success');
+}
+
+// ═══════════════════════════════
+//  MODAL + TOAST
+// ═══════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target===m) m.classList.remove('open'); });
+});
+
+function showToast(msg, type='info') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div'); t.className=`toast ${type}`;
+  const icons = {success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  t.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  c.appendChild(t); setTimeout(()=>t.remove(), 3500);
+}
+</script>
+</body>
+</html>
