@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Invoices — Packrs Courier</title>
+  <title>Accounts — Packrs Courier</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--teal:#3aafa9;--teal-dark:#2b7a78;--teal-light:#def2f1;--red:#e05c7a;--bg:#f0f4f4;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--border:#d1e0df;--shadow:0 2px 8px rgba(0,0,0,.08);--nav:220px;--hdr:56px}
@@ -32,36 +33,50 @@
     .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
     .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
     .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
-    .btn-add{background:var(--teal);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;white-space:nowrap}
+    .btn-add{background:var(--teal);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s}
     .btn-add:hover{background:var(--teal-dark)}
+    /* STAT CARDS */
     .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
     @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:560px){.stat-grid{grid-template-columns:1fr 1fr}}
     .stat-card{background:var(--teal);color:#fff;border-radius:12px;padding:18px 20px 14px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
     .stat-card::after{content:'';position:absolute;bottom:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1)}
-    .stat-card.red{background:var(--red)}.stat-card.orange{background:#f59e0b}
+    .stat-card.red{background:var(--red)}
     .stat-label{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.85}
     .stat-value{font-size:1.6rem;font-weight:800;line-height:1.1;margin:6px 0 8px}
     .stat-subs{display:flex;flex-direction:column;gap:2px}
     .stat-sub{font-size:.72rem;opacity:.85;display:flex;justify-content:space-between}
-    .stat-more{display:block;text-align:right;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7);text-decoration:none;margin-top:10px;letter-spacing:.5px;position:relative;z-index:1;transition:color .15s}
+    .stat-more{display:block;text-align:right;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7);text-decoration:none;margin-top:10px;position:relative;z-index:1}
     .stat-more:hover{color:#fff}
+    /* ACCOUNT SUMMARY CARDS */
+    .acc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+    @media(max-width:1100px){.acc-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:640px){.acc-grid{grid-template-columns:1fr 1fr}}
+    .acc-card{background:var(--white);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);border-left:4px solid var(--teal)}
+    .acc-name{font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:10px}
+    .acc-row{display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:4px}
+    .acc-row span:first-child{color:var(--muted)}
+    .amt-green{color:#16a34a;font-weight:700}
+    .amt-red{color:var(--red);font-weight:700}
+    .amt-teal{color:var(--teal-dark);font-weight:800}
+    /* PANEL */
     .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
     .panel-hdr{background:var(--teal-dark);color:#fff;padding:13px 20px;font-size:.88rem;font-weight:800;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between}
-    /* TABS */
-    .tab-bar{display:flex;gap:6px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--border)}
-    .tab-btn{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;border:2px solid var(--teal);background:transparent;color:var(--teal);transition:all .15s}
-    .tab-btn.active,.tab-btn:hover{background:var(--teal);color:#fff}
-    /* FILTER */
+    .panel-body{padding:16px 20px}
+    .chart-wrap{position:relative;height:240px}
+    /* TWO COL */
+    .panels-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:900px){.panels-2{grid-template-columns:1fr}}
+    /* FILTER BAR */
     .filter-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 20px;background:var(--teal-light);border-bottom:1px solid var(--border)}
     .filter-bar label{font-size:.75rem;font-weight:700;color:var(--teal-dark);white-space:nowrap}
-    .filter-bar input[type=date],.filter-bar input[type=search]{padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;background:var(--white);outline:none}
+    .filter-bar input{padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;background:var(--white);outline:none}
     .filter-bar input:focus{border-color:var(--teal)}
     .btn-filter{background:var(--teal);color:#fff;border:none;padding:6px 14px;border-radius:7px;font-size:.78rem;font-weight:700;cursor:pointer}
     .btn-filter:hover{background:var(--teal-dark)}
     .btn-reset{background:transparent;color:var(--muted);border:1.5px solid var(--border);padding:5px 12px;border-radius:7px;font-size:.78rem;font-weight:700;cursor:pointer}
     .btn-reset:hover{color:var(--red);border-color:var(--red)}
     .filter-msg{font-size:.68rem;color:var(--muted);margin-left:auto}
+    /* TABLE */
     .table-wrap{overflow-x:auto}
     table{width:100%;border-collapse:collapse;font-size:.8rem}
     thead th{background:var(--teal-light);color:var(--teal-dark);font-weight:700;padding:10px 12px;text-align:left;white-space:nowrap;border-bottom:2px solid var(--border)}
@@ -69,17 +84,13 @@
     tbody tr:hover{background:#f8fbfb}
     tbody td{padding:10px 12px;color:var(--text);white-space:nowrap}
     tr.hidden{display:none}
-    .inv-id{font-weight:700;color:var(--teal-dark)}
     .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700}
     .b-green{background:#dcfce7;color:#16a34a}
-    .b-orange{background:#fef3c7;color:#d97706}
     .b-red{background:#fce4ec;color:#e05c7a}
-    .b-gray{background:#f3f4f6;color:#6b7280}
     .act-btns{display:flex;gap:4px}
     .act-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s}
     .act-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-    .act-view{color:#0284c7;border-color:#bae6fd}.act-view:hover{background:#e0f2fe}
-    .act-dl{color:#16a34a;border-color:#bbf7d0}.act-dl:hover{background:#dcfce7}
+    .act-edit{color:#d97706;border-color:#fde68a}.act-edit:hover{background:#fef3c7}
     .act-del{color:#e05c7a;border-color:#fecdd3}.act-del:hover{background:#fce4ec}
     .pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--border);font-size:.8rem;color:var(--muted);flex-wrap:wrap;gap:8px}
     .pag-btns{display:flex;gap:6px}
@@ -88,24 +99,19 @@
     /* MODAL */
     .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center}
     .modal-bg.open{display:flex}
-    .modal{background:var(--white);border-radius:12px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+    .modal{background:var(--white);border-radius:12px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
     .modal-head{background:var(--teal-dark);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-radius:12px 12px 0 0}
     .modal-head h3{font-size:.9rem;font-weight:800}
     .modal-x{background:none;border:none;color:rgba(255,255,255,.8);font-size:1.3rem;cursor:pointer}
-    .modal-x:hover{color:#fff}
-    .modal-body{padding:20px}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .form-full{grid-column:1/-1}
+    .modal-body{padding:20px;display:flex;flex-direction:column;gap:12px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .form-group{display:flex;flex-direction:column;gap:4px}
+    .form-full{grid-column:1/-1}
     .form-group label{font-size:.72rem;font-weight:700;color:var(--muted)}
     .form-group input,.form-group select,.form-group textarea{padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;color:var(--text);outline:none;font-family:inherit}
     .form-group input:focus,.form-group select:focus{border-color:var(--teal)}
-    .total-preview{background:var(--teal-light);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:4px}
-    .total-preview span{font-size:.8rem;color:var(--muted);font-weight:600}
-    .total-preview strong{font-size:1.1rem;font-weight:800;color:var(--teal-dark)}
     .modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
     .btn-save{background:var(--teal);color:#fff;border:none;padding:8px 20px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.82rem}
-    .btn-save:hover{background:var(--teal-dark)}
     .btn-cancel{background:none;color:var(--muted);border:1.5px solid var(--border);padding:8px 16px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.82rem}
   </style>
 </head>
@@ -119,8 +125,8 @@
     <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
     <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Riders</span></a></li>
     <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
-    <li><a href="invoices.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoices</span></a></li>
-    <li><a href="accounts.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Accounts</span></a></li>
+    <li><a href="invoices.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoices</span></a></li>
+    <li><a href="accounts.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Accounts</span></a></li>
     <li><a href="reports.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Reports</span></a></li>
     <li><a href="vendor-report.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg><span>Vendor Report</span></a></li>
     <li><a href="settings.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a></li>
@@ -141,106 +147,136 @@
   </div>
 </header>
 
-<!-- PAGE -->
 <div class="page-body">
   <div class="page-inner">
 
+    <!-- Title -->
     <div class="title-row">
-      <div>
-        <div class="page-title">Invoices</div>
-        <div class="page-sub">Manage billing and invoice records</div>
-      </div>
+      <div><div class="page-title">Accounts</div><div class="page-sub">Track income, expenses and balances</div></div>
       <button class="btn-add" onclick="document.getElementById('addModal').classList.add('open')">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Create Invoice
+        Add Transaction
       </button>
     </div>
 
     <!-- Stat Cards -->
     <div class="stat-grid">
       <div class="stat-card">
-        <div class="stat-label">Total Invoiced</div>
+        <div class="stat-label">Total Income</div>
         <div class="stat-value">Rs 1,24,500</div>
         <div class="stat-subs">
-          <div class="stat-sub"><span>This Month</span><span>95 invoices</span></div>
+          <div class="stat-sub"><span>Transactions</span><span>48</span></div>
+          <div class="stat-sub"><span>Last Month</span><span>Rs 1,08,000</span></div>
         </div>
         <a href="#" class="stat-more">VIEW MORE ›</a>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Paid</div>
-        <div class="stat-value">Rs 89,200</div>
+        <div class="stat-label">Total Expense</div>
+        <div class="stat-value">Rs 48,200</div>
         <div class="stat-subs">
-          <div class="stat-sub"><span>Invoices</span><span>72</span></div>
-          <div class="stat-sub"><span>Rate</span><span>75.8%</span></div>
+          <div class="stat-sub"><span>Transactions</span><span>32</span></div>
+          <div class="stat-sub"><span>Last Month</span><span>Rs 41,500</span></div>
         </div>
         <a href="#" class="stat-more">VIEW MORE ›</a>
       </div>
-      <div class="stat-card orange">
-        <div class="stat-label">Pending</div>
-        <div class="stat-value">Rs 28,100</div>
+      <div class="stat-card">
+        <div class="stat-label">Net Balance</div>
+        <div class="stat-value">Rs 76,300</div>
         <div class="stat-subs">
-          <div class="stat-sub"><span>Invoices</span><span>18</span></div>
+          <div class="stat-sub"><span>Cash + Banks</span><span>5 accounts</span></div>
+          <div class="stat-sub"><span>Growth</span><span>+12.4%</span></div>
         </div>
         <a href="#" class="stat-more">VIEW MORE ›</a>
       </div>
       <div class="stat-card red">
-        <div class="stat-label">Overdue</div>
-        <div class="stat-value">Rs 7,200</div>
+        <div class="stat-label">Pending Dues</div>
+        <div class="stat-value">Rs 9,800</div>
         <div class="stat-subs">
-          <div class="stat-sub"><span>Invoices</span><span>5</span></div>
+          <div class="stat-sub"><span>Clients Owing</span><span>5</span></div>
+          <div class="stat-sub"><span>Overdue</span><span>3</span></div>
         </div>
         <a href="#" class="stat-more">VIEW MORE ›</a>
       </div>
     </div>
 
-    <!-- Table Panel -->
+    <!-- Account Summary Cards -->
+    <div class="acc-grid">
+      <div class="acc-card" style="border-left-color:#3aafa9">
+        <div class="acc-name">Cash</div>
+        <div class="acc-row"><span>Income</span><span class="amt-green">Rs 40,000</span></div>
+        <div class="acc-row"><span>Expense</span><span class="amt-red">Rs 18,000</span></div>
+        <div class="acc-row"><span>Balance</span><span class="amt-teal">Rs 22,000</span></div>
+      </div>
+      <div class="acc-card" style="border-left-color:#2563eb">
+        <div class="acc-name">Laxmi Bank</div>
+        <div class="acc-row"><span>Income</span><span class="amt-green">Rs 35,000</span></div>
+        <div class="acc-row"><span>Expense</span><span class="amt-red">Rs 12,000</span></div>
+        <div class="acc-row"><span>Balance</span><span class="amt-teal">Rs 23,000</span></div>
+      </div>
+      <div class="acc-card" style="border-left-color:#f59e0b">
+        <div class="acc-name">Petty Cash</div>
+        <div class="acc-row"><span>Income</span><span class="amt-green">Rs 15,000</span></div>
+        <div class="acc-row"><span>Expense</span><span class="amt-red">Rs 8,000</span></div>
+        <div class="acc-row"><span>Balance</span><span class="amt-teal">Rs 7,000</span></div>
+      </div>
+      <div class="acc-card" style="border-left-color:#7c3aed">
+        <div class="acc-name">Nabil Bank</div>
+        <div class="acc-row"><span>Income</span><span class="amt-green">Rs 28,500</span></div>
+        <div class="acc-row"><span>Expense</span><span class="amt-red">Rs 10,200</span></div>
+        <div class="acc-row"><span>Balance</span><span class="amt-teal">Rs 18,300</span></div>
+      </div>
+      <div class="acc-card" style="border-left-color:#e05c7a">
+        <div class="acc-name">Due</div>
+        <div class="acc-row"><span>Income</span><span class="amt-green">Rs 6,000</span></div>
+        <div class="acc-row"><span>Expense</span><span class="amt-red">Rs 0</span></div>
+        <div class="acc-row"><span>Balance</span><span class="amt-red">-Rs 9,800</span></div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="panel">
+      <div class="panel-hdr">Income vs Expense Trend (Last 6 Months)</div>
+      <div class="panel-body">
+        <div class="chart-wrap"><canvas id="accChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Transaction Table -->
     <div class="panel">
       <div class="panel-hdr">
-        <span>Invoice List</span>
-        <span style="font-size:.75rem;opacity:.75">95 invoices</span>
+        <span>Transaction History</span>
+        <span style="font-size:.75rem;opacity:.75">80 records</span>
       </div>
-
-      <!-- Status Tabs -->
-      <div class="tab-bar">
-        <button class="tab-btn active" onclick="filterTab(this,'all')">ALL</button>
-        <button class="tab-btn" onclick="filterTab(this,'paid')">PAID</button>
-        <button class="tab-btn" onclick="filterTab(this,'pending')">PENDING</button>
-        <button class="tab-btn" onclick="filterTab(this,'overdue')">OVERDUE</button>
-        <button class="tab-btn" onclick="filterTab(this,'draft')">DRAFT</button>
-      </div>
-
-      <!-- Date + Search filter -->
       <div class="filter-bar">
         <label>Search:</label>
-        <input type="search" id="invSearch" placeholder="Invoice # or client..." oninput="searchInvoices()" style="min-width:160px" />
-        <label>From:</label><input type="date" id="iFrom" value="2025-04-01" />
-        <label>To:</label><input type="date" id="iTo" value="2025-04-20" />
-        <button class="btn-filter" onclick="filterInvoices()">Filter</button>
-        <button class="btn-reset" onclick="resetInvoices()">Reset</button>
-        <span class="filter-msg" id="iMsg"></span>
+        <input type="search" id="txSearch" placeholder="Description or account..." oninput="searchTx()" style="min-width:160px" />
+        <label>From:</label><input type="date" id="txFrom" value="2025-04-01" />
+        <label>To:</label><input type="date" id="txTo" value="2025-04-20" />
+        <button class="btn-filter" onclick="filterTx()">Filter</button>
+        <button class="btn-reset" onclick="resetTx()">Reset</button>
+        <span class="filter-msg" id="txMsg"></span>
       </div>
-
       <div class="table-wrap">
         <table>
           <thead>
-            <tr><th>Invoice #</th><th>Client</th><th>Packages</th><th>Amount</th><th>Created</th><th>Due Date</th><th>Status</th><th>Actions</th></tr>
+            <tr><th>S.N</th><th>Date</th><th>Account</th><th>Type</th><th>Description</th><th>Amount</th><th>Added By</th><th>Actions</th></tr>
           </thead>
-          <tbody id="invBody">
-            <tr data-date="2025-04-20" data-status="paid"><td class="inv-id">INV-2025-001</td><td>Deza Collection</td><td>50</td><td><strong>Rs 8,750</strong></td><td>Apr 20, 2025</td><td>Apr 27, 2025</td><td><span class="badge b-green">Paid</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-18" data-status="pending"><td class="inv-id">INV-2025-002</td><td>Amazing Dresup</td><td>30</td><td><strong>Rs 5,250</strong></td><td>Apr 18, 2025</td><td>Apr 25, 2025</td><td><span class="badge b-orange">Pending</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-17" data-status="paid"><td class="inv-id">INV-2025-003</td><td>Daliya Solutions</td><td>20</td><td><strong>Rs 3,500</strong></td><td>Apr 17, 2025</td><td>Apr 24, 2025</td><td><span class="badge b-green">Paid</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-16" data-status="overdue"><td class="inv-id">INV-2025-004</td><td>Ama Ko Achar</td><td>10</td><td><strong>Rs 1,750</strong></td><td>Apr 16, 2025</td><td>Apr 23, 2025</td><td><span class="badge b-red">Overdue</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-15" data-status="paid"><td class="inv-id">INV-2025-005</td><td>ABC Enterprises</td><td>5</td><td><strong>Rs 875</strong></td><td>Apr 15, 2025</td><td>Apr 22, 2025</td><td><span class="badge b-green">Paid</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-14" data-status="pending"><td class="inv-id">INV-2025-006</td><td>Sunrise Traders</td><td>8</td><td><strong>Rs 1,400</strong></td><td>Apr 14, 2025</td><td>Apr 21, 2025</td><td><span class="badge b-orange">Pending</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-12" data-status="paid"><td class="inv-id">INV-2025-007</td><td>Himalayan Crafts</td><td>12</td><td><strong>Rs 2,100</strong></td><td>Apr 12, 2025</td><td>Apr 19, 2025</td><td><span class="badge b-green">Paid</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-10" data-status="overdue"><td class="inv-id">INV-2025-008</td><td>Valley Foods</td><td>6</td><td><strong>Rs 1,050</strong></td><td>Apr 10, 2025</td><td>Apr 17, 2025</td><td><span class="badge b-red">Overdue</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-08" data-status="draft"><td class="inv-id">INV-2025-009</td><td>Nepal Boutique</td><td>3</td><td><strong>Rs 525</strong></td><td>Apr 08, 2025</td><td>Apr 15, 2025</td><td><span class="badge b-gray">Draft</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-06" data-status="paid"><td class="inv-id">INV-2025-010</td><td>Mountain Spices</td><td>15</td><td><strong>Rs 2,625</strong></td><td>Apr 06, 2025</td><td>Apr 13, 2025</td><td><span class="badge b-green">Paid</span></td><td class="act-btns">BTNS</td></tr>
+          <tbody id="txBody">
+            <tr data-date="2025-04-20" data-type="income"><td>1</td><td>Apr 20</td><td>Cash</td><td><span class="badge b-green">Income</span></td><td>Delivery Charges</td><td class="amt-green">+Rs 12,500</td><td>Admin</td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-20" data-type="expense"><td>2</td><td>Apr 20</td><td>Laxmi Bank</td><td><span class="badge b-red">Expense</span></td><td>Fuel Cost</td><td class="amt-red">-Rs 3,200</td><td>Admin</td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-19" data-type="expense"><td>3</td><td>Apr 19</td><td>Petty Cash</td><td><span class="badge b-red">Expense</span></td><td>Office Supplies</td><td class="amt-red">-Rs 850</td><td>Admin</td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-19" data-type="income"><td>4</td><td>Apr 19</td><td>Nabil Bank</td><td><span class="badge b-green">Income</span></td><td>COD Collection</td><td class="amt-green">+Rs 8,750</td><td>Admin</td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-18" data-type="income"><td>5</td><td>Apr 18</td><td>Cash</td><td><span class="badge b-green">Income</span></td><td>Delivery Charges</td><td class="amt-green">+Rs 9,800</td><td>Admin</td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-18" data-type="income"><td>6</td><td>Apr 18</td><td>Due</td><td><span class="badge b-green">Income</span></td><td>Client Payment</td><td class="amt-green">+Rs 6,000</td><td>Admin</td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-17" data-type="income"><td>7</td><td>Apr 17</td><td>Laxmi Bank</td><td><span class="badge b-green">Income</span></td><td>Invoice Payment</td><td class="amt-green">+Rs 5,250</td><td>Admin</td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-17" data-type="expense"><td>8</td><td>Apr 17</td><td>Petty Cash</td><td><span class="badge b-red">Expense</span></td><td>Packaging Materials</td><td class="amt-red">-Rs 1,200</td><td>Admin</td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-16" data-type="expense"><td>9</td><td>Apr 16</td><td>Cash</td><td><span class="badge b-red">Expense</span></td><td>Rider Salary Advance</td><td class="amt-red">-Rs 5,000</td><td>Admin</td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-15" data-type="expense"><td>10</td><td>Apr 15</td><td>Nabil Bank</td><td><span class="badge b-red">Expense</span></td><td>Insurance Premium</td><td class="amt-red">-Rs 4,500</td><td>Admin</td><td class="act-btns">BTNS</td></tr>
           </tbody>
         </table>
       </div>
       <div class="pagination">
-        <span>Showing 1–10 of 95 invoices</span>
+        <span>Showing 1–10 of 80 transactions</span>
         <div class="pag-btns">
           <button class="pag-btn">&#8249; Prev</button>
           <button class="pag-btn">Next &#8250;</button>
@@ -251,39 +287,30 @@
   </div>
 </div>
 
-<!-- CREATE INVOICE MODAL -->
+<!-- ADD TRANSACTION MODAL -->
 <div class="modal-bg" id="addModal">
   <div class="modal">
     <div class="modal-head">
-      <h3>Create Invoice</h3>
+      <h3>Add Transaction</h3>
       <button class="modal-x" onclick="document.getElementById('addModal').classList.remove('open')">&#10005;</button>
     </div>
     <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group form-full"><label>Client</label>
-          <select>
-            <option value="">— Select Client —</option>
-            <option>Deza Collection</option><option>Amazing Dresup</option>
-            <option>Daliya Solutions</option><option>Ama Ko Achar</option>
-            <option>ABC Enterprises</option><option>Sunrise Traders</option>
-          </select>
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input type="date" value="2025-04-20" /></div>
+        <div class="form-group"><label>Account</label>
+          <select><option>Cash</option><option>Laxmi Bank</option><option>Petty Cash</option><option>Nabil Bank</option><option>Due</option></select>
         </div>
-        <div class="form-group"><label>Invoice Date</label><input type="date" value="2025-04-20" /></div>
-        <div class="form-group"><label>Due Date</label><input type="date" value="2025-04-27" /></div>
-        <div class="form-group"><label>Number of Packages</label><input type="number" id="pkgCount" placeholder="0" oninput="calcTotal()" /></div>
-        <div class="form-group"><label>Rate per Package (Rs)</label><input type="number" id="pkgRate" placeholder="175" value="175" oninput="calcTotal()" /></div>
-        <div class="form-group form-full">
-          <div class="total-preview">
-            <span>Total Amount</span>
-            <strong id="totalAmt">Rs 0</strong>
-          </div>
+        <div class="form-group"><label>Type</label>
+          <select><option>Income</option><option>Expense</option></select>
         </div>
+        <div class="form-group"><label>Amount (Rs)</label><input type="number" placeholder="0.00" /></div>
+        <div class="form-group form-full"><label>Description</label><input type="text" placeholder="Brief description..." /></div>
         <div class="form-group form-full"><label>Notes</label><textarea rows="2" placeholder="Additional notes..."></textarea></div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="document.getElementById('addModal').classList.remove('open')">Cancel</button>
-      <button class="btn-save" onclick="alert('Invoice created!');document.getElementById('addModal').classList.remove('open')">Create Invoice</button>
+      <button class="btn-save" onclick="alert('Transaction saved!');document.getElementById('addModal').classList.remove('open')">Save</button>
     </div>
   </div>
 </div>
@@ -291,62 +318,55 @@
 <script>
 // Inject action buttons
 document.querySelectorAll('.act-btns').forEach(td => {
-  const row = td.closest('tr');
-  const invId = row.querySelector('.inv-id').textContent;
   td.innerHTML = `<div style="display:flex;gap:4px">
-    <button class="act-btn act-view" title="View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-    <button class="act-btn act-dl" title="Download" onclick="alert('Downloading ${invId}...')"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+    <button class="act-btn act-edit" title="Edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
     <button class="act-btn act-del" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
   </div>`;
 });
 
-// Tab filter
-let activeTab = 'all';
-function filterTab(btn, status) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  activeTab = status;
-  applyFilters();
-}
+// Chart
+new Chart(document.getElementById('accChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Nov','Dec','Jan','Feb','Mar','Apr'],
+    datasets: [
+      { label:'Income',  data:[68000,72000,85000,91000,108000,124500], backgroundColor:'#3aafa9', borderRadius:4 },
+      { label:'Expense', data:[28000,31000,38000,42000,45000,48200],   backgroundColor:'#e05c7a', borderRadius:4 }
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ position:'top', labels:{ font:{size:11} } } },
+    scales:{
+      x:{ grid:{display:false}, ticks:{font:{size:10}} },
+      y:{ grid:{color:'#e5e7eb'}, ticks:{font:{size:10}, callback:v=>'Rs '+(v/1000)+'k'} }
+    }
+  }
+});
 
-// Date filter
-function filterInvoices() {
-  applyFilters();
-  const visible = document.querySelectorAll('#invBody tr:not(.hidden)').length;
-  document.getElementById('iMsg').textContent = visible + ' record(s) found';
-}
-
-function resetInvoices() {
-  document.getElementById('iFrom').value = '2025-04-01';
-  document.getElementById('iTo').value   = '2025-04-20';
-  document.getElementById('iMsg').textContent = '';
-  document.getElementById('invSearch').value = '';
-  activeTab = 'all';
-  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===0));
-  document.querySelectorAll('#invBody tr').forEach(tr => tr.classList.remove('hidden'));
-}
-
-function searchInvoices() { applyFilters(); }
-
-function applyFilters() {
-  const from = document.getElementById('iFrom').value;
-  const to   = document.getElementById('iTo').value;
-  const q    = document.getElementById('invSearch').value.toLowerCase();
-  document.querySelectorAll('#invBody tr').forEach(tr => {
-    const d  = tr.dataset.date;
-    const st = tr.dataset.status;
-    const matchDate   = d >= from && d <= to;
-    const matchTab    = activeTab === 'all' || st === activeTab;
-    const matchSearch = !q || tr.textContent.toLowerCase().includes(q);
-    tr.classList.toggle('hidden', !(matchDate && matchTab && matchSearch));
+function filterTx() {
+  const from = document.getElementById('txFrom').value;
+  const to   = document.getElementById('txTo').value;
+  let count  = 0;
+  document.querySelectorAll('#txBody tr').forEach(tr => {
+    const d = tr.dataset.date;
+    if (d >= from && d <= to) { tr.classList.remove('hidden'); count++; }
+    else tr.classList.add('hidden');
   });
+  document.getElementById('txMsg').textContent = count + ' record(s) found';
 }
-
-// Live total calculation
-function calcTotal() {
-  const pkgs = parseFloat(document.getElementById('pkgCount').value) || 0;
-  const rate = parseFloat(document.getElementById('pkgRate').value)  || 0;
-  document.getElementById('totalAmt').textContent = 'Rs ' + (pkgs * rate).toLocaleString();
+function resetTx() {
+  document.getElementById('txFrom').value = '2025-04-01';
+  document.getElementById('txTo').value   = '2025-04-20';
+  document.getElementById('txMsg').textContent = '';
+  document.getElementById('txSearch').value = '';
+  document.querySelectorAll('#txBody tr').forEach(tr => tr.classList.remove('hidden'));
+}
+function searchTx() {
+  const q = document.getElementById('txSearch').value.toLowerCase();
+  document.querySelectorAll('#txBody tr').forEach(tr => {
+    tr.classList.toggle('hidden', q && !tr.textContent.toLowerCase().includes(q));
+  });
 }
 </script>
 </body>
