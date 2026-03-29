@@ -52,28 +52,16 @@
     .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
     @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.stat-grid{grid-template-columns:1fr 1fr}}
-    .stat-card{background:var(--white);border-radius:12px;box-shadow:var(--shadow);padding:18px 20px;border-left:4px solid var(--teal);position:relative;overflow:hidden}
-    .stat-card.sc-teal{border-left-color:#3aafa9}
-    .stat-card.sc-green{border-left-color:#16a34a}
-    .stat-card.sc-orange{border-left-color:#d97706}
-    .stat-card.sc-purple{border-left-color:#7c3aed}
-    .stat-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
-    .stat-value{font-size:1.9rem;font-weight:800;line-height:1.1;margin:6px 0 4px}
-    .stat-card.sc-teal .stat-value{color:#3aafa9}
-    .stat-card.sc-green .stat-value{color:#16a34a}
-    .stat-card.sc-orange .stat-value{color:#d97706}
-    .stat-card.sc-purple .stat-value{color:#7c3aed}
-    .stat-sub{font-size:.72rem;color:var(--muted)}
+    .stat-card{background:var(--teal);color:#fff;border-radius:12px;padding:18px 20px 14px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+    .stat-card::after{content:'';position:absolute;bottom:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1)}
+    .stat-card.red{background:var(--red)}
+    .stat-label{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.85}
+    .stat-value{font-size:1.8rem;font-weight:800;line-height:1.1;margin:6px 0 4px}
+    .stat-sub{font-size:.72rem;opacity:.8}
 
     /* SECTION PANELS */
     .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
-    .panel-hdr{padding:13px 20px;color:#fff;font-size:.88rem;font-weight:800;letter-spacing:.4px;display:flex;align-items:center;justify-content:space-between}
-    .ph-teal{background:var(--teal-dark)}
-    .ph-blue{background:#1d4ed8}
-    .ph-green{background:#15803d}
-    .ph-orange{background:#b45309}
-    .ph-purple{background:#6d28d9}
-    .ph-red{background:#be123c}
+    .panel-hdr{padding:13px 20px;color:#fff;font-size:.88rem;font-weight:800;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between;background:var(--teal-dark)}
 
     /* TABLE */
     .table-wrap{overflow-x:auto}
@@ -110,8 +98,8 @@
       body{background:#fff!important;color:#000!important}
       .page-inner{padding:0!important;gap:12px!important}
       .title-row{margin-bottom:8px}
-      .stat-card{box-shadow:none!important;border:1px solid #ccc!important}
-      .stat-value{color:#000!important;-webkit-print-color-adjust:exact}
+      .stat-card{background:#2b7a78!important;box-shadow:none!important;-webkit-print-color-adjust:exact}
+      .stat-card.red{background:#e05c7a!important}
       .panel{box-shadow:none!important;border:1px solid #ccc!important;break-inside:avoid}
       .panel-hdr{background:#2b7a78!important;-webkit-print-color-adjust:exact}
       thead th{background:#def2f1!important;-webkit-print-color-adjust:exact}
@@ -189,22 +177,22 @@
 
     <!-- SUMMARY STATS -->
     <div class="stat-grid">
-      <div class="stat-card sc-teal">
+      <div class="stat-card">
         <div class="stat-label">Total Assigned</div>
         <div class="stat-value" id="statAssigned">348</div>
         <div class="stat-sub">Packages assigned to vendor</div>
       </div>
-      <div class="stat-card sc-green">
+      <div class="stat-card">
         <div class="stat-label">Total Delivered</div>
         <div class="stat-value" id="statDelivered">281</div>
         <div class="stat-sub">Successfully delivered</div>
       </div>
-      <div class="stat-card sc-orange">
+      <div class="stat-card">
         <div class="stat-label">Total Pending</div>
         <div class="stat-value" id="statPending">42</div>
         <div class="stat-sub">Awaiting delivery</div>
       </div>
-      <div class="stat-card sc-purple">
+      <div class="stat-card red">
         <div class="stat-label">Delivery Rate</div>
         <div class="stat-value" id="statRate">80.7%</div>
         <div class="stat-sub">Overall success rate</div>
@@ -213,7 +201,7 @@
 
     <!-- SECTION 1: Package Summary by Status -->
     <div class="panel">
-      <div class="panel-hdr ph-teal">
+      <div class="panel-hdr">
         <span>Package Summary by Status</span>
         <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s1VendorLabel">All Vendors</span>
       </div>
@@ -234,7 +222,7 @@
 
     <!-- SECTION 2: Delivery Performance by Area -->
     <div class="panel">
-      <div class="panel-hdr ph-blue">
+      <div class="panel-hdr">
         <span>Delivery Performance by Area</span>
         <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s2VendorLabel">All Vendors</span>
       </div>
@@ -256,7 +244,7 @@
 
     <!-- SECTION 3: Daily Delivery Trend -->
     <div class="panel">
-      <div class="panel-hdr ph-green">
+      <div class="panel-hdr">
         <span>Daily Delivery Trend (Last 7 Days)</span>
         <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s3VendorLabel">All Vendors</span>
       </div>
@@ -278,7 +266,7 @@
 
     <!-- SECTION 4: Top Riders Performance -->
     <div class="panel">
-      <div class="panel-hdr ph-orange">
+      <div class="panel-hdr">
         <span>Top Riders Performance</span>
         <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s4VendorLabel">All Vendors</span>
       </div>
@@ -301,7 +289,7 @@
 
     <!-- SECTION 5: COD Collection Summary -->
     <div class="panel">
-      <div class="panel-hdr ph-purple">
+      <div class="panel-hdr">
         <span>COD Collection Summary</span>
         <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s5VendorLabel">All Vendors</span>
       </div>
@@ -324,7 +312,7 @@
 
     <!-- SECTION 6: Returns & Failed Deliveries -->
     <div class="panel">
-      <div class="panel-hdr ph-red">
+      <div class="panel-hdr">
         <span>Returns &amp; Failed Deliveries</span>
         <span style="font-size:.75rem;opacity:.8;font-weight:400;" id="s6VendorLabel">All Vendors</span>
       </div>
