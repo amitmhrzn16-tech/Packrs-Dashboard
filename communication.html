@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Communication — Packrs Courier</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--teal:#3aafa9;--teal-dark:#2b7a78;--teal-light:#def2f1;--red:#e05c7a;--bg:#f0f4f4;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--border:#d1e0df;--shadow:0 2px 8px rgba(0,0,0,.08);--nav:220px;--hdr:56px}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{position:fixed;top:0;left:var(--nav);right:0;height:var(--hdr);background:var(--white);display:flex;align-items:center;gap:16px;padding:0 20px;box-shadow:var(--shadow);z-index:200}
+    .logo{font-size:1.1rem;font-weight:800;letter-spacing:2px;color:var(--teal-dark);text-transform:uppercase;flex:1}
+    .menu-btn{display:none;background:none;border:none;font-size:1.2rem;cursor:pointer}
+    .hdr-right{display:flex;align-items:center;gap:16px}
+    .notif-btn{position:relative;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+    .notif-badge{position:absolute;top:-4px;right:-5px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .user-chip{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .avatar{width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem}
+    .user-name{font-size:.82rem;font-weight:700}.user-role{font-size:.65rem;color:var(--muted);letter-spacing:1px}
+    @media(max-width:768px){header{left:0}.menu-btn{display:block}}
+    .sidenav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--teal-dark);color:#fff;z-index:300;overflow-y:auto;display:flex;flex-direction:column;transition:transform .25s}
+    .sn-brand{padding:16px;font-size:1rem;font-weight:800;letter-spacing:2px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .sn-links{list-style:none;padding:10px 0;flex:1}
+    .sn-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;font-weight:600;transition:background .15s,color .15s;border-left:3px solid transparent}
+    .sn-item:hover,.sn-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#fff}
+    .sn-icon{width:17px;height:17px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .sn-footer{padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}
+    @media(max-width:768px){.sidenav{transform:translateX(-100%)}.sidenav.open{transform:translateX(0)}}
+    .page-body{margin-left:var(--nav);padding-top:var(--hdr);min-height:100vh}
+    .page-inner{padding:20px;display:flex;flex-direction:column;gap:16px}
+    @media(max-width:768px){.page-body{margin-left:0}}
+    .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
+    .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
+    /* STAT CARDS */
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+    .stat-card{background:var(--teal);color:#fff;border-radius:12px;padding:18px 20px 14px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+    .stat-card::after{content:'';position:absolute;bottom:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1)}
+    .stat-label{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.85}
+    .stat-value{font-size:1.6rem;font-weight:800;line-height:1.1;margin:6px 0 8px}
+    /* PANEL */
+    .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+    .panel-hdr{background:var(--teal-dark);color:#fff;padding:13px 20px;font-size:.88rem;font-weight:800;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between}
+    .panel-body{padding:20px}
+    /* TAB NAV */
+    .tab-nav{display:flex;border-bottom:2px solid var(--border);background:var(--white);padding:0 20px;gap:0}
+    .tab-btn{padding:13px 20px;font-size:.85rem;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s}
+    .tab-btn:hover{color:var(--teal)}
+    .tab-btn.active{color:var(--teal-dark);border-bottom-color:var(--teal)}
+    .tab-pane{display:none}
+    .tab-pane.active{display:block}
+    /* FORM */
+    .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+    .form-group label{font-size:.75rem;font-weight:700;color:var(--muted)}
+    .form-group input,.form-group select,.form-group textarea{padding:9px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:.82rem;color:var(--text);outline:none;font-family:inherit;background:var(--white)}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal)}
+    .form-group textarea{resize:vertical}
+    .char-counter{font-size:.7rem;color:var(--muted);text-align:right;margin-top:3px}
+    /* RADIO GROUP */
+    .radio-group{display:flex;gap:20px;align-items:center;padding:6px 0}
+    .radio-group label{display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:var(--text);cursor:pointer}
+    .radio-group input[type=radio]{accent-color:var(--teal);width:15px;height:15px}
+    /* BUTTONS */
+    .btn-teal{background:var(--teal);color:#fff;border:none;padding:10px 22px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .15s}
+    .btn-teal:hover{background:var(--teal-dark)}
+    .btn-outline{background:none;color:var(--teal-dark);border:1.5px solid var(--teal);padding:6px 14px;border-radius:7px;font-size:.75rem;font-weight:700;cursor:pointer;transition:background .15s,color .15s}
+    .btn-outline:hover{background:var(--teal);color:#fff}
+    /* TEMPLATE GRID */
+    .tmpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+    @media(max-width:640px){.tmpl-grid{grid-template-columns:1fr}}
+    .tmpl-card{background:var(--teal-light);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+    .tmpl-title{font-size:.82rem;font-weight:800;color:var(--teal-dark)}
+    .tmpl-text{font-size:.78rem;color:var(--text);line-height:1.5;flex:1}
+    /* TABLE */
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.8rem}
+    thead th{background:var(--teal-light);color:var(--teal-dark);font-weight:700;padding:10px 12px;text-align:left;white-space:nowrap;border-bottom:2px solid var(--border)}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+    tbody tr:hover{background:#f8fbfb}
+    tbody td{padding:10px 12px;color:var(--text);white-space:nowrap}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700}
+    .b-green{background:#dcfce7;color:#16a34a}
+    .b-red{background:#fce4ec;color:#e05c7a}
+    .b-blue{background:#dbeafe;color:#1d4ed8}
+    .b-purple{background:#ede9fe;color:#7c3aed}
+    .b-orange{background:#fef3c7;color:#d97706}
+    .act-btn{padding:5px 12px;border-radius:6px;border:1.5px solid var(--border);background:none;cursor:pointer;font-size:.72rem;font-weight:700;transition:background .12s,color .12s}
+    .act-view{color:var(--teal-dark);border-color:var(--teal)}.act-view:hover{background:var(--teal-light)}
+    .act-retry{color:var(--red);border-color:var(--red)}.act-retry:hover{background:#fce4ec}
+    /* TWO COL LAYOUT */
+    .comm-layout{display:grid;grid-template-columns:1fr 340px;gap:16px}
+    @media(max-width:960px){.comm-layout{grid-template-columns:1fr}}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+
+<!-- SIDENAV -->
+<nav class="sidenav" id="sidenav">
+  <div class="sn-brand">&#9992; PACKRS</div>
+  <ul class="sn-links">
+    <li><a href="index.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
+    <li><a href="users.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>User Management</span></a></li>
+    <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M15 13l3 7"/><path d="M9 13l-3 7"/></svg><span>Riders</span></a></li>
+    <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
+    <li><a href="courier.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Courier</span></a></li>
+    <li><a href="manifesto.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Manifesto</span></a></li>
+    <li><a href="invoices.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoice</span></a></li>
+    <li><a href="accounts.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Accounting</span></a></li>
+    <li><a href="rider-location.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Rider Location</span></a></li>
+    <li><a href="communication.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Communication</span></a></li>
+    <li><a href="reports.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Reports</span></a></li>
+    <li><a href="vendor-report.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg><span>Vendor Report</span></a></li>
+    <li><a href="settings.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>System Settings</span></a></li>
+    <li><a href="support-ticket.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Support Ticket</span></a></li>
+  </ul>
+  <div class="sn-footer"><a href="#" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span></a></div>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <button class="menu-btn" id="menuBtn">&#9776;</button>
+  <div class="logo">Packrs</div>
+  <div class="hdr-right">
+    <button class="notif-btn">
+      &#128276;
+      <span class="notif-badge">3</span>
+    </button>
+    <div class="user-chip">
+      <div class="avatar">AD</div>
+      <div>
+        <div class="user-name">Admin</div>
+        <div class="user-role">SUPER ADMIN</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PAGE BODY -->
+<div class="page-body">
+  <div class="page-inner">
+
+    <!-- TITLE ROW -->
+    <div class="title-row">
+      <div>
+        <div class="page-title">Communication</div>
+        <div class="page-sub">Send notifications, SMS and announcements</div>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">SMS Sent Today</div>
+        <div class="stat-value">847</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Emails Sent</div>
+        <div class="stat-value">234</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Push Notifications</div>
+        <div class="stat-value">1,205</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">SMS Credit Balance</div>
+        <div class="stat-value">0</div>
+      </div>
+    </div>
+
+    <!-- TAB PANEL -->
+    <div class="panel">
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="sms">Send SMS</button>
+        <button class="tab-btn" data-tab="email">Send Email</button>
+        <button class="tab-btn" data-tab="bulk">Bulk Notification</button>
+        <button class="tab-btn" data-tab="history">History</button>
+      </div>
+
+      <!-- TAB 1: Send SMS -->
+      <div id="tab-sms" class="tab-pane active">
+        <div class="comm-layout" style="padding:20px;gap:20px">
+          <!-- FORM -->
+          <div>
+            <div class="panel-hdr" style="border-radius:10px 10px 0 0;margin:-20px -20px 16px -20px;position:relative;top:auto;left:auto;right:auto">
+              <span>Compose SMS</span>
+            </div>
+
+            <div class="form-group">
+              <label>Recipient Type</label>
+              <select id="smsRecipientType" onchange="toggleSpecificRecipient('sms')">
+                <option value="all-riders">All Riders</option>
+                <option value="specific-rider">Specific Rider</option>
+                <option value="all-vendors">All Vendors</option>
+                <option value="specific-vendor">Specific Vendor</option>
+                <option value="all-customers">All Customers</option>
+              </select>
+            </div>
+
+            <div class="form-group hidden" id="smsSpecificGroup">
+              <label>Specific Recipient</label>
+              <input type="text" id="smsSpecificInput" placeholder="Enter name or phone number..." />
+            </div>
+
+            <div class="form-group">
+              <label>Message</label>
+              <textarea id="smsMessage" rows="4" maxlength="160" placeholder="Type your SMS message here..." oninput="updateCharCounter()"></textarea>
+              <div class="char-counter" id="smsCharCounter">0/160</div>
+            </div>
+
+            <div class="form-group">
+              <label>Schedule</label>
+              <div class="radio-group">
+                <label>
+                  <input type="radio" name="smsSchedule" value="now" checked onchange="toggleScheduleTime()" /> Send Now
+                </label>
+                <label>
+                  <input type="radio" name="smsSchedule" value="later" onchange="toggleScheduleTime()" /> Schedule Later
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group hidden" id="smsScheduleGroup">
+              <label>Schedule Date &amp; Time</label>
+              <input type="datetime-local" id="smsScheduleTime" />
+            </div>
+
+            <button class="btn-teal">Send SMS</button>
+          </div>
+
+          <!-- TEMPLATES -->
+          <div>
+            <div style="font-size:.85rem;font-weight:800;color:var(--teal-dark);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border)">SMS Templates</div>
+            <div class="tmpl-grid" style="grid-template-columns:1fr">
+              <div class="tmpl-card">
+                <div class="tmpl-title">Package Delivered</div>
+                <div class="tmpl-text">Your package has been delivered successfully.</div>
+                <button class="btn-outline" onclick="useTemplate('Your package has been delivered successfully.')">Use Template</button>
+              </div>
+              <div class="tmpl-card">
+                <div class="tmpl-title">Package Delayed</div>
+                <div class="tmpl-text">Your package delivery has been delayed. We apologize.</div>
+                <button class="btn-outline" onclick="useTemplate('Your package delivery has been delayed. We apologize.')">Use Template</button>
+              </div>
+              <div class="tmpl-card">
+                <div class="tmpl-title">Pick Up Ready</div>
+                <div class="tmpl-text">Your package is ready for pick up at our branch.</div>
+                <button class="btn-outline" onclick="useTemplate('Your package is ready for pick up at our branch.')">Use Template</button>
+              </div>
+              <div class="tmpl-card">
+                <div class="tmpl-title">Payment Reminder</div>
+                <div class="tmpl-text">Payment of NPR {amount} is pending. Please clear dues.</div>
+                <button class="btn-outline" onclick="useTemplate('Payment of NPR {amount} is pending. Please clear dues.')">Use Template</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: Send Email -->
+      <div id="tab-email" class="tab-pane">
+        <div style="padding:20px">
+          <div class="panel-hdr" style="border-radius:10px 10px 0 0;margin:-20px -20px 20px -20px">
+            <span>Compose Email</span>
+          </div>
+
+          <div class="form-group">
+            <label>To (Email Address)</label>
+            <input type="email" placeholder="recipient@example.com" />
+          </div>
+          <div class="form-group">
+            <label>Subject</label>
+            <input type="text" placeholder="Enter email subject..." />
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea rows="6" placeholder="Compose your email message here..."></textarea>
+          </div>
+          <button class="btn-teal">Send Email</button>
+        </div>
+      </div>
+
+      <!-- TAB 3: Bulk Notification -->
+      <div id="tab-bulk" class="tab-pane">
+        <div style="padding:20px">
+          <div class="panel-hdr" style="border-radius:10px 10px 0 0;margin:-20px -20px 20px -20px">
+            <span>Bulk Notification</span>
+          </div>
+
+          <div class="form-group">
+            <label>Notification Type</label>
+            <select>
+              <option>SMS</option>
+              <option>Email</option>
+              <option>Push</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Target Group</label>
+            <select>
+              <option>All Users</option>
+              <option>All Riders</option>
+              <option>All Vendors</option>
+              <option>All Customers</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Subject</label>
+            <input type="text" placeholder="Enter notification subject..." />
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea rows="5" placeholder="Enter your notification message..."></textarea>
+          </div>
+          <button class="btn-teal">Send to All (1141 users)</button>
+        </div>
+      </div>
+
+      <!-- TAB 4: History -->
+      <div id="tab-history" class="tab-pane">
+        <div style="padding:20px">
+          <div class="panel-hdr" style="border-radius:10px 10px 0 0;margin:-20px -20px 16px -20px">
+            <span>Message History</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Recipient</th>
+                  <th>Message Preview</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2024-03-28 10:30</td>
+                  <td><span class="badge b-blue">SMS</span></td>
+                  <td>All Riders (20)</td>
+                  <td>&#8220;Please check your assigned packages...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
+                <tr>
+                  <td>2024-03-28 09:15</td>
+                  <td><span class="badge b-orange">Email</span></td>
+                  <td>Pokhara Streetwear</td>
+                  <td>&#8220;Invoice #INV-2024-089 is ready...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
+                <tr>
+                  <td>2024-03-27 16:45</td>
+                  <td><span class="badge b-purple">Push</span></td>
+                  <td>All Customers (847)</td>
+                  <td>&#8220;Track your package in real-time...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
+                <tr>
+                  <td>2024-03-27 14:20</td>
+                  <td><span class="badge b-blue">SMS</span></td>
+                  <td>Amit Tamang</td>
+                  <td>&#8220;Your shift starts in 30 minutes...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
+                <tr>
+                  <td>2024-03-27 11:00</td>
+                  <td><span class="badge b-blue">SMS</span></td>
+                  <td>All Vendors (5)</td>
+                  <td>&#8220;Monthly report is now available...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
+                <tr>
+                  <td>2024-03-26 15:30</td>
+                  <td><span class="badge b-orange">Email</span></td>
+                  <td>Daliya Solutions</td>
+                  <td>&#8220;Payment of NPR 45,000 received...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
+                <tr>
+                  <td>2024-03-26 10:00</td>
+                  <td><span class="badge b-purple">Push</span></td>
+                  <td>All Riders (20)</td>
+                  <td>&#8220;New packages assigned to you...&#8221;</td>
+                  <td><span class="badge b-red">Failed</span></td>
+                  <td><button class="act-btn act-retry">Retry</button></td>
+                </tr>
+                <tr>
+                  <td>2024-03-25 17:45</td>
+                  <td><span class="badge b-blue">SMS</span></td>
+                  <td>Rajan Shrestha</td>
+                  <td>&#8220;Package MNF-2024-002 completed...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
+                <tr>
+                  <td>2024-03-25 09:30</td>
+                  <td><span class="badge b-orange">Email</span></td>
+                  <td>All Vendors (5)</td>
+                  <td>&#8220;System maintenance scheduled...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
+                <tr>
+                  <td>2024-03-24 14:00</td>
+                  <td><span class="badge b-blue">Bulk</span></td>
+                  <td>All Users (1141)</td>
+                  <td>&#8220;Packrs app update available...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Mobile menu
+  document.getElementById('menuBtn').addEventListener('click', function(){
+    document.getElementById('sidenav').classList.toggle('open');
+  });
+
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var tab = this.getAttribute('data-tab');
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+      this.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+    });
+  });
+
+  // Char counter for SMS
+  function updateCharCounter(){
+    var msg = document.getElementById('smsMessage');
+    var counter = document.getElementById('smsCharCounter');
+    counter.textContent = msg.value.length + '/160';
+  }
+
+  // Show/hide specific recipient input
+  function toggleSpecificRecipient(type){
+    var sel = document.getElementById(type + 'RecipientType');
+    var grp = document.getElementById(type + 'SpecificGroup');
+    var val = sel.value;
+    if(val === 'specific-rider' || val === 'specific-vendor'){
+      grp.classList.remove('hidden');
+    } else {
+      grp.classList.add('hidden');
+    }
+  }
+
+  // Show/hide schedule datetime
+  function toggleScheduleTime(){
+    var radios = document.querySelectorAll('input[name="smsSchedule"]');
+    var grp = document.getElementById('smsScheduleGroup');
+    var val = '';
+    radios.forEach(function(r){ if(r.checked) val = r.value; });
+    if(val === 'later'){
+      grp.classList.remove('hidden');
+    } else {
+      grp.classList.add('hidden');
+    }
+  }
+
+  // Use template
+  function useTemplate(text){
+    var ta = document.getElementById('smsMessage');
+    ta.value = text;
+    updateCharCounter();
+    // Switch to SMS tab if not already active
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelector('[data-tab="sms"]').classList.add('active');
+    document.getElementById('tab-sms').classList.add('active');
+    ta.focus();
+  }
+</script>
+</body>
+</html>
