@@ -429,7 +429,29 @@
   <ul class="sn-links">
     <li><a href="index.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
     <li><a href="users.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>User Management</span></a></li>
-    <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li class="sn-parent">
+      <a href="#" class="sn-item sn-toggle" onclick="event.preventDefault();this.parentElement.classList.toggle('open')">
+        <svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span>Package</span>
+        <svg class="sn-arrow" viewBox="0 0 24 24" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+      <ul class="sn-sub">
+        <li><a href="packages.html" class="sn-item sn-sub-item">All Packages</a></li>
+        <li><a href="pkg-ready-to-pick.html" class="sn-item sn-sub-item">Ready To Pick</a></li>
+        <li><a href="pkg-pick-up.html" class="sn-item sn-sub-item">Pick Up</a></li>
+        <li><a href="pkg-receive.html" class="sn-item sn-sub-item">Receive</a></li>
+        <li><a href="pkg-delivery-return-receive.html" class="sn-item sn-sub-item">Delivery Return Receive</a></li>
+        <li><a href="pkg-return-receive.html" class="sn-item sn-sub-item">Return Receive</a></li>
+        <li><a href="pkg-instant-return.html" class="sn-item sn-sub-item">Instant Return</a></li>
+        <li><a href="pkg-warehouse.html" class="sn-item sn-sub-item">Warehouse</a></li>
+        <li><a href="pkg-deliveries.html" class="sn-item sn-sub-item">Deliveries</a></li>
+        <li><a href="pkg-add.html" class="sn-item sn-sub-item">Add Package</a></li>
+        <li><a href="pkg-import.html" class="sn-item sn-sub-item">Import Package</a></li>
+        <li><a href="pkg-ncm-sync-log.html" class="sn-item sn-sub-item">NCM Sync Log</a></li>
+        <li><a href="pkg-edit-log.html" class="sn-item sn-sub-item">Package Edit Log</a></li>
+        <li><a href="pkg-directly-verified-invoiced.html" class="sn-item sn-sub-item">Directly Verified Invoiced</a></li>
+      </ul>
+    </li>
     <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg><span>Riders</span></a></li>
     <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
     <li><a href="courier.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Courier</span></a></li>
