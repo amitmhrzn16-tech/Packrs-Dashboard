@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Invoices — Packrs Courier</title>
+  <title>Cancelled/Return Invoices — Packrs Courier</title>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--teal:#3aafa9;--teal-dark:#2b7a78;--teal-light:#def2f1;--red:#e05c7a;--bg:#f0f4f4;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--border:#d1e0df;--shadow:0 2px 8px rgba(0,0,0,.08);--nav:220px;--hdr:56px}
@@ -38,8 +38,6 @@
     .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
     .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
     .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
-    .btn-add{background:var(--teal);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;white-space:nowrap}
-    .btn-add:hover{background:var(--teal-dark)}
     .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
     @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.stat-grid{grid-template-columns:1fr 1fr}}
@@ -54,11 +52,9 @@
     .stat-more:hover{color:#fff}
     .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
     .panel-hdr{background:var(--teal-dark);color:#fff;padding:13px 20px;font-size:.88rem;font-weight:800;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between}
-    /* TABS */
     .tab-bar{display:flex;gap:6px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--border)}
     .tab-btn{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;border:2px solid var(--teal);background:transparent;color:var(--teal);transition:all .15s}
     .tab-btn.active,.tab-btn:hover{background:var(--teal);color:#fff}
-    /* FILTER */
     .filter-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 20px;background:var(--teal-light);border-bottom:1px solid var(--border)}
     .filter-bar label{font-size:.75rem;font-weight:700;color:var(--teal-dark);white-space:nowrap}
     .filter-bar input[type=date],.filter-bar input[type=search]{padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;background:var(--white);outline:none}
@@ -91,28 +87,6 @@
     .pag-btns{display:flex;gap:6px}
     .pag-btn{background:none;border:1.5px solid var(--border);border-radius:6px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;color:var(--teal-dark)}
     .pag-btn:hover{background:var(--teal-light)}
-    /* MODAL */
-    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center}
-    .modal-bg.open{display:flex}
-    .modal{background:var(--white);border-radius:12px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-    .modal-head{background:var(--teal-dark);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-radius:12px 12px 0 0}
-    .modal-head h3{font-size:.9rem;font-weight:800}
-    .modal-x{background:none;border:none;color:rgba(255,255,255,.8);font-size:1.3rem;cursor:pointer}
-    .modal-x:hover{color:#fff}
-    .modal-body{padding:20px}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .form-full{grid-column:1/-1}
-    .form-group{display:flex;flex-direction:column;gap:4px}
-    .form-group label{font-size:.72rem;font-weight:700;color:var(--muted)}
-    .form-group input,.form-group select,.form-group textarea{padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;color:var(--text);outline:none;font-family:inherit}
-    .form-group input:focus,.form-group select:focus{border-color:var(--teal)}
-    .total-preview{background:var(--teal-light);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:4px}
-    .total-preview span{font-size:.8rem;color:var(--muted);font-weight:600}
-    .total-preview strong{font-size:1.1rem;font-weight:800;color:var(--teal-dark)}
-    .modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
-    .btn-save{background:var(--teal);color:#fff;border:none;padding:8px 20px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.82rem}
-    .btn-save:hover{background:var(--teal-dark)}
-    .btn-cancel{background:none;color:var(--muted);border:1.5px solid var(--border);padding:8px 16px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.82rem}
   </style>
 </head>
 <body>
@@ -123,29 +97,7 @@
   <ul class="sn-links">
     <li><a href="index.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
     <li><a href="users.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>User Management</span></a></li>
-    <li class="sn-parent">
-      <a href="#" class="sn-item sn-toggle" onclick="event.preventDefault();this.parentElement.classList.toggle('open')">
-        <svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span>Package</span>
-        <svg class="sn-arrow" viewBox="0 0 24 24" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
-      </a>
-      <ul class="sn-sub">
-        <li><a href="packages.html" class="sn-item sn-sub-item">All Packages</a></li>
-        <li><a href="pkg-ready-to-pick.html" class="sn-item sn-sub-item">Ready To Pick</a></li>
-        <li><a href="pkg-pick-up.html" class="sn-item sn-sub-item">Pick Up</a></li>
-        <li><a href="pkg-receive.html" class="sn-item sn-sub-item">Receive</a></li>
-        <li><a href="pkg-delivery-return-receive.html" class="sn-item sn-sub-item">Delivery Return Receive</a></li>
-        <li><a href="pkg-return-receive.html" class="sn-item sn-sub-item">Return Receive</a></li>
-        <li><a href="pkg-instant-return.html" class="sn-item sn-sub-item">Instant Return</a></li>
-        <li><a href="pkg-warehouse.html" class="sn-item sn-sub-item">Warehouse</a></li>
-        <li><a href="pkg-deliveries.html" class="sn-item sn-sub-item">Deliveries</a></li>
-        <li><a href="pkg-add.html" class="sn-item sn-sub-item">Add Package</a></li>
-        <li><a href="pkg-import.html" class="sn-item sn-sub-item">Import Package</a></li>
-        <li><a href="pkg-ncm-sync-log.html" class="sn-item sn-sub-item">NCM Sync Log</a></li>
-        <li><a href="pkg-edit-log.html" class="sn-item sn-sub-item">Package Edit Log</a></li>
-        <li><a href="pkg-directly-verified-invoiced.html" class="sn-item sn-sub-item">Directly Verified Invoiced</a></li>
-      </ul>
-    </li>
+    <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
     <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M15 13l3 7"/><path d="M9 13l-3 7"/></svg><span>Riders</span></a></li>
     <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
     <li><a href="courier.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Courier</span></a></li>
@@ -158,7 +110,7 @@
       </a>
       <ul class="sn-sub">
         <li><a href="invoice-all.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span>All Invoice</span></a></li>
-        <li><a href="invoice-cancelled.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span>All Cancelled/Return Invoice</span></a></li>
+        <li><a href="invoice-cancelled.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span>All Cancelled/Return Invoice</span></a></li>
         <li><a href="invoice-generate.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Generate Invoice</span></a></li>
         <li><a href="invoice-generate-cancelled.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Generate Cancelled/Return Invoice</span></a></li>
         <li><a href="invoice-trash.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg><span>Trash</span></a></li>
@@ -194,47 +146,43 @@
 
     <div class="title-row">
       <div>
-        <div class="page-title">Invoices</div>
-        <div class="page-sub">Manage billing and invoice records</div>
+        <div class="page-title">All Cancelled/Return Invoices</div>
+        <div class="page-sub">View cancelled and returned invoice records</div>
       </div>
-      <button class="btn-add" onclick="document.getElementById('addModal').classList.add('open')">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Create Invoice
-      </button>
     </div>
 
     <!-- Stat Cards -->
     <div class="stat-grid">
       <div class="stat-card">
-        <div class="stat-label">Total Invoiced</div>
-        <div class="stat-value">Rs 1,24,500</div>
+        <div class="stat-label">Total Cancelled</div>
+        <div class="stat-value">Rs 15,800</div>
         <div class="stat-subs">
-          <div class="stat-sub"><span>This Month</span><span>95 invoices</span></div>
+          <div class="stat-sub"><span>This Month</span><span>12 invoices</span></div>
         </div>
         <a href="#" class="stat-more">VIEW MORE ›</a>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Paid</div>
-        <div class="stat-value">Rs 89,200</div>
+        <div class="stat-label">Refunded</div>
+        <div class="stat-value">Rs 11,200</div>
         <div class="stat-subs">
-          <div class="stat-sub"><span>Invoices</span><span>72</span></div>
-          <div class="stat-sub"><span>Rate</span><span>75.8%</span></div>
+          <div class="stat-sub"><span>Invoices</span><span>8</span></div>
+          <div class="stat-sub"><span>Rate</span><span>70.8%</span></div>
         </div>
         <a href="#" class="stat-more">VIEW MORE ›</a>
       </div>
       <div class="stat-card orange">
-        <div class="stat-label">Pending</div>
-        <div class="stat-value">Rs 28,100</div>
+        <div class="stat-label">Pending Refund</div>
+        <div class="stat-value">Rs 3,100</div>
         <div class="stat-subs">
-          <div class="stat-sub"><span>Invoices</span><span>18</span></div>
+          <div class="stat-sub"><span>Invoices</span><span>3</span></div>
         </div>
         <a href="#" class="stat-more">VIEW MORE ›</a>
       </div>
       <div class="stat-card red">
-        <div class="stat-label">Overdue</div>
-        <div class="stat-value">Rs 7,200</div>
+        <div class="stat-label">Return Processed</div>
+        <div class="stat-value">Rs 1,500</div>
         <div class="stat-subs">
-          <div class="stat-sub"><span>Invoices</span><span>5</span></div>
+          <div class="stat-sub"><span>Invoices</span><span>1</span></div>
         </div>
         <a href="#" class="stat-more">VIEW MORE ›</a>
       </div>
@@ -243,17 +191,16 @@
     <!-- Table Panel -->
     <div class="panel">
       <div class="panel-hdr">
-        <span>Invoice List</span>
-        <span style="font-size:.75rem;opacity:.75">95 invoices</span>
+        <span>Cancelled/Return Invoice List</span>
+        <span style="font-size:.75rem;opacity:.75">12 invoices</span>
       </div>
 
       <!-- Status Tabs -->
       <div class="tab-bar">
         <button class="tab-btn active" onclick="filterTab(this,'all')">ALL</button>
-        <button class="tab-btn" onclick="filterTab(this,'paid')">PAID</button>
-        <button class="tab-btn" onclick="filterTab(this,'pending')">PENDING</button>
-        <button class="tab-btn" onclick="filterTab(this,'overdue')">OVERDUE</button>
-        <button class="tab-btn" onclick="filterTab(this,'draft')">DRAFT</button>
+        <button class="tab-btn" onclick="filterTab(this,'cancelled')">CANCELLED</button>
+        <button class="tab-btn" onclick="filterTab(this,'returned')">RETURNED</button>
+        <button class="tab-btn" onclick="filterTab(this,'refunded')">REFUNDED</button>
       </div>
 
       <!-- Date + Search filter -->
@@ -270,24 +217,22 @@
       <div class="table-wrap">
         <table>
           <thead>
-            <tr><th>Invoice #</th><th>Client</th><th>Packages</th><th>Amount</th><th>Created</th><th>Due Date</th><th>Status</th><th>Actions</th></tr>
+            <tr><th>Invoice #</th><th>Client</th><th>Packages</th><th>Amount</th><th>Cancelled Date</th><th>Reason</th><th>Status</th><th>Actions</th></tr>
           </thead>
           <tbody id="invBody">
-            <tr data-date="2025-04-20" data-status="paid"><td class="inv-id">INV-2025-001</td><td>Deza Collection</td><td>50</td><td><strong>Rs 8,750</strong></td><td>Apr 20, 2025</td><td>Apr 27, 2025</td><td><span class="badge b-green">Paid</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-18" data-status="pending"><td class="inv-id">INV-2025-002</td><td>Amazing Dresup</td><td>30</td><td><strong>Rs 5,250</strong></td><td>Apr 18, 2025</td><td>Apr 25, 2025</td><td><span class="badge b-orange">Pending</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-17" data-status="paid"><td class="inv-id">INV-2025-003</td><td>Daliya Solutions</td><td>20</td><td><strong>Rs 3,500</strong></td><td>Apr 17, 2025</td><td>Apr 24, 2025</td><td><span class="badge b-green">Paid</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-16" data-status="overdue"><td class="inv-id">INV-2025-004</td><td>Ama Ko Achar</td><td>10</td><td><strong>Rs 1,750</strong></td><td>Apr 16, 2025</td><td>Apr 23, 2025</td><td><span class="badge b-red">Overdue</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-15" data-status="paid"><td class="inv-id">INV-2025-005</td><td>ABC Enterprises</td><td>5</td><td><strong>Rs 875</strong></td><td>Apr 15, 2025</td><td>Apr 22, 2025</td><td><span class="badge b-green">Paid</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-14" data-status="pending"><td class="inv-id">INV-2025-006</td><td>Sunrise Traders</td><td>8</td><td><strong>Rs 1,400</strong></td><td>Apr 14, 2025</td><td>Apr 21, 2025</td><td><span class="badge b-orange">Pending</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-12" data-status="paid"><td class="inv-id">INV-2025-007</td><td>Himalayan Crafts</td><td>12</td><td><strong>Rs 2,100</strong></td><td>Apr 12, 2025</td><td>Apr 19, 2025</td><td><span class="badge b-green">Paid</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-10" data-status="overdue"><td class="inv-id">INV-2025-008</td><td>Valley Foods</td><td>6</td><td><strong>Rs 1,050</strong></td><td>Apr 10, 2025</td><td>Apr 17, 2025</td><td><span class="badge b-red">Overdue</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-08" data-status="draft"><td class="inv-id">INV-2025-009</td><td>Nepal Boutique</td><td>3</td><td><strong>Rs 525</strong></td><td>Apr 08, 2025</td><td>Apr 15, 2025</td><td><span class="badge b-gray">Draft</span></td><td class="act-btns">BTNS</td></tr>
-            <tr data-date="2025-04-06" data-status="paid"><td class="inv-id">INV-2025-010</td><td>Mountain Spices</td><td>15</td><td><strong>Rs 2,625</strong></td><td>Apr 06, 2025</td><td>Apr 13, 2025</td><td><span class="badge b-green">Paid</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-19" data-status="cancelled"><td class="inv-id">CAN-2025-001</td><td>Deza Collection</td><td>15</td><td><strong>Rs 2,625</strong></td><td>Apr 19, 2025</td><td>Client Request</td><td><span class="badge b-red">Cancelled</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-18" data-status="returned"><td class="inv-id">CAN-2025-002</td><td>Amazing Dresup</td><td>8</td><td><strong>Rs 1,400</strong></td><td>Apr 18, 2025</td><td>Damaged Goods</td><td><span class="badge b-orange">Returned</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-17" data-status="refunded"><td class="inv-id">CAN-2025-003</td><td>Daliya Solutions</td><td>20</td><td><strong>Rs 3,500</strong></td><td>Apr 17, 2025</td><td>Duplicate Invoice</td><td><span class="badge b-green">Refunded</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-15" data-status="cancelled"><td class="inv-id">CAN-2025-004</td><td>Ama Ko Achar</td><td>5</td><td><strong>Rs 875</strong></td><td>Apr 15, 2025</td><td>Wrong Amount</td><td><span class="badge b-red">Cancelled</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-13" data-status="refunded"><td class="inv-id">CAN-2025-005</td><td>Sunrise Traders</td><td>12</td><td><strong>Rs 2,100</strong></td><td>Apr 13, 2025</td><td>Client Request</td><td><span class="badge b-green">Refunded</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-11" data-status="returned"><td class="inv-id">CAN-2025-006</td><td>Valley Foods</td><td>6</td><td><strong>Rs 1,050</strong></td><td>Apr 11, 2025</td><td>Return to Sender</td><td><span class="badge b-orange">Returned</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-09" data-status="refunded"><td class="inv-id">CAN-2025-007</td><td>Himalayan Crafts</td><td>10</td><td><strong>Rs 1,750</strong></td><td>Apr 09, 2025</td><td>Service Issue</td><td><span class="badge b-green">Refunded</span></td><td class="act-btns">BTNS</td></tr>
+            <tr data-date="2025-04-07" data-status="cancelled"><td class="inv-id">CAN-2025-008</td><td>Mountain Spices</td><td>14</td><td><strong>Rs 2,450</strong></td><td>Apr 07, 2025</td><td>Client Request</td><td><span class="badge b-red">Cancelled</span></td><td class="act-btns">BTNS</td></tr>
           </tbody>
         </table>
       </div>
       <div class="pagination">
-        <span>Showing 1–10 of 95 invoices</span>
+        <span>Showing 1–8 of 12 invoices</span>
         <div class="pag-btns">
           <button class="pag-btn">&#8249; Prev</button>
           <button class="pag-btn">Next &#8250;</button>
@@ -295,43 +240,6 @@
       </div>
     </div>
 
-  </div>
-</div>
-
-<!-- CREATE INVOICE MODAL -->
-<div class="modal-bg" id="addModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>Create Invoice</h3>
-      <button class="modal-x" onclick="document.getElementById('addModal').classList.remove('open')">&#10005;</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group form-full"><label>Client</label>
-          <select>
-            <option value="">— Select Client —</option>
-            <option>Deza Collection</option><option>Amazing Dresup</option>
-            <option>Daliya Solutions</option><option>Ama Ko Achar</option>
-            <option>ABC Enterprises</option><option>Sunrise Traders</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Invoice Date</label><input type="date" value="2025-04-20" /></div>
-        <div class="form-group"><label>Due Date</label><input type="date" value="2025-04-27" /></div>
-        <div class="form-group"><label>Number of Packages</label><input type="number" id="pkgCount" placeholder="0" oninput="calcTotal()" /></div>
-        <div class="form-group"><label>Rate per Package (Rs)</label><input type="number" id="pkgRate" placeholder="175" value="175" oninput="calcTotal()" /></div>
-        <div class="form-group form-full">
-          <div class="total-preview">
-            <span>Total Amount</span>
-            <strong id="totalAmt">Rs 0</strong>
-          </div>
-        </div>
-        <div class="form-group form-full"><label>Notes</label><textarea rows="2" placeholder="Additional notes..."></textarea></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="document.getElementById('addModal').classList.remove('open')">Cancel</button>
-      <button class="btn-save" onclick="alert('Invoice created!');document.getElementById('addModal').classList.remove('open')">Create Invoice</button>
-    </div>
   </div>
 </div>
 
@@ -356,7 +264,6 @@ function filterTab(btn, status) {
   applyFilters();
 }
 
-// Date filter
 function filterInvoices() {
   applyFilters();
   const visible = document.querySelectorAll('#invBody tr:not(.hidden)').length;
@@ -387,13 +294,6 @@ function applyFilters() {
     const matchSearch = !q || tr.textContent.toLowerCase().includes(q);
     tr.classList.toggle('hidden', !(matchDate && matchTab && matchSearch));
   });
-}
-
-// Live total calculation
-function calcTotal() {
-  const pkgs = parseFloat(document.getElementById('pkgCount').value) || 0;
-  const rate = parseFloat(document.getElementById('pkgRate').value)  || 0;
-  document.getElementById('totalAmt').textContent = 'Rs ' + (pkgs * rate).toLocaleString();
 }
 </script>
 </body>

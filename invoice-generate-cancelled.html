@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generate Cancelled/Return Invoice — Packrs Courier</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--teal:#3aafa9;--teal-dark:#2b7a78;--teal-light:#def2f1;--red:#e05c7a;--bg:#f0f4f4;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--border:#d1e0df;--shadow:0 2px 8px rgba(0,0,0,.08);--nav:220px;--hdr:56px}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{position:fixed;top:0;left:var(--nav);right:0;height:var(--hdr);background:var(--white);display:flex;align-items:center;gap:16px;padding:0 20px;box-shadow:var(--shadow);z-index:200}
+    .logo{font-size:1.1rem;font-weight:800;letter-spacing:2px;color:var(--teal-dark);text-transform:uppercase;flex:1}
+    .menu-btn{display:none;background:none;border:none;font-size:1.2rem;cursor:pointer}
+    .hdr-right{display:flex;align-items:center;gap:16px}
+    .notif-btn{position:relative;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+    .notif-badge{position:absolute;top:-4px;right:-5px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .user-chip{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .avatar{width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem}
+    .user-name{font-size:.82rem;font-weight:700}.user-role{font-size:.65rem;color:var(--muted);letter-spacing:1px}
+    @media(max-width:768px){header{left:0}.menu-btn{display:block}}
+    .sidenav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--teal-dark);color:#fff;z-index:300;overflow-y:auto;display:flex;flex-direction:column;transition:transform .25s}
+    .sn-brand{padding:16px;font-size:1rem;font-weight:800;letter-spacing:2px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .sn-links{list-style:none;padding:10px 0;flex:1}
+    .sn-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;font-weight:600;transition:background .15s,color .15s;border-left:3px solid transparent}
+    .sn-item:hover,.sn-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#fff}
+    .sn-icon{width:17px;height:17px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .sn-footer{padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}
+    .sn-has-sub .sn-item{cursor:pointer}
+    .sn-arrow{width:12px;height:12px;margin-left:auto;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+    .sn-has-sub.open .sn-arrow{transform:rotate(90deg)}
+    .sn-sub{list-style:none;padding:0;max-height:0;overflow:hidden;transition:max-height .25s ease}
+    .sn-has-sub.open .sn-sub{max-height:300px}
+    .sn-sub .sn-item{padding:7px 16px 7px 44px;font-size:.78rem;border-left:3px solid transparent}
+    @media(max-width:768px){.sidenav{transform:translateX(-100%)}.sidenav.open{transform:translateX(0)}}
+    .page-body{margin-left:var(--nav);padding-top:var(--hdr);min-height:100vh}
+    .page-inner{padding:20px;display:flex;flex-direction:column;gap:16px}
+    @media(max-width:768px){.page-body{margin-left:0}}
+    .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
+    .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
+    .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+    .panel-hdr{background:var(--teal-dark);color:#fff;padding:13px 20px;font-size:.88rem;font-weight:800;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between}
+
+    /* Form styles */
+    .form-body{padding:24px 20px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    .form-row.full{grid-template-columns:1fr}
+    .form-group label{display:block;font-size:.78rem;font-weight:700;color:var(--teal-dark);margin-bottom:5px}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;font-family:inherit;background:var(--white);outline:none;transition:border-color .15s}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal)}
+    .form-group textarea{resize:vertical;min-height:90px}
+    .form-footer{display:flex;justify-content:flex-end;gap:10px;padding:16px 20px;border-top:1px solid var(--border);background:var(--teal-light)}
+    .btn-cancel{padding:9px 22px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:none;border:1.5px solid var(--border);background:var(--white);color:var(--muted);transition:all .15s}
+    .btn-cancel:hover{color:var(--red);border-color:var(--red)}
+    .btn-submit{padding:9px 22px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;border:none;background:var(--teal);color:#fff;transition:background .15s}
+    .btn-submit:hover{background:var(--teal-dark)}
+
+    /* Refund summary box */
+    .refund-summary{background:var(--teal-light);border:1.5px solid var(--border);border-radius:10px;padding:18px 22px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+    .refund-summary .rs-item{display:flex;flex-direction:column;gap:2px;min-width:140px}
+    .refund-summary .rs-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .refund-summary .rs-value{font-size:1.15rem;font-weight:800;color:var(--teal-dark)}
+    .refund-summary .rs-sep{font-size:1.3rem;font-weight:700;color:var(--muted);align-self:flex-end;padding-bottom:2px}
+    .refund-summary .rs-adj{color:var(--red)}
+  </style>
+</head>
+<body>
+
+<!-- SIDENAV -->
+<nav class="sidenav" id="sidenav">
+  <div class="sn-brand">&#9992; PACKRS</div>
+  <ul class="sn-links">
+    <li><a href="index.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
+    <li><a href="users.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>User Management</span></a></li>
+    <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M15 13l3 7"/><path d="M9 13l-3 7"/></svg><span>Riders</span></a></li>
+    <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
+    <li><a href="courier.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Courier</span></a></li>
+    <li><a href="manifesto.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Manifesto</span></a></li>
+    <li class="sn-has-sub open">
+      <a class="sn-item active" onclick="this.parentElement.classList.toggle('open')">
+        <svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Invoice</span>
+        <svg class="sn-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <ul class="sn-sub">
+        <li><a href="invoice-all.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span>All Invoice</span></a></li>
+        <li><a href="invoice-cancelled.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span>All Cancelled/Return Invoice</span></a></li>
+        <li><a href="invoice-generate.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Generate Invoice</span></a></li>
+        <li><a href="invoice-generate-cancelled.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Generate Cancelled/Return Invoice</span></a></li>
+        <li><a href="invoice-trash.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg><span>Trash</span></a></li>
+      </ul>
+    </li>
+    <li><a href="accounts.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Accounting</span></a></li>
+    <li><a href="rider-location.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Rider Location</span></a></li>
+    <li><a href="communication.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Communication</span></a></li>
+    <li><a href="reports.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Reports</span></a></li>
+    <li><a href="vendor-report.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg><span>Vendor Report</span></a></li>
+    <li><a href="settings.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>System Settings</span></a></li>
+    <li><a href="support-ticket.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Support Ticket</span></a></li>
+  </ul>
+  <div class="sn-footer"><a href="#" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span></a></div>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <button class="menu-btn" onclick="document.getElementById('sidenav').classList.toggle('open')">&#9776;</button>
+  <div class="logo">&#9992; Packrs Courier</div>
+  <div class="hdr-right">
+    <button class="notif-btn">&#128276;<span class="notif-badge">2</span></button>
+    <div class="user-chip">
+      <div class="avatar">AM</div>
+      <div><div class="user-name">Amit Maharjan</div><div class="user-role">ADMIN</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- PAGE -->
+<div class="page-body">
+  <div class="page-inner">
+
+    <div class="title-row">
+      <div>
+        <div class="page-title">Generate Cancelled/Return Invoice</div>
+        <div class="page-sub">Create a cancellation or return invoice</div>
+      </div>
+    </div>
+
+    <!-- Form Panel -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span>Cancellation / Return Invoice Details</span>
+      </div>
+
+      <form id="cancelledForm" onsubmit="return handleSubmit(event)">
+        <div class="form-body">
+
+          <!-- Row 1: Type & Original Invoice # -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="invoiceType">Type</label>
+              <select id="invoiceType" required>
+                <option value="">-- Select Type --</option>
+                <option value="Cancellation">Cancellation</option>
+                <option value="Return">Return</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="originalInvoice">Original Invoice #</label>
+              <input type="text" id="originalInvoice" placeholder="e.g. INV-2025-001" required />
+            </div>
+          </div>
+
+          <!-- Row 2: Client & Date -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="client">Client</label>
+              <select id="client" required>
+                <option value="">-- Select Client --</option>
+                <option value="Deza Collection">Deza Collection</option>
+                <option value="Amazing Dresup">Amazing Dresup</option>
+                <option value="Daliya Solutions">Daliya Solutions</option>
+                <option value="Ama Ko Achar">Ama Ko Achar</option>
+                <option value="ABC Enterprises">ABC Enterprises</option>
+                <option value="Sunrise Traders">Sunrise Traders</option>
+                <option value="Himalayan Crafts">Himalayan Crafts</option>
+                <option value="Valley Foods">Valley Foods</option>
+                <option value="Nepal Boutique">Nepal Boutique</option>
+                <option value="Mountain Spices">Mountain Spices</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="cancelDate">Cancellation/Return Date</label>
+              <input type="date" id="cancelDate" required />
+            </div>
+          </div>
+
+          <!-- Row 3: Reason (full width) -->
+          <div class="form-row full">
+            <div class="form-group">
+              <label for="reason">Reason</label>
+              <select id="reason" required>
+                <option value="">-- Select Reason --</option>
+                <option value="Client Request">Client Request</option>
+                <option value="Duplicate Invoice">Duplicate Invoice</option>
+                <option value="Wrong Amount">Wrong Amount</option>
+                <option value="Damaged Goods">Damaged Goods</option>
+                <option value="Return to Sender">Return to Sender</option>
+                <option value="Service Issue">Service Issue</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 4: Original Amount & Refund Amount -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="originalAmount">Original Amount (Rs)</label>
+              <input type="number" id="originalAmount" min="0" step="0.01" placeholder="0.00" required oninput="calcAdjustment()" />
+            </div>
+            <div class="form-group">
+              <label for="refundAmount">Refund Amount (Rs)</label>
+              <input type="number" id="refundAmount" min="0" step="0.01" placeholder="0.00" required oninput="calcAdjustment()" />
+            </div>
+          </div>
+
+          <!-- Row 5: Refund Summary Box (full width) -->
+          <div class="form-row full">
+            <div class="form-group">
+              <label>Refund Summary</label>
+              <div class="refund-summary">
+                <div class="rs-item">
+                  <span class="rs-label">Original Amount</span>
+                  <span class="rs-value" id="sumOriginal">Rs 0.00</span>
+                </div>
+                <span class="rs-sep">-</span>
+                <div class="rs-item">
+                  <span class="rs-label">Refund Amount</span>
+                  <span class="rs-value" id="sumRefund">Rs 0.00</span>
+                </div>
+                <span class="rs-sep">=</span>
+                <div class="rs-item">
+                  <span class="rs-label">Adjustment</span>
+                  <span class="rs-value rs-adj" id="sumAdjustment">Rs 0.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 6: Refund Method (full width) -->
+          <div class="form-row full">
+            <div class="form-group">
+              <label for="refundMethod">Refund Method</label>
+              <select id="refundMethod" required>
+                <option value="">-- Select Refund Method --</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cash">Cash</option>
+                <option value="Credit Note">Credit Note</option>
+                <option value="Original Payment Method">Original Payment Method</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 7: Notes/Comments (full width) -->
+          <div class="form-row full">
+            <div class="form-group">
+              <label for="notes">Notes / Comments</label>
+              <textarea id="notes" placeholder="Add any additional notes or comments..."></textarea>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Form Footer -->
+        <div class="form-footer">
+          <a href="invoice-cancelled.html" class="btn-cancel">Cancel</a>
+          <button type="submit" class="btn-submit">Generate Cancelled/Return Invoice</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Calculate adjustment dynamically
+function calcAdjustment() {
+  var orig = parseFloat(document.getElementById('originalAmount').value) || 0;
+  var refund = parseFloat(document.getElementById('refundAmount').value) || 0;
+  var adj = orig - refund;
+
+  document.getElementById('sumOriginal').textContent = 'Rs ' + orig.toFixed(2);
+  document.getElementById('sumRefund').textContent = 'Rs ' + refund.toFixed(2);
+  document.getElementById('sumAdjustment').textContent = 'Rs ' + adj.toFixed(2);
+}
+
+// Form submit handler
+function handleSubmit(e) {
+  e.preventDefault();
+  var type = document.getElementById('invoiceType').value;
+  var invNo = document.getElementById('originalInvoice').value;
+  var client = document.getElementById('client').value;
+  alert(type + ' invoice for ' + invNo + ' (' + client + ') has been generated successfully!');
+  return false;
+}
+
+// Set default date to today
+document.getElementById('cancelDate').valueAsDate = new Date();
+</script>
+</body>
+</html>
