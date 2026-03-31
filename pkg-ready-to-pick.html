@@ -153,6 +153,18 @@
     .pag-btn:hover { background: var(--teal-light); }
     .pag-btn:disabled { opacity: .4; cursor: not-allowed; }
     .no-results { text-align: center; padding: 32px; color: var(--muted); font-size: .88rem; }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed; top: 20px; right: 20px; z-index: 9999;
+      background: #16a34a; color: #fff; padding: 14px 24px; border-radius: 10px;
+      font-size: .85rem; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+      display: flex; align-items: center; gap: 10px; transform: translateX(120%);
+      transition: transform .35s ease; max-width: 420px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.error { background: var(--red); }
+    .toast-icon { font-size: 1.2rem; }
   </style>
 </head>
 <body>
@@ -571,19 +583,35 @@
   function assignRider(riderName) {
     if (!currentVendor || selectedPkgs.size === 0) return;
     const pkgs = vendorPackages[currentVendor.id];
-    let assignedCount = 0;
+    const assignedPkgs = [];
     pkgs.forEach(p => {
       if (selectedPkgs.has(p.id)) {
-        p.status = 'Assigned';
-        p.rider = riderName;
-        assignedCount++;
+        assignedPkgs.push({
+          id: p.id, customer: p.customer, dest: p.dest, weight: p.weight,
+          charges: p.charges, priority: p.priority, date: p.date,
+          rider: riderName, status: 'Scheduled',
+          vendor: currentVendor.name, vendorId: currentVendor.id,
+          branch: currentVendor.branch, address: currentVendor.address,
+          mobile: currentVendor.mobile, phone: currentVendor.phone,
+          time: new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'})
+        });
       }
     });
+
+    // Save assigned packages to localStorage for Pick Up page
+    const existing = JSON.parse(localStorage.getItem('pickupPackages') || '[]');
+    localStorage.setItem('pickupPackages', JSON.stringify([...existing, ...assignedPkgs]));
+
+    // Remove assigned packages from this vendor
+    vendorPackages[currentVendor.id] = pkgs.filter(p => !selectedPkgs.has(p.id));
+
+    const count = assignedPkgs.length;
     selectedPkgs.clear();
     closeRiderDropdown();
     renderPackages();
     updateSelectionUI();
-    alert(assignedCount + ' package(s) assigned to ' + riderName + ' successfully!');
+    renderVendors();
+    showToast(count + ' package(s) assigned to ' + riderName + ' successfully! Moved to Pick Up.');
   }
 
   // ═══ PACKAGE DETAIL MODAL ═══
@@ -628,8 +656,22 @@
     if (e.target === e.currentTarget) closeModal();
   });
 
+
+  function showToast(msg, isError) {
+    const t = document.getElementById('toast');
+    const m = document.getElementById('toastMsg');
+    t.querySelector('.toast-icon').textContent = isError ? '\u2716' : '\u2714';
+    t.className = 'toast' + (isError ? ' error' : '');
+    m.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
   // Init
   renderVendors();
 </script>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon"></span><span id="toastMsg"></span></div>
 </body>
 </html>

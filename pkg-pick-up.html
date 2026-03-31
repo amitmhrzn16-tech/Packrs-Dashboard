@@ -153,6 +153,18 @@
     .pag-btn:hover { background: var(--teal-light); }
     .pag-btn:disabled { opacity: .4; cursor: not-allowed; }
     .no-results { text-align: center; padding: 32px; color: var(--muted); font-size: .88rem; }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed; top: 20px; right: 20px; z-index: 9999;
+      background: #16a34a; color: #fff; padding: 14px 24px; border-radius: 10px;
+      font-size: .85rem; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+      display: flex; align-items: center; gap: 10px; transform: translateX(120%);
+      transition: transform .35s ease; max-width: 420px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.error { background: var(--red); }
+    .toast-icon { font-size: 1.2rem; }
   </style>
 </head>
 <body>
@@ -552,18 +564,40 @@
   function confirmPickUp() {
     if (!currentVendor || selectedPkgs.size === 0) return;
     const pkgs = vendorPackages[currentVendor.id];
-    let pickedCount = 0;
+    const pickedPkgs = [];
     pkgs.forEach(p => {
       if (selectedPkgs.has(p.id)) {
-        p.status = 'Picked Up';
-        pickedCount++;
+        pickedPkgs.push({
+          id: p.id, customer: p.customer, dest: p.dest, weight: p.weight,
+          charges: p.charges, priority: p.priority, date: p.date,
+          rider: p.rider, status: 'Pending', condition: 'Good',
+          vendor: currentVendor.name, vendorId: currentVendor.id,
+          branch: currentVendor.branch, address: currentVendor.address,
+          mobile: currentVendor.mobile, phone: currentVendor.phone,
+          time: p.time
+        });
       }
     });
+
+    // Save picked packages to localStorage for Receive page
+    const existing = JSON.parse(localStorage.getItem('receivePackages') || '[]');
+    localStorage.setItem('receivePackages', JSON.stringify([...existing, ...pickedPkgs]));
+
+    // Remove picked packages from this vendor
+    vendorPackages[currentVendor.id] = pkgs.filter(p => !selectedPkgs.has(p.id));
+
+    // Also remove from pickupPackages localStorage
+    const pickupStore = JSON.parse(localStorage.getItem('pickupPackages') || '[]');
+    const pickedIds = new Set(pickedPkgs.map(p => p.id));
+    localStorage.setItem('pickupPackages', JSON.stringify(pickupStore.filter(p => !pickedIds.has(p.id))));
+
+    const count = pickedPkgs.length;
     selectedPkgs.clear();
     closeRiderDropdown();
     renderPackages();
     updateSelectionUI();
-    alert(pickedCount + ' package(s) marked as Picked Up successfully!');
+    renderVendors();
+    showToast(count + ' package(s) picked up successfully! Moved to Receive.');
   }
 
   // ═══ PACKAGE DETAIL MODAL ═══
@@ -609,8 +643,40 @@
     if (e.target === e.currentTarget) closeModal();
   });
 
+
+  function showToast(msg, isError) {
+    const t = document.getElementById('toast');
+    const m = document.getElementById('toastMsg');
+    t.querySelector('.toast-icon').textContent = isError ? '\u2716' : '\u2714';
+    t.className = 'toast' + (isError ? ' error' : '');
+    m.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // Load packages from localStorage (assigned from Ready To Pick)
+  function loadFromLocalStorage() {
+    const stored = JSON.parse(localStorage.getItem('pickupPackages') || '[]');
+    stored.forEach(pkg => {
+      const vid = pkg.vendorId;
+      if (!vendorPackages[vid]) vendorPackages[vid] = [];
+      // Check if vendor exists
+      if (!vendors.find(v => v.id === vid)) {
+        vendors.push({ id: vid, name: pkg.vendor, branch: pkg.branch, address: pkg.address, phone: pkg.phone || '', mobile: pkg.mobile });
+      }
+      // Check if package already exists
+      if (!vendorPackages[vid].find(p => p.id === pkg.id)) {
+        vendorPackages[vid].push(pkg);
+      }
+    });
+  }
+
   // Init
+  loadFromLocalStorage();
   renderVendors();
 </script>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon"></span><span id="toastMsg"></span></div>
 </body>
 </html>
