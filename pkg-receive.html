@@ -153,6 +153,18 @@
     .pag-btn:hover { background: var(--teal-light); }
     .pag-btn:disabled { opacity: .4; cursor: not-allowed; }
     .no-results { text-align: center; padding: 32px; color: var(--muted); font-size: .88rem; }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed; top: 20px; right: 20px; z-index: 9999;
+      background: #16a34a; color: #fff; padding: 14px 24px; border-radius: 10px;
+      font-size: .85rem; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+      display: flex; align-items: center; gap: 10px; transform: translateX(120%);
+      transition: transform .35s ease; max-width: 420px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.error { background: var(--red); }
+    .toast-icon { font-size: 1.2rem; }
   </style>
 </head>
 <body>
@@ -553,19 +565,40 @@
     if (!currentVendor || selectedPkgs.size === 0) return;
     const pkgs = vendorPackages[currentVendor.id];
     const condition = document.getElementById('receiveCondition').value;
-    let receivedCount = 0;
+    const receivedPkgs = [];
     pkgs.forEach(p => {
       if (selectedPkgs.has(p.id)) {
-        p.status = 'In Warehouse';
-        p.condition = condition;
-        receivedCount++;
+        receivedPkgs.push({
+          id: p.id, client: p.vendor || currentVendor.name, customer: p.customer,
+          dest: p.dest, weight: p.weight, charges: p.charges,
+          zone: '—', shelf: '—', origin: currentVendor.address.split(',')[0] || 'Hub',
+          days: '0', status: 'Stored', condition: condition,
+          rider: p.rider, date: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric'}),
+          vendor: currentVendor.name, vendorId: currentVendor.id,
+          branch: currentVendor.branch
+        });
       }
     });
+
+    // Save received packages to localStorage for Warehouse page
+    const existing = JSON.parse(localStorage.getItem('warehousePackages') || '[]');
+    localStorage.setItem('warehousePackages', JSON.stringify([...existing, ...receivedPkgs]));
+
+    // Remove received packages from this vendor
+    vendorPackages[currentVendor.id] = pkgs.filter(p => !selectedPkgs.has(p.id));
+
+    // Also remove from receivePackages localStorage
+    const receiveStore = JSON.parse(localStorage.getItem('receivePackages') || '[]');
+    const receivedIds = new Set(receivedPkgs.map(p => p.id));
+    localStorage.setItem('receivePackages', JSON.stringify(receiveStore.filter(p => !receivedIds.has(p.id))));
+
+    const count = receivedPkgs.length;
     selectedPkgs.clear();
     closeRiderDropdown();
     renderPackages();
     updateSelectionUI();
-    alert(receivedCount + ' package(s) received and set to "In Warehouse" status successfully!');
+    renderVendors();
+    showToast(count + ' package(s) received and moved to Warehouse successfully!');
   }
 
   // ═══ PACKAGE DETAIL MODAL ═══
@@ -611,8 +644,38 @@
     if (e.target === e.currentTarget) closeModal();
   });
 
+
+  function showToast(msg, isError) {
+    const t = document.getElementById('toast');
+    const m = document.getElementById('toastMsg');
+    t.querySelector('.toast-icon').textContent = isError ? '\u2716' : '\u2714';
+    t.className = 'toast' + (isError ? ' error' : '');
+    m.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // Load packages from localStorage (picked up from Pick Up)
+  function loadFromLocalStorage() {
+    const stored = JSON.parse(localStorage.getItem('receivePackages') || '[]');
+    stored.forEach(pkg => {
+      const vid = pkg.vendorId;
+      if (!vendorPackages[vid]) vendorPackages[vid] = [];
+      if (!vendors.find(v => v.id === vid)) {
+        vendors.push({ id: vid, name: pkg.vendor, branch: pkg.branch, address: pkg.address, phone: pkg.phone || '', mobile: pkg.mobile || '' });
+      }
+      if (!vendorPackages[vid].find(p => p.id === pkg.id)) {
+        vendorPackages[vid].push(pkg);
+      }
+    });
+  }
+
   // Init
+  loadFromLocalStorage();
   renderVendors();
 </script>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon"></span><span id="toastMsg"></span></div>
 </body>
 </html>

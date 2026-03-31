@@ -117,6 +117,18 @@
     .pag-btn:hover { background: var(--teal-light); }
     .pag-btn:disabled { opacity: .4; cursor: not-allowed; }
     .no-results { text-align: center; padding: 32px; color: var(--muted); font-size: .88rem; }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed; top: 20px; right: 20px; z-index: 9999;
+      background: #16a34a; color: #fff; padding: 14px 24px; border-radius: 10px;
+      font-size: .85rem; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+      display: flex; align-items: center; gap: 10px; transform: translateX(120%);
+      transition: transform .35s ease; max-width: 420px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.error { background: var(--red); }
+    .toast-icon { font-size: 1.2rem; }
   </style>
 </head>
 <body>
@@ -249,7 +261,43 @@
   let currentPage = 1;
   function changePage(d) { currentPage += d; document.getElementById('prevBtn').disabled = currentPage <= 1; }
   function resetFilters() { activeStatus='all'; searchQuery=''; document.getElementById('searchInput').value=''; document.getElementById('dateFrom').value=''; document.getElementById('dateTo').value=''; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.querySelector('[data-status="all"]').classList.add('active'); renderTable(); }
+
+  function showToast(msg, isError) {
+    const t = document.getElementById('toast');
+    const m = document.getElementById('toastMsg');
+    t.querySelector('.toast-icon').textContent = isError ? '\u2716' : '\u2714';
+    t.className = 'toast' + (isError ? ' error' : '');
+    m.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // Load received packages from localStorage
+  function loadFromLocalStorage() {
+    const stored = JSON.parse(localStorage.getItem('warehousePackages') || '[]');
+    stored.forEach(pkg => {
+      if (!data.find(d => d.id === pkg.id)) {
+        data.push({
+          id: pkg.id, client: pkg.client || pkg.vendor, zone: pkg.zone || '—',
+          shelf: pkg.shelf || '—', origin: pkg.origin || '—', dest: pkg.dest,
+          weight: pkg.weight, days: pkg.days || '0', status: pkg.status || 'Stored',
+          date: pkg.date
+        });
+      }
+    });
+  }
+
+  loadFromLocalStorage();
   renderTable();
+
+  // Show toast if there are newly received packages
+  const whPkgs = JSON.parse(localStorage.getItem('warehousePackages') || '[]');
+  if (whPkgs.length > 0) {
+    showToast(whPkgs.length + ' package(s) received from Receive are now in Warehouse.');
+  }
 </script>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon"></span><span id="toastMsg"></span></div>
 </body>
 </html>
