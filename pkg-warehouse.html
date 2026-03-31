@@ -293,7 +293,7 @@
   // Show toast if there are newly received packages
   const whPkgs = JSON.parse(localStorage.getItem('warehousePackages') || '[]');
   if (whPkgs.length > 0) {
-    showToast(whPkgs.length + ' package(s) received from Receive are now in Warehouse.');
+    setTimeout(() => showToast(whPkgs.length + ' package(s) received from Receive are now in Warehouse.'), 500);
   }
 </script>
 
