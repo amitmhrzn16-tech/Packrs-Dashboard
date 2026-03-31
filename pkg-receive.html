@@ -658,21 +658,36 @@
   // Load packages from localStorage (picked up from Pick Up)
   function loadFromLocalStorage() {
     const stored = JSON.parse(localStorage.getItem('receivePackages') || '[]');
+    if (!stored.length) return 0;
+    let added = 0;
     stored.forEach(pkg => {
-      const vid = pkg.vendorId;
+      const vid = Number(pkg.vendorId);
       if (!vendorPackages[vid]) vendorPackages[vid] = [];
       if (!vendors.find(v => v.id === vid)) {
         vendors.push({ id: vid, name: pkg.vendor, branch: pkg.branch, address: pkg.address, phone: pkg.phone || '', mobile: pkg.mobile || '' });
       }
       if (!vendorPackages[vid].find(p => p.id === pkg.id)) {
         vendorPackages[vid].push(pkg);
+        added++;
       }
     });
+    const sel = document.getElementById('vendorFilter');
+    sel.innerHTML = '<option value="">Select Vendor</option>';
+    vendors.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v.name;
+      opt.textContent = v.name;
+      sel.appendChild(opt);
+    });
+    return added;
   }
 
   // Init
-  loadFromLocalStorage();
+  const loadedCount = loadFromLocalStorage();
   renderVendors();
+  if (loadedCount > 0) {
+    setTimeout(() => showToast(loadedCount + ' new package(s) loaded from Pick Up.'), 500);
+  }
 </script>
 
 <!-- TOAST -->
