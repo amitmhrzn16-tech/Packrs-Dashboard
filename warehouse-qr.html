@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Warehouse QR — Packrs Courier</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:       #3aafa9;
+      --teal-dark:  #2b7a78;
+      --teal-light: #def2f1;
+      --red:        #e05c7a;
+      --bg:         #f0f4f4;
+      --white:      #ffffff;
+      --text:       #1a1a2e;
+      --muted:      #6b7280;
+      --border:     #d1e0df;
+      --shadow:     0 2px 8px rgba(0,0,0,.08);
+      --nav:        220px;
+      --hdr:        56px;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────────── */
+    header {
+      position: fixed;
+      top: 0;
+      left: var(--nav);
+      right: 0;
+      height: var(--hdr);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 20px;
+      box-shadow: var(--shadow);
+      z-index: 200;
+    }
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--teal-dark);
+      text-transform: uppercase;
+      flex: 1;
+    }
+    .menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .hdr-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .notif-btn {
+      position: relative;
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    .notif-badge {
+      position: absolute;
+      top: -4px;
+      right: -5px;
+      background: var(--red);
+      color: #fff;
+      font-size: .6rem;
+      font-weight: 700;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: .8rem;
+    }
+    .user-name { font-size: .82rem; font-weight: 700; }
+    .user-role { font-size: .65rem; color: var(--muted); letter-spacing: 1px; }
+
+    @media(max-width:768px) {
+      header { left: 0; }
+      .menu-btn { display: block; }
+    }
+
+    /* ── SIDENAV ─────────────────────────────────────── */
+    .sidenav {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--nav);
+      height: 100vh;
+      background: var(--teal-dark);
+      color: #fff;
+      z-index: 300;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      transition: transform .25s;
+    }
+    .sn-brand {
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .sn-links {
+      list-style: none;
+      padding: 10px 0;
+      flex: 1;
+    }
+    .sn-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      color: rgba(255,255,255,.75);
+      text-decoration: none;
+      font-size: .82rem;
+      font-weight: 600;
+      transition: background .15s, color .15s;
+      border-left: 3px solid transparent;
+    }
+    .sn-item:hover, .sn-item.active {
+      background: rgba(255,255,255,.1);
+      color: #fff;
+      border-left-color: #fff;
+    }
+    .sn-icon { width: 17px; height: 17px; flex-shrink: 0; }
+    .sn-toggle span { flex: 1; }
+    .sn-arrow {
+      width: 12px; height: 12px; flex-shrink: 0;
+      fill: none; stroke: rgba(255,255,255,.6); stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round;
+      transition: transform .2s;
+    }
+    .sn-parent.open > .sn-toggle .sn-arrow { transform: rotate(180deg); }
+    .sn-sub {
+      list-style: none;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .3s ease;
+      background: rgba(0,0,0,.12);
+    }
+    .sn-parent.open > .sn-sub { max-height: 600px; }
+    .sn-sub-item {
+      padding: 8px 16px 8px 43px !important;
+      font-size: .78rem !important;
+      border-left: 3px solid transparent;
+    }
+    .sn-sub-item::before {
+      content: '';
+      display: inline-block;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.4);
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .sn-sub-item.active { background: rgba(255,255,255,.15); color: #fff; border-left-color: #fff; }
+    .sn-sub-item.active::before { background: #fff; }
+    .sn-footer {
+      padding: 10px 0;
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+
+    @media(max-width:768px) {
+      .sidenav { transform: translateX(-100%); }
+      .sidenav.open { transform: translateX(0); }
+    }
+
+    /* ── PAGE BODY ─────────────────────────────────────── */
+    .page-body {
+      margin-left: var(--nav);
+      padding-top: var(--hdr);
+      min-height: 100vh;
+    }
+    .page-inner { padding: 20px; }
+
+    @media(max-width:768px) {
+      .page-body { margin-left: 0; }
+    }
+
+    /* ── BREADCRUMB & TITLE ──────────────────────────── */
+    .breadcrumb {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .breadcrumb a {
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    /* ── SCAN SECTION ────────────────────────────────── */
+    .scan-panel {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .scan-panel-hdr {
+      background: var(--teal-dark);
+      color: #fff;
+      padding: 14px 20px;
+      font-size: .9rem;
+      font-weight: 800;
+      letter-spacing: .5px;
+    }
+    .scan-panel-body { padding: 20px; }
+    .scan-label {
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .scan-label span { color: var(--red); }
+    .scan-input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      max-width: 500px;
+    }
+    .scan-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid var(--teal);
+      border-radius: 6px;
+      font-size: .9rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .scan-input:focus { border-color: var(--teal-dark); }
+    .scan-input::placeholder { color: #b0b8b7; }
+
+    /* ── SCANNED LIST TABLE ──────────────────────────── */
+    .table-panel {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .table-panel-hdr {
+      background: var(--teal-dark);
+      color: #fff;
+      padding: 14px 20px;
+      font-size: .9rem;
+      font-weight: 800;
+      letter-spacing: .5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .table-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .records-per-page {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    .records-per-page select {
+      padding: 4px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      font-size: .82rem;
+    }
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .82rem;
+    }
+    thead th {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      font-weight: 700;
+      padding: 10px 12px;
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 2px solid var(--border);
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .12s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f8fbfb; }
+    tbody td {
+      padding: 10px 12px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .pkg-id { font-weight: 700; color: var(--teal-dark); }
+
+    table input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--teal);
+      cursor: pointer;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+    .badge-receive { background: #dcfce7; color: #16a34a; }
+
+    .actions { display: flex; gap: 5px; }
+    .icon-btn {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .12s, border-color .12s;
+      color: var(--muted);
+    }
+    .icon-btn:hover { background: var(--teal-light); border-color: var(--teal); color: var(--teal-dark); }
+    .icon-btn.del:hover { background: #fce4ec; border-color: var(--red); color: var(--red); }
+    .icon-btn svg { width: 13px; height: 13px; }
+
+    .no-results {
+      text-align: center;
+      padding: 32px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+    .total-row td {
+      font-weight: 800;
+      background: var(--teal-light);
+    }
+
+    /* Delete all button */
+    .btn-del-all {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      transition: background .12s;
+    }
+    .btn-del-all:hover { background: #fce4ec; border-color: var(--red); color: var(--red); }
+
+    /* ── TOAST NOTIFICATION ──────────────────────────── */
+    .toast {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 700;
+      color: #fff;
+      z-index: 600;
+      animation: slideIn .3s ease;
+      display: none;
+    }
+    .toast.show { display: block; }
+    .toast-success { background: #16a34a; }
+    .toast-error { background: var(--red); }
+    .toast-info { background: #2563eb; }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to   { transform: translateX(0);   opacity: 1; }
+    }
+
+    /* ── ASSIGN RIDER SECTION ────────────────────────── */
+    .assign-section {
+      display: flex;
+      justify-content: flex-end;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      gap: 10px;
+    }
+    .act-btn {
+      padding: 9px 20px;
+      border-radius: 6px;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: opacity .15s;
+      white-space: nowrap;
+    }
+    .act-btn:hover { opacity: .85; }
+    .act-btn-teal { background: var(--teal); color: #fff; }
+    .act-btn-dark { background: var(--teal-dark); color: #fff; }
+    .act-btn-outline {
+      background: var(--white);
+      color: var(--teal-dark);
+      border: 1.5px solid var(--teal-dark);
+    }
+    .act-btn-outline:hover { background: var(--teal-light); }
+    .act-btn:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+
+    /* ── MODAL ────────────────────────────────────────── */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-bg.show { display: flex; }
+    .modal {
+      background: var(--white);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      animation: modalIn .2s ease;
+    }
+    @keyframes modalIn {
+      from { transform: scale(.95); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .modal-head {
+      background: var(--teal-dark);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-head h3 { font-size: .95rem; font-weight: 700; }
+    .modal-x {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+    .modal-body { padding: 20px; }
+    .modal-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .filter-group label {
+      display: block;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 5px;
+    }
+    .filter-group select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: .82rem;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+    }
+    .filter-group select:focus { border-color: var(--teal); }
+
+    /* ── RESULT MESSAGE ──────────────────────────────── */
+    .result-msg {
+      display: none;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 600;
+      margin-top: 16px;
+      animation: slideIn .3s ease;
+    }
+    .result-msg.show { display: block; }
+    .result-msg.success {
+      background: #dcfce7;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+    .result-msg.error {
+      background: #fce4ec;
+      color: var(--red);
+      border: 1px solid #f8bbd0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDENAV ══════════════════════════════════════════════ -->
+<nav class="sidenav" id="sidenav">
+  <div class="sn-brand">&#9992; PACKRS</div>
+  <ul class="sn-links">
+    <li><a href="index.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
+    <li><a href="users.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>User Management</span></a></li>
+    <li class="sn-parent open">
+      <a href="#" class="sn-item sn-toggle" onclick="event.preventDefault();this.parentElement.classList.toggle('open')">
+        <svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span>Package</span>
+        <svg class="sn-arrow" viewBox="0 0 24 24" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+      <ul class="sn-sub">
+        <li><a href="packages.html" class="sn-item sn-sub-item">All Packages</a></li>
+        <li><a href="pkg-ready-to-pick.html" class="sn-item sn-sub-item">Ready To Pick</a></li>
+        <li><a href="pkg-pick-up.html" class="sn-item sn-sub-item">Pick Up</a></li>
+        <li><a href="pkg-receive.html" class="sn-item sn-sub-item">Receive</a></li>
+        <li><a href="pkg-delivery-return-receive.html" class="sn-item sn-sub-item">Delivery Return Receive</a></li>
+        <li><a href="pkg-return-receive.html" class="sn-item sn-sub-item">Return Receive</a></li>
+        <li><a href="pkg-instant-return.html" class="sn-item sn-sub-item">Instant Return</a></li>
+        <li><a href="warehouse.html" class="sn-item sn-sub-item active">Warehouse</a></li>
+        <li><a href="pkg-deliveries.html" class="sn-item sn-sub-item">Deliveries</a></li>
+        <li><a href="pkg-add.html" class="sn-item sn-sub-item">Add Package</a></li>
+        <li><a href="pkg-import.html" class="sn-item sn-sub-item">Import Package</a></li>
+        <li><a href="pkg-ncm-sync-log.html" class="sn-item sn-sub-item">NCM Sync Log</a></li>
+        <li><a href="pkg-edit-log.html" class="sn-item sn-sub-item">Package Edit Log</a></li>
+        <li><a href="pkg-directly-verified-invoiced.html" class="sn-item sn-sub-item">Directly Verified Invoiced</a></li>
+      </ul>
+    </li>
+    <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M15 13l3 7"/><path d="M9 13l-3 7"/></svg><span>Riders</span></a></li>
+    <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
+    <li><a href="courier.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Courier</span></a></li>
+    <li><a href="manifesto.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Manifesto</span></a></li>
+    <li><a href="invoices.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoice</span></a></li>
+    <li><a href="accounts.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Accounting</span></a></li>
+    <li><a href="rider-location.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Rider Location</span></a></li>
+    <li><a href="communication.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Communication</span></a></li>
+    <li><a href="reports.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Reports</span></a></li>
+    <li><a href="settings.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>System Settings</span></a></li>
+    <li><a href="support-ticket.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Support Ticket</span></a></li>
+  </ul>
+  <div class="sn-footer"><a href="#" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span></a></div>
+</nav>
+
+<!-- ══ HEADER ════════════════════════════════════════════════ -->
+<header>
+  <button class="menu-btn" onclick="document.getElementById('sidenav').classList.toggle('open')">&#9776;</button>
+  <div class="logo">&#9992; Packrs Courier</div>
+  <div class="hdr-right">
+    <button class="notif-btn">&#128276;<span class="notif-badge">2</span></button>
+    <div class="user-chip">
+      <div class="avatar">PA</div>
+      <div class="user-info">
+        <div class="user-name">PACKRS Admin(Head Office)</div>
+        <div class="user-role">ADMIN</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ PAGE BODY ═════════════════════════════════════════════ -->
+<div class="page-body">
+  <div class="page-inner">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="packages.html">Package</a> / <a href="warehouse-qr.html">Warehouse QR</a> / <span>warehouse</span>
+    </div>
+
+    <!-- Page title -->
+    <div class="page-title">Warehouse QR</div>
+
+    <!-- QR Scan Input Section -->
+    <div class="scan-panel">
+      <div class="scan-panel-hdr">Warehouse QR</div>
+      <div class="scan-panel-body">
+        <div class="scan-label">Package Number <span>*</span></div>
+        <div class="scan-input-row">
+          <input type="text" class="scan-input" id="scanInput" placeholder="Package Number" autofocus />
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanned Packages Table -->
+    <div class="table-panel">
+      <div class="table-panel-hdr">
+        <span>Warehouse QR</span>
+      </div>
+      <div class="table-top-bar">
+        <div class="records-per-page">
+          <select id="recordsPerPage">
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <span>records per page</span>
+        </div>
+        <button class="btn-del-all" title="Clear all scanned packages" onclick="clearAllScanned()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll" /></th>
+              <th>S.N.</th>
+              <th>Branch</th>
+              <th>Package Number</th>
+              <th>Vendor Name</th>
+              <th>Customer Name</th>
+              <th>Street Address</th>
+              <th>City</th>
+              <th>Mobile No.</th>
+              <th>Package Amount</th>
+              <th>Package Type</th>
+              <th>Package Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="scannedTbody">
+            <tr><td colspan="13" class="no-results" id="noPackageMsg">No Package Found</td></tr>
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="9" style="text-align:center;">Total</td>
+              <td id="totalAmount">0</td>
+              <td colspan="3"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="assign-section">
+        <button class="act-btn act-btn-outline" onclick="window.location.href='warehouse.html'">&#8592; Back to Warehouse</button>
+        <button class="act-btn act-btn-teal" onclick="openAssignRider()" id="assignRiderBtn">Assign Rider</button>
+      </div>
+    </div>
+
+    <!-- Assignment Result Message -->
+    <div class="result-msg" id="resultMsg"></div>
+
+  </div>
+</div>
+
+<!-- ══ ASSIGN RIDER MODAL ═══════════════════════════════════ -->
+<div class="modal-bg" id="assignRiderModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Assign Rider to Scanned Packages</h3>
+      <button class="modal-x" onclick="closeAssignRiderModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px;" id="assignInfo"></p>
+      <div class="filter-group">
+        <label>Select Rider</label>
+        <select id="riderSelect">
+          <option value="">-- Choose a rider --</option>
+          <option value="Amit Maharjan">Amit Maharjan</option>
+          <option value="Sandesh Dangol">Sandesh Dangol</option>
+          <option value="Rohan Maharjan">Rohan Maharjan</option>
+          <option value="Dinesh Dangol">Dinesh Dangol</option>
+          <option value="Nikesh Maharjan">Nikesh Maharjan</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="act-btn act-btn-teal" onclick="confirmAssignRider()">Assign</button>
+      <button class="act-btn act-btn-outline" onclick="closeAssignRiderModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ═════════════════════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+
+<script>
+  document.querySelector('.menu-btn')?.addEventListener('click', () => {
+    document.getElementById('sidenav').classList.toggle('open');
+  });
+
+  // Simulated package database (same data as warehouse page)
+  const packageDB = [
+    { branch:'Chabahil', pkgNum:'JKVOPOR2', vendor:"people's smart", customer:'dipika',       street:'budhanilkantha bhangal', city:'Kathmandu', mobile:'9767581367', amount:0,    type:'Inside Valley',  status:'Receive' },
+    { branch:'Chabahil', pkgNum:'ETB1ABKV', vendor:"people's smart", customer:'shraddha shakya', street:'gwarko',              city:'Lalitpur',   mobile:'9841210939', amount:1250, type:'Inside Valley',  status:'Receive' },
+    { branch:'Chabahil', pkgNum:'3IBMILNW', vendor:"people's smart", customer:'bhawana limbu',  street:'basantapur',            city:'Kathmandu', mobile:'9766902237', amount:1250, type:'Inside Valley',  status:'Receive' },
+    { branch:'Chabahil', pkgNum:'TNLC5VTY', vendor:"people's smart", customer:'ms collection nepal', street:'kalanki',          city:'Kathmandu', mobile:'9828556764', amount:1250, type:'Inside Valley',  status:'Receive' },
+    { branch:'Chabahil', pkgNum:'WBTVTYFQ', vendor:"people's smart", customer:'jia gandharba',  street:'kirtipur',              city:'Kathmandu', mobile:'9810134868', amount:1250, type:'Inside Valley',  status:'Receive' },
+    { branch:'Chabahil', pkgNum:'SLQHD8UG', vendor:"people's smart", customer:'no name',        street:'chakrapath',            city:'Kathmandu', mobile:'9813395090', amount:0,    type:'Inside Valley',  status:'Receive' },
+    { branch:'Chabahil', pkgNum:'7UIIVE3I', vendor:"people's smart", customer:'sita acharya',   street:'banasthali',            city:'Kathmandu', mobile:'9867027510', amount:1650, type:'Inside Valley',  status:'Receive' },
+    { branch:'Chabahil', pkgNum:'ZH0XRPDI', vendor:"people's smart", customer:'mira',           street:'swoyambhu',             city:'Kathmandu', mobile:'9823123742', amount:1250, type:'Inside Valley',  status:'Receive' },
+    { branch:'Chabahil', pkgNum:'AWDN2WB1', vendor:"people's smart", customer:'laxmi basnet',   street:'basundhara',            city:'Kathmandu', mobile:'9769423315', amount:1250, type:'Inside Valley',  status:'Receive' },
+    { branch:'Chabahil', pkgNum:'XNOHBLVU', vendor:'shoes splash',   customer:'nisha ale',      street:'bhairahawa',            city:'Bhairahawa', mobile:'9827303254', amount:1450, type:'Outside Valley', status:'Receive' },
+  ];
+
+  const scannedPackages = [];
+
+  // Listen for Enter key on scan input
+  document.getElementById('scanInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = this.value.trim().toUpperCase();
+      if (!val) return;
+
+      // Check if already scanned
+      if (scannedPackages.find(p => p.pkgNum === val)) {
+        showToast('Package ' + val + ' is already scanned.', 'error');
+        this.value = '';
+        return;
+      }
+
+      // Look up in database
+      const pkg = packageDB.find(p => p.pkgNum === val);
+      if (pkg) {
+        scannedPackages.push({ ...pkg });
+        showToast('Package ' + val + ' scanned successfully!', 'success');
+        renderScannedTable();
+      } else {
+        showToast('Package ' + val + ' not found in the system.', 'error');
+      }
+
+      this.value = '';
+    }
+  });
+
+  function renderScannedTable() {
+    const tbody = document.getElementById('scannedTbody');
+    tbody.innerHTML = '';
+
+    if (scannedPackages.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="13" class="no-results">No Package Found</td></tr>';
+      document.getElementById('totalAmount').textContent = '0';
+      return;
+    }
+
+    let totalAmt = 0;
+    scannedPackages.forEach((p, i) => {
+      totalAmt += p.amount;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="checkbox" class="row-check" data-index="${i}" /></td>
+        <td>${i + 1}</td>
+        <td>${p.branch}</td>
+        <td class="pkg-id">${p.pkgNum}</td>
+        <td>${p.vendor}</td>
+        <td>${p.customer}</td>
+        <td>${p.street}</td>
+        <td>${p.city}</td>
+        <td>${p.mobile}</td>
+        <td>${p.amount}</td>
+        <td>${p.type}</td>
+        <td><span class="badge badge-receive">${p.status}</span></td>
+        <td>
+          <div class="actions">
+            <button class="icon-btn del" title="Remove" onclick="removeScanned(${i})">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6"/><path d="M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('totalAmount').textContent = totalAmt;
+  }
+
+  function removeScanned(index) {
+    scannedPackages.splice(index, 1);
+    renderScannedTable();
+    showToast('Package removed from list.', 'info');
+  }
+
+  function clearAllScanned() {
+    if (scannedPackages.length === 0) return;
+    scannedPackages.length = 0;
+    renderScannedTable();
+    showToast('All scanned packages cleared.', 'info');
+  }
+
+  // Select all checkbox
+  document.getElementById('selectAll').addEventListener('change', function() {
+    document.querySelectorAll('.row-check').forEach(c => c.checked = this.checked);
+  });
+
+  function getSelectedScanned() {
+    const checks = document.querySelectorAll('.row-check:checked');
+    return Array.from(checks).map(c => scannedPackages[parseInt(c.dataset.index)]);
+  }
+
+  // Toast notification
+  function showToast(msg, type) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = 'toast show toast-' + type;
+    setTimeout(() => { toast.className = 'toast'; }, 3000);
+  }
+
+  // ── ASSIGN RIDER ───────────────────────────────────
+  function openAssignRider() {
+    if (scannedPackages.length === 0) {
+      showToast('No scanned packages to assign. Scan packages first.', 'error');
+      return;
+    }
+
+    const selected = getSelectedScanned();
+    const pkgsToAssign = selected.length > 0 ? selected : scannedPackages;
+
+    document.getElementById('assignInfo').textContent =
+      `Assigning rider to ${pkgsToAssign.length} package(s): ${pkgsToAssign.map(p => p.pkgNum).join(', ')}`;
+    document.getElementById('riderSelect').value = '';
+    document.getElementById('assignRiderModal').classList.add('show');
+  }
+
+  function closeAssignRiderModal() {
+    document.getElementById('assignRiderModal').classList.remove('show');
+  }
+
+  function confirmAssignRider() {
+    const rider = document.getElementById('riderSelect').value;
+    if (!rider) {
+      showToast('Please select a rider.', 'error');
+      return;
+    }
+
+    const selected = getSelectedScanned();
+    const pkgsToAssign = selected.length > 0 ? selected : scannedPackages;
+    const pkgNumbers = pkgsToAssign.map(p => p.pkgNum);
+
+    closeAssignRiderModal();
+
+    // Simulate assignment (success/failure)
+    const success = Math.random() > 0.15; // 85% success rate for demo
+
+    const resultMsg = document.getElementById('resultMsg');
+
+    if (success) {
+      resultMsg.className = 'result-msg show success';
+      resultMsg.innerHTML = `
+        <strong>Assignment Successful!</strong><br>
+        Rider <strong>${rider}</strong> has been assigned to ${pkgNumbers.length} package(s):<br>
+        ${pkgNumbers.join(', ')}
+      `;
+      showToast(`Successfully assigned ${rider} to ${pkgNumbers.length} package(s).`, 'success');
+
+      // Remove assigned packages from the scanned list
+      pkgNumbers.forEach(num => {
+        const idx = scannedPackages.findIndex(p => p.pkgNum === num);
+        if (idx !== -1) scannedPackages.splice(idx, 1);
+      });
+      renderScannedTable();
+
+      // Uncheck select all
+      document.getElementById('selectAll').checked = false;
+    } else {
+      resultMsg.className = 'result-msg show error';
+      resultMsg.innerHTML = `
+        <strong>Assignment Failed!</strong><br>
+        Could not assign rider <strong>${rider}</strong> to the selected packages. Please try again or contact support.
+      `;
+      showToast('Assignment failed. Please try again.', 'error');
+    }
+
+    // Auto-hide result after 8 seconds
+    setTimeout(() => {
+      resultMsg.className = 'result-msg';
+    }, 8000);
+  }
+</script>
+</body>
+</html>

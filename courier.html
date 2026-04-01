@@ -25,6 +25,13 @@
     .sn-item:hover,.sn-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#fff}
     .sn-icon{width:17px;height:17px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .sn-footer{padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}
+    .sn-submenu{list-style:none;padding:0;max-height:0;overflow:hidden;transition:max-height .25s ease}
+    .sn-submenu.open{max-height:300px}
+    .sn-submenu li a{display:flex;align-items:center;gap:8px;padding:8px 16px 8px 44px;color:rgba(255,255,255,.6);text-decoration:none;font-size:.78rem;font-weight:500;transition:background .15s,color .15s;border-left:3px solid transparent}
+    .sn-submenu li a:hover,.sn-submenu li a.active{color:#fff;background:rgba(255,255,255,.08);border-left-color:var(--teal)}
+    .sn-toggle{cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding-right:14px}
+    .sn-toggle::after{content:'';width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid rgba(255,255,255,.5);transition:transform .2s}
+    .sn-toggle.open::after{transform:rotate(180deg)}
     @media(max-width:768px){.sidenav{transform:translateX(-100%)}.sidenav.open{transform:translateX(0)}}
     .page-body{margin-left:var(--nav);padding-top:var(--hdr);min-height:100vh}
     .page-inner{padding:20px;display:flex;flex-direction:column;gap:16px}
@@ -112,11 +119,47 @@
   <div class="sn-brand">&#9992; PACKRS</div>
   <ul class="sn-links">
     <li><a href="index.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
-    <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li class="sn-parent">
+      <a href="#" class="sn-item sn-toggle" onclick="event.preventDefault();this.parentElement.classList.toggle('open')">
+        <svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span>Package</span>
+        <svg class="sn-arrow" viewBox="0 0 24 24" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+      <ul class="sn-sub">
+        <li><a href="packages.html" class="sn-item sn-sub-item">All Packages</a></li>
+        <li><a href="pkg-ready-to-pick.html" class="sn-item sn-sub-item">Ready To Pick</a></li>
+        <li><a href="pkg-pick-up.html" class="sn-item sn-sub-item">Pick Up</a></li>
+        <li><a href="pkg-receive.html" class="sn-item sn-sub-item">Receive</a></li>
+        <li><a href="pkg-delivery-return-receive.html" class="sn-item sn-sub-item">Delivery Return Receive</a></li>
+        <li><a href="pkg-return-receive.html" class="sn-item sn-sub-item">Return Receive</a></li>
+        <li><a href="pkg-instant-return.html" class="sn-item sn-sub-item">Instant Return</a></li>
+        <li><a href="warehouse.html" class="sn-item sn-sub-item">Warehouse</a></li>
+        <li><a href="pkg-deliveries.html" class="sn-item sn-sub-item">Deliveries</a></li>
+        <li><a href="pkg-add.html" class="sn-item sn-sub-item">Add Package</a></li>
+        <li><a href="pkg-import.html" class="sn-item sn-sub-item">Import Package</a></li>
+        <li><a href="pkg-ncm-sync-log.html" class="sn-item sn-sub-item">NCM Sync Log</a></li>
+        <li><a href="pkg-edit-log.html" class="sn-item sn-sub-item">Package Edit Log</a></li>
+        <li><a href="pkg-directly-verified-invoiced.html" class="sn-item sn-sub-item">Directly Verified Invoiced</a></li>
+      </ul>
+    </li>
     <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Riders</span></a></li>
     <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
     <li><a href="users.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg><span>Users</span></a></li>
-    <li><a href="courier.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Courier</span></a></li>
+    <li>
+      <a href="#" class="sn-item sn-toggle open" onclick="this.classList.toggle('open');this.parentElement.querySelector('.sn-submenu').classList.toggle('open');return false;">
+        <svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <span>Courier</span>
+      </a>
+      <ul class="sn-submenu open">
+        <li><a href="courier-all.html">All Courier</a></li>
+        <li><a href="courier-add.html">Add Courier</a></li>
+        <li><a href="courier-locations.html">Courier Locations</a></li>
+        <li><a href="courier-add-location.html">Add Location</a></li>
+        <li><a href="courier-rate-list.html">Courier Rate List</a></li>
+        <li><a href="courier-add-rate.html">Add Courier Rate</a></li>
+        <li><a href="courier-rate-calculator.html">Rate Calculator</a></li>
+      </ul>
+    </li>
     <li><a href="manifesto.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Manifesto</span></a></li>
     <li><a href="support-ticket.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Support Ticket</span></a></li>
     <li><a href="invoices.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoices</span></a></li>

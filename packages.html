@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Packages — Packrs Courier</title>
+  <title>All Packages — Packrs Courier</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -157,6 +157,39 @@
       border-left-color: #fff;
     }
     .sn-icon { width: 17px; height: 17px; flex-shrink: 0; }
+    .sn-toggle { justify-content: flex-start; }
+    .sn-toggle span { flex: 1; }
+    .sn-arrow {
+      width: 12px; height: 12px; flex-shrink: 0;
+      fill: none; stroke: rgba(255,255,255,.6); stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round;
+      transition: transform .2s;
+    }
+    .sn-parent.open > .sn-toggle .sn-arrow { transform: rotate(180deg); }
+    .sn-sub {
+      list-style: none;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .3s ease;
+      background: rgba(0,0,0,.12);
+    }
+    .sn-parent.open > .sn-sub { max-height: 600px; }
+    .sn-sub-item {
+      padding: 8px 16px 8px 43px !important;
+      font-size: .78rem !important;
+      border-left: 3px solid transparent;
+    }
+    .sn-sub-item::before {
+      content: '';
+      display: inline-block;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.4);
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .sn-sub-item.active { background: rgba(255,255,255,.15); color: #fff; border-left-color: #fff; }
+    .sn-sub-item.active::before { background: #fff; }
     .sn-footer {
       padding: 10px 0;
       border-top: 1px solid rgba(255,255,255,.1);
@@ -498,7 +531,29 @@
   <ul class="sn-links">
     <li><a href="index.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
     <li><a href="users.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>User Management</span></a></li>
-    <li><a href="packages.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li class="sn-parent">
+      <a href="#" class="sn-item sn-toggle active" onclick="event.preventDefault();this.parentElement.classList.toggle('open')">
+        <svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span>Package</span>
+        <svg class="sn-arrow" viewBox="0 0 24 24" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+      <ul class="sn-sub">
+        <li><a href="packages.html" class="sn-item sn-sub-item active">All Packages</a></li>
+        <li><a href="pkg-ready-to-pick.html" class="sn-item sn-sub-item">Ready To Pick</a></li>
+        <li><a href="pkg-pick-up.html" class="sn-item sn-sub-item">Pick Up</a></li>
+        <li><a href="pkg-receive.html" class="sn-item sn-sub-item">Receive</a></li>
+        <li><a href="pkg-delivery-return-receive.html" class="sn-item sn-sub-item">Delivery Return Receive</a></li>
+        <li><a href="pkg-return-receive.html" class="sn-item sn-sub-item">Return Receive</a></li>
+        <li><a href="pkg-instant-return.html" class="sn-item sn-sub-item">Instant Return</a></li>
+        <li><a href="warehouse.html" class="sn-item sn-sub-item">Warehouse</a></li>
+        <li><a href="deliveries.html" class="sn-item sn-sub-item">Deliveries</a></li>
+        <li><a href="pkg-add.html" class="sn-item sn-sub-item">Add Package</a></li>
+        <li><a href="pkg-import.html" class="sn-item sn-sub-item">Import Package</a></li>
+        <li><a href="pkg-ncm-sync-log.html" class="sn-item sn-sub-item">NCM Sync Log</a></li>
+        <li><a href="pkg-edit-log.html" class="sn-item sn-sub-item">Package Edit Log</a></li>
+        <li><a href="pkg-directly-verified-invoiced.html" class="sn-item sn-sub-item">Directly Verified Invoiced</a></li>
+      </ul>
+    </li>
     <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M15 13l3 7"/><path d="M9 13l-3 7"/></svg><span>Riders</span></a></li>
     <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
     <li><a href="courier.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Courier</span></a></li>
