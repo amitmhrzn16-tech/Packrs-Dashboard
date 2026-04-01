@@ -35,33 +35,48 @@
     .page-body{margin-left:var(--nav);padding-top:var(--hdr);min-height:100vh}
     .page-inner{padding:20px;display:flex;flex-direction:column;gap:16px}
     @media(max-width:768px){.page-body{margin-left:0}}
-    .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
     .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
-    .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
+    .breadcrumb{font-size:.78rem;color:var(--muted);margin-top:2px}
+    .breadcrumb a{color:var(--teal);text-decoration:none;font-weight:600}
+    .breadcrumb a:hover{text-decoration:underline}
     .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
-    .panel-hdr{background:var(--teal-dark);color:#fff;padding:13px 20px;font-size:.88rem;font-weight:800;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between}
-
-    /* Form styles */
-    .form-body{padding:24px 20px}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-    .form-row.full{grid-template-columns:1fr}
-    .form-group label{display:block;font-size:.78rem;font-weight:700;color:var(--teal-dark);margin-bottom:5px}
-    .form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;font-family:inherit;background:var(--white);outline:none;transition:border-color .15s}
-    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal)}
-    .form-group textarea{resize:vertical;min-height:90px}
-    .form-footer{display:flex;justify-content:flex-end;gap:10px;padding:16px 20px;border-top:1px solid var(--border);background:var(--teal-light)}
-    .btn-cancel{padding:9px 22px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:none;border:1.5px solid var(--border);background:var(--white);color:var(--muted);transition:all .15s}
-    .btn-cancel:hover{color:var(--red);border-color:var(--red)}
-    .btn-submit{padding:9px 22px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;border:none;background:var(--teal);color:#fff;transition:background .15s}
-    .btn-submit:hover{background:var(--teal-dark)}
-
-    /* Refund summary box */
-    .refund-summary{background:var(--teal-light);border:1.5px solid var(--border);border-radius:10px;padding:18px 22px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
-    .refund-summary .rs-item{display:flex;flex-direction:column;gap:2px;min-width:140px}
-    .refund-summary .rs-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-    .refund-summary .rs-value{font-size:1.15rem;font-weight:800;color:var(--teal-dark)}
-    .refund-summary .rs-sep{font-size:1.3rem;font-weight:700;color:var(--muted);align-self:flex-end;padding-bottom:2px}
-    .refund-summary .rs-adj{color:var(--red)}
+    .panel-border{border:1.5px solid var(--border)}
+    .panel-title{font-size:.9rem;font-weight:800;color:var(--text);padding:16px 20px;border-bottom:1px solid var(--border)}
+    .filter-section{padding:20px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+    .filter-group{display:flex;flex-direction:column;gap:5px;min-width:160px}
+    .filter-group label{font-size:.75rem;font-weight:700;color:var(--teal-dark)}
+    .filter-group select,.filter-group input{padding:8px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;color:var(--text);background:var(--white);outline:none;font-family:inherit}
+    .filter-group select:focus,.filter-group input:focus{border-color:var(--teal)}
+    .filter-actions{display:flex;gap:8px;margin-left:auto;align-self:flex-end}
+    .btn-search{background:var(--teal);color:#fff;border:none;padding:8px 22px;border-radius:7px;font-size:.82rem;font-weight:700;cursor:pointer}
+    .btn-search:hover{background:var(--teal-dark)}
+    .btn-reset{background:var(--white);color:var(--text);border:1.5px solid var(--border);padding:8px 22px;border-radius:7px;font-size:.82rem;font-weight:700;cursor:pointer}
+    .btn-reset:hover{border-color:var(--red);color:var(--red)}
+    .table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;flex-wrap:wrap;gap:10px}
+    .records-per-page{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted)}
+    .records-per-page select{padding:4px 8px;border:1.5px solid var(--border);border-radius:5px;font-size:.78rem;outline:none}
+    .btn-generate{background:var(--red);color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:.84rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
+    .btn-generate:hover{background:#c24060}
+    .btn-generate svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.78rem}
+    thead th{background:var(--teal-light);color:var(--teal-dark);font-weight:700;padding:10px 10px;text-align:left;white-space:nowrap;border-bottom:2px solid var(--border);font-size:.72rem;text-transform:uppercase;letter-spacing:.3px}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+    tbody tr:hover{background:#f8fbfb}
+    tbody td{padding:9px 10px;color:var(--text);white-space:nowrap}
+    tr.hidden{display:none}
+    .pid{font-weight:700;color:var(--teal-dark)}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700}
+    .b-green{background:#dcfce7;color:#16a34a}
+    .b-orange{background:#fef3c7;color:#d97706}
+    .b-red{background:#fce4ec;color:#e05c7a}
+    .b-gray{background:#f3f4f6;color:#6b7280}
+    input[type=checkbox]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer}
+    .pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--border);font-size:.8rem;color:var(--muted);flex-wrap:wrap;gap:8px}
+    .pag-btns{display:flex;gap:6px}
+    .pag-btn{background:none;border:1.5px solid var(--border);border-radius:6px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;color:var(--teal-dark)}
+    .pag-btn:hover{background:var(--teal-light)}
+    .text-muted{color:var(--muted);font-size:.78rem}
   </style>
 </head>
 <body>
@@ -73,6 +88,7 @@
     <li><a href="index.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
     <li><a href="users.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>User Management</span></a></li>
     <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li><a href="warehouse.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V13h6v8"/><rect x="7" y="10" width="4" height="3"/><rect x="13" y="10" width="4" height="3"/></svg><span>Warehouse</span></a></li>
     <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M15 13l3 7"/><path d="M9 13l-3 7"/></svg><span>Riders</span></a></li>
     <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
     <li><a href="courier.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Courier</span></a></li>
@@ -119,173 +135,170 @@
 <div class="page-body">
   <div class="page-inner">
 
-    <div class="title-row">
-      <div>
-        <div class="page-title">Generate Cancelled/Return Invoice</div>
-        <div class="page-sub">Create a cancellation or return invoice</div>
+    <div>
+      <div class="page-title">Cancelled/Return Invoices</div>
+      <div class="breadcrumb"><a href="invoice-cancelled.html">Cancelled/Return Invoices</a> / Generate Cancelled/Return Invoice</div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="panel panel-border">
+      <div class="filter-section">
+        <div class="filter-group">
+          <label>Package Type</label>
+          <select id="fPkgType">
+            <option value="">Select Package Type</option>
+            <option>Document</option>
+            <option>Parcel</option>
+            <option>Fragile</option>
+            <option>Heavy</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Vendor</label>
+          <select id="fVendor" onchange="filterByVendor()">
+            <option value="">Select Vendor</option>
+            <option value="deda collection">Deda Collection (Chabahill)</option>
+            <option value="amazing dresup">Amazing Dresup</option>
+            <option value="daliya solutions">Daliya Solutions</option>
+            <option value="sunrise traders">Sunrise Traders</option>
+            <option value="himalayan crafts">Himalayan Crafts</option>
+            <option value="valley foods">Valley Foods</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>From</label>
+          <input type="date" id="fFrom" />
+        </div>
+        <div class="filter-group">
+          <label>To</label>
+          <input type="date" id="fTo" />
+        </div>
+        <div class="filter-actions">
+          <button class="btn-search" onclick="searchPackages()">Search</button>
+          <button class="btn-reset" onclick="resetFilters()">Reset</button>
+        </div>
       </div>
     </div>
 
-    <!-- Form Panel -->
-    <div class="panel">
-      <div class="panel-hdr">
-        <span>Cancellation / Return Invoice Details</span>
+    <!-- Generate Cancelled/Return Invoice Table -->
+    <div class="panel panel-border">
+      <div class="panel-title">Generate Cancelled/Return Invoice</div>
+
+      <div class="table-toolbar">
+        <div class="records-per-page">
+          <select id="perPage">
+            <option>20</option><option>50</option><option>100</option>
+          </select>
+          records per page
+        </div>
+        <button class="btn-generate" onclick="generateInvoice()">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Generate Cancelled/Return Invoice
+        </button>
       </div>
 
-      <form id="cancelledForm" onsubmit="return handleSubmit(event)">
-        <div class="form-body">
-
-          <!-- Row 1: Type & Original Invoice # -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="invoiceType">Type</label>
-              <select id="invoiceType" required>
-                <option value="">-- Select Type --</option>
-                <option value="Cancellation">Cancellation</option>
-                <option value="Return">Return</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="originalInvoice">Original Invoice #</label>
-              <input type="text" id="originalInvoice" placeholder="e.g. INV-2025-001" required />
-            </div>
-          </div>
-
-          <!-- Row 2: Client & Date -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="client">Client</label>
-              <select id="client" required>
-                <option value="">-- Select Client --</option>
-                <option value="Deza Collection">Deza Collection</option>
-                <option value="Amazing Dresup">Amazing Dresup</option>
-                <option value="Daliya Solutions">Daliya Solutions</option>
-                <option value="Ama Ko Achar">Ama Ko Achar</option>
-                <option value="ABC Enterprises">ABC Enterprises</option>
-                <option value="Sunrise Traders">Sunrise Traders</option>
-                <option value="Himalayan Crafts">Himalayan Crafts</option>
-                <option value="Valley Foods">Valley Foods</option>
-                <option value="Nepal Boutique">Nepal Boutique</option>
-                <option value="Mountain Spices">Mountain Spices</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="cancelDate">Cancellation/Return Date</label>
-              <input type="date" id="cancelDate" required />
-            </div>
-          </div>
-
-          <!-- Row 3: Reason (full width) -->
-          <div class="form-row full">
-            <div class="form-group">
-              <label for="reason">Reason</label>
-              <select id="reason" required>
-                <option value="">-- Select Reason --</option>
-                <option value="Client Request">Client Request</option>
-                <option value="Duplicate Invoice">Duplicate Invoice</option>
-                <option value="Wrong Amount">Wrong Amount</option>
-                <option value="Damaged Goods">Damaged Goods</option>
-                <option value="Return to Sender">Return to Sender</option>
-                <option value="Service Issue">Service Issue</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Row 4: Original Amount & Refund Amount -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="originalAmount">Original Amount (Rs)</label>
-              <input type="number" id="originalAmount" min="0" step="0.01" placeholder="0.00" required oninput="calcAdjustment()" />
-            </div>
-            <div class="form-group">
-              <label for="refundAmount">Refund Amount (Rs)</label>
-              <input type="number" id="refundAmount" min="0" step="0.01" placeholder="0.00" required oninput="calcAdjustment()" />
-            </div>
-          </div>
-
-          <!-- Row 5: Refund Summary Box (full width) -->
-          <div class="form-row full">
-            <div class="form-group">
-              <label>Refund Summary</label>
-              <div class="refund-summary">
-                <div class="rs-item">
-                  <span class="rs-label">Original Amount</span>
-                  <span class="rs-value" id="sumOriginal">Rs 0.00</span>
-                </div>
-                <span class="rs-sep">-</span>
-                <div class="rs-item">
-                  <span class="rs-label">Refund Amount</span>
-                  <span class="rs-value" id="sumRefund">Rs 0.00</span>
-                </div>
-                <span class="rs-sep">=</span>
-                <div class="rs-item">
-                  <span class="rs-label">Adjustment</span>
-                  <span class="rs-value rs-adj" id="sumAdjustment">Rs 0.00</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Row 6: Refund Method (full width) -->
-          <div class="form-row full">
-            <div class="form-group">
-              <label for="refundMethod">Refund Method</label>
-              <select id="refundMethod" required>
-                <option value="">-- Select Refund Method --</option>
-                <option value="Bank Transfer">Bank Transfer</option>
-                <option value="Cash">Cash</option>
-                <option value="Credit Note">Credit Note</option>
-                <option value="Original Payment Method">Original Payment Method</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Row 7: Notes/Comments (full width) -->
-          <div class="form-row full">
-            <div class="form-group">
-              <label for="notes">Notes / Comments</label>
-              <textarea id="notes" placeholder="Add any additional notes or comments..."></textarea>
-            </div>
-          </div>
-
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll" onchange="toggleAll(this)" /></th>
+              <th>P. ID</th>
+              <th>Vendor Name</th>
+              <th>Customer Name</th>
+              <th>Customer Contact</th>
+              <th>Customer Address</th>
+              <th>Created Date</th>
+              <th>P. Amount</th>
+              <th>Pick Up Charge</th>
+              <th>Delivery Charge</th>
+              <th>Status</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody id="pkgBody">
+            <tr data-vendor="deda collection" data-date="2025-04-19"><td><input type="checkbox" class="row-chk" /></td><td class="pid">RT3KLP8M</td><td>deda collection</td><td>priya sharma</td><td>9841567890</td><td>lalitpur patan</td><td>Apr 19, 2025</td><td>1200</td><td>0</td><td>170</td><td><span class="badge b-red">Cancelled</span></td><td class="text-muted">Client Request</td></tr>
+            <tr data-vendor="deda collection" data-date="2025-04-18"><td><input type="checkbox" class="row-chk" /></td><td class="pid">VN7GHQW2</td><td>deda collection</td><td>rabin tamang</td><td>9823456789</td><td>bhaktapur durbar sq</td><td>Apr 18, 2025</td><td>890</td><td>0</td><td>120</td><td><span class="badge b-orange">Returned</span></td><td class="text-muted">Wrong Address</td></tr>
+            <tr data-vendor="deda collection" data-date="2025-04-16"><td><input type="checkbox" class="row-chk" /></td><td class="pid">XP2MNBV6</td><td>deda collection</td><td>kamala basnet</td><td>9867123456</td><td>chitwan ratnanagar</td><td>Apr 16, 2025</td><td>1650</td><td>0</td><td>220</td><td><span class="badge b-red">Cancelled</span></td><td class="text-muted">Duplicate Order</td></tr>
+            <tr data-vendor="amazing dresup" data-date="2025-04-17"><td><input type="checkbox" class="row-chk" /></td><td class="pid">QW8RTFG3</td><td>amazing dresup</td><td>deepak adhikari</td><td>9845678901</td><td>pokhara newroad</td><td>Apr 17, 2025</td><td>2300</td><td>0</td><td>250</td><td><span class="badge b-orange">Returned</span></td><td class="text-muted">Damaged Goods</td></tr>
+            <tr data-vendor="amazing dresup" data-date="2025-04-14"><td><input type="checkbox" class="row-chk" /></td><td class="pid">FH5CDEW1</td><td>amazing dresup</td><td>mina rai</td><td>9812340987</td><td>butwal buspark</td><td>Apr 14, 2025</td><td>1780</td><td>0</td><td>170</td><td><span class="badge b-red">Cancelled</span></td><td class="text-muted">Client Request</td></tr>
+            <tr data-vendor="daliya solutions" data-date="2025-04-15"><td><input type="checkbox" class="row-chk" /></td><td class="pid">BK9WQPL4</td><td>daliya solutions</td><td>hari prasad</td><td>9876543210</td><td>biratnagar main rd</td><td>Apr 15, 2025</td><td>750</td><td>0</td><td>120</td><td><span class="badge b-orange">Returned</span></td><td class="text-muted">Not Home</td></tr>
+            <tr data-vendor="sunrise traders" data-date="2025-04-13"><td><input type="checkbox" class="row-chk" /></td><td class="pid">TG6HNMK8</td><td>sunrise traders</td><td>sunita devi</td><td>9834567012</td><td>janakpur zero mile</td><td>Apr 13, 2025</td><td>1100</td><td>0</td><td>170</td><td><span class="badge b-red">Cancelled</span></td><td class="text-muted">Wrong Item</td></tr>
+            <tr data-vendor="himalayan crafts" data-date="2025-04-12"><td><input type="checkbox" class="row-chk" /></td><td class="pid">LM4XZYR7</td><td>himalayan crafts</td><td>bikram thapa</td><td>9801234567</td><td>dharan bhanuchowk</td><td>Apr 12, 2025</td><td>2050</td><td>0</td><td>220</td><td><span class="badge b-orange">Returned</span></td><td class="text-muted">Refused Delivery</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span>Showing 1–8 of 8 packages</span>
+        <div class="pag-btns">
+          <button class="pag-btn">&#8249; Prev</button>
+          <button class="pag-btn">Next &#8250;</button>
         </div>
-
-        <!-- Form Footer -->
-        <div class="form-footer">
-          <a href="invoice-cancelled.html" class="btn-cancel">Cancel</a>
-          <button type="submit" class="btn-submit">Generate Cancelled/Return Invoice</button>
-        </div>
-      </form>
+      </div>
     </div>
 
   </div>
 </div>
 
 <script>
-// Calculate adjustment dynamically
-function calcAdjustment() {
-  var orig = parseFloat(document.getElementById('originalAmount').value) || 0;
-  var refund = parseFloat(document.getElementById('refundAmount').value) || 0;
-  var adj = orig - refund;
-
-  document.getElementById('sumOriginal').textContent = 'Rs ' + orig.toFixed(2);
-  document.getElementById('sumRefund').textContent = 'Rs ' + refund.toFixed(2);
-  document.getElementById('sumAdjustment').textContent = 'Rs ' + adj.toFixed(2);
+function toggleAll(master) {
+  document.querySelectorAll('.row-chk').forEach(cb => {
+    const row = cb.closest('tr');
+    if (!row.classList.contains('hidden')) cb.checked = master.checked;
+  });
 }
 
-// Form submit handler
-function handleSubmit(e) {
-  e.preventDefault();
-  var type = document.getElementById('invoiceType').value;
-  var invNo = document.getElementById('originalInvoice').value;
-  var client = document.getElementById('client').value;
-  alert(type + ' invoice for ' + invNo + ' (' + client + ') has been generated successfully!');
-  return false;
+function filterByVendor() {
+  const vendor = document.getElementById('fVendor').value;
+  document.querySelectorAll('#pkgBody tr').forEach(tr => {
+    if (!vendor) { tr.classList.remove('hidden'); return; }
+    tr.classList.toggle('hidden', tr.dataset.vendor !== vendor);
+  });
+  uncheckAll();
+  updateCount();
 }
 
-// Set default date to today
-document.getElementById('cancelDate').valueAsDate = new Date();
+function searchPackages() {
+  const vendor = document.getElementById('fVendor').value;
+  const from = document.getElementById('fFrom').value;
+  const to = document.getElementById('fTo').value;
+  document.querySelectorAll('#pkgBody tr').forEach(tr => {
+    const d = tr.dataset.date;
+    const v = tr.dataset.vendor;
+    const matchVendor = !vendor || v === vendor;
+    const matchFrom = !from || d >= from;
+    const matchTo = !to || d <= to;
+    tr.classList.toggle('hidden', !(matchVendor && matchFrom && matchTo));
+  });
+  uncheckAll();
+  updateCount();
+}
+
+function resetFilters() {
+  document.getElementById('fPkgType').value = '';
+  document.getElementById('fVendor').value = '';
+  document.getElementById('fFrom').value = '';
+  document.getElementById('fTo').value = '';
+  document.querySelectorAll('#pkgBody tr').forEach(tr => tr.classList.remove('hidden'));
+  uncheckAll();
+  updateCount();
+}
+
+function uncheckAll() {
+  document.getElementById('selectAll').checked = false;
+  document.querySelectorAll('.row-chk').forEach(cb => cb.checked = false);
+}
+
+function updateCount() {
+  const visible = document.querySelectorAll('#pkgBody tr:not(.hidden)').length;
+  document.querySelector('.pagination span').textContent = 'Showing 1–' + visible + ' of ' + visible + ' packages';
+}
+
+function generateInvoice() {
+  const checked = document.querySelectorAll('.row-chk:checked');
+  if (checked.length === 0) { alert('Please select at least one package to generate cancelled/return invoice.'); return; }
+  const ids = Array.from(checked).map(cb => cb.closest('tr').querySelector('.pid').textContent);
+  alert('Generating Cancelled/Return Invoice for ' + checked.length + ' package(s):\n' + ids.join(', '));
+}
 </script>
 </body>
 </html>

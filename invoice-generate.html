@@ -35,38 +35,49 @@
     .page-body{margin-left:var(--nav);padding-top:var(--hdr);min-height:100vh}
     .page-inner{padding:20px;display:flex;flex-direction:column;gap:16px}
     @media(max-width:768px){.page-body{margin-left:0}}
-    .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
     .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
-    .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
+    .breadcrumb{font-size:.78rem;color:var(--muted);margin-top:2px}
+    .breadcrumb a{color:var(--teal);text-decoration:none;font-weight:600}
+    .breadcrumb a:hover{text-decoration:underline}
     .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
-    .panel-hdr{background:var(--teal-dark);color:#fff;padding:13px 20px;font-size:.88rem;font-weight:800;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px}
-    .form-full{grid-column:1/-1}
-    .form-group{display:flex;flex-direction:column;gap:4px}
-    .form-group label{font-size:.72rem;font-weight:700;color:var(--muted)}
-    .form-group input,.form-group select,.form-group textarea{padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;color:var(--text);outline:none;font-family:inherit}
-    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal)}
-    .line-items{border:1.5px solid var(--border);border-radius:8px;overflow:hidden}
-    .line-items table{width:100%;border-collapse:collapse;font-size:.8rem}
-    .line-items thead th{background:var(--teal-light);color:var(--teal-dark);font-weight:700;padding:8px 10px;text-align:left;font-size:.72rem}
-    .line-items tbody td{padding:6px 8px;border-top:1px solid var(--border)}
-    .line-items input{width:100%;padding:6px 8px;border:1.5px solid var(--border);border-radius:5px;font-size:.78rem;outline:none}
-    .line-items input:focus{border-color:var(--teal)}
-    .line-items .amt-cell{font-weight:700;color:var(--teal-dark);font-size:.8rem;min-width:90px}
-    .btn-add-line{background:none;border:1.5px dashed var(--teal);color:var(--teal);padding:7px 14px;border-radius:7px;font-size:.78rem;font-weight:700;cursor:pointer;margin-top:8px}
-    .btn-add-line:hover{background:var(--teal-light)}
-    .summary-box{background:var(--teal-light);border-radius:8px;padding:16px 20px;max-width:320px;margin-left:auto}
-    .summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:.82rem;color:var(--text)}
-    .summary-row.total{border-top:2px solid var(--teal);margin-top:6px;padding-top:10px;font-weight:800;font-size:.95rem;color:var(--teal-dark)}
-    .summary-row input{width:80px;padding:4px 8px;border:1.5px solid var(--border);border-radius:5px;font-size:.78rem;text-align:right;outline:none}
-    .summary-row input:focus{border-color:var(--teal)}
-    .form-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
-    .btn-save{background:var(--teal);color:#fff;border:none;padding:9px 22px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.84rem}
-    .btn-save:hover{background:var(--teal-dark)}
-    .btn-cancel{background:none;color:var(--muted);border:1.5px solid var(--border);padding:8px 18px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.82rem;text-decoration:none}
-    .btn-cancel:hover{color:var(--red);border-color:var(--red)}
-    .btn-rm{background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem;padding:2px 6px}
-    .btn-rm:hover{color:#b91c1c}
+    .panel-border{border:1.5px solid var(--border)}
+    .panel-title{font-size:.9rem;font-weight:800;color:var(--text);padding:16px 20px;border-bottom:1px solid var(--border)}
+    /* Filter section */
+    .filter-section{padding:20px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+    .filter-group{display:flex;flex-direction:column;gap:5px;min-width:160px}
+    .filter-group label{font-size:.75rem;font-weight:700;color:var(--teal-dark)}
+    .filter-group select,.filter-group input{padding:8px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;color:var(--text);background:var(--white);outline:none;font-family:inherit}
+    .filter-group select:focus,.filter-group input:focus{border-color:var(--teal)}
+    .filter-actions{display:flex;gap:8px;margin-left:auto;align-self:flex-end}
+    .btn-search{background:var(--teal);color:#fff;border:none;padding:8px 22px;border-radius:7px;font-size:.82rem;font-weight:700;cursor:pointer}
+    .btn-search:hover{background:var(--teal-dark)}
+    .btn-reset{background:var(--white);color:var(--text);border:1.5px solid var(--border);padding:8px 22px;border-radius:7px;font-size:.82rem;font-weight:700;cursor:pointer}
+    .btn-reset:hover{border-color:var(--red);color:var(--red)}
+    /* Table toolbar */
+    .table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;flex-wrap:wrap;gap:10px}
+    .records-per-page{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted)}
+    .records-per-page select{padding:4px 8px;border:1.5px solid var(--border);border-radius:5px;font-size:.78rem;outline:none}
+    .btn-generate{background:var(--teal);color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:.84rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
+    .btn-generate:hover{background:var(--teal-dark)}
+    .btn-generate svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    /* Table */
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.78rem}
+    thead th{background:var(--teal-light);color:var(--teal-dark);font-weight:700;padding:10px 10px;text-align:left;white-space:nowrap;border-bottom:2px solid var(--border);font-size:.72rem;text-transform:uppercase;letter-spacing:.3px}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+    tbody tr:hover{background:#f8fbfb}
+    tbody td{padding:9px 10px;color:var(--text);white-space:nowrap}
+    .pid{font-weight:700;color:var(--teal-dark)}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700}
+    .b-green{background:#dcfce7;color:#16a34a}
+    .b-orange{background:#fef3c7;color:#d97706}
+    .b-gray{background:#f3f4f6;color:#6b7280}
+    input[type=checkbox]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer}
+    .pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--border);font-size:.8rem;color:var(--muted);flex-wrap:wrap;gap:8px}
+    .pag-btns{display:flex;gap:6px}
+    .pag-btn{background:none;border:1.5px solid var(--border);border-radius:6px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;color:var(--teal-dark)}
+    .pag-btn:hover{background:var(--teal-light)}
+    .text-muted{color:var(--muted);font-size:.78rem}
   </style>
 </head>
 <body>
@@ -78,6 +89,7 @@
     <li><a href="index.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
     <li><a href="users.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>User Management</span></a></li>
     <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li><a href="warehouse.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V13h6v8"/><rect x="7" y="10" width="4" height="3"/><rect x="13" y="10" width="4" height="3"/></svg><span>Warehouse</span></a></li>
     <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M15 13l3 7"/><path d="M9 13l-3 7"/></svg><span>Riders</span></a></li>
     <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
     <li><a href="courier.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Courier</span></a></li>
@@ -124,87 +136,109 @@
 <div class="page-body">
   <div class="page-inner">
 
-    <div class="title-row">
-      <div>
-        <div class="page-title">Generate Invoice</div>
-        <div class="page-sub">Create a new billing invoice</div>
+    <div>
+      <div class="page-title">Proforma Invoices</div>
+      <div class="breadcrumb"><a href="invoice-all.html">Proforma Invoices</a> / Generate Invoice</div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="panel panel-border">
+      <div class="filter-section">
+        <div class="filter-group">
+          <label>Package Type</label>
+          <select id="fPkgType">
+            <option value="">Select Package Type</option>
+            <option>Document</option>
+            <option>Parcel</option>
+            <option>Fragile</option>
+            <option>Heavy</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Vendor</label>
+          <select id="fVendor" onchange="filterByVendor()">
+            <option value="">Select Vendor</option>
+            <option value="deda collection">Deda Collection (Chabahill)</option>
+            <option value="amazing dresup">Amazing Dresup</option>
+            <option value="daliya solutions">Daliya Solutions</option>
+            <option value="sunrise traders">Sunrise Traders</option>
+            <option value="himalayan crafts">Himalayan Crafts</option>
+            <option value="valley foods">Valley Foods</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>From</label>
+          <input type="date" id="fFrom" />
+        </div>
+        <div class="filter-group">
+          <label>To</label>
+          <input type="date" id="fTo" />
+        </div>
+        <div class="filter-actions">
+          <button class="btn-search" onclick="searchPackages()">Search</button>
+          <button class="btn-reset" onclick="resetFilters()">Reset</button>
+        </div>
       </div>
     </div>
 
-    <!-- Invoice Form Panel -->
-    <div class="panel">
-      <div class="panel-hdr">
-        <span>New Invoice Details</span>
+    <!-- Generate Invoice Table -->
+    <div class="panel panel-border">
+      <div class="panel-title">Generate Invoice</div>
+
+      <div class="table-toolbar">
+        <div class="records-per-page">
+          <select id="perPage">
+            <option>20</option><option>50</option><option>100</option>
+          </select>
+          records per page
+        </div>
+        <button class="btn-generate" onclick="generateInvoice()">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Generate Proforma Invoice
+        </button>
       </div>
 
-      <div class="form-grid">
-        <div class="form-group form-full">
-          <label>Client</label>
-          <select id="fClient">
-            <option value="">— Select Client —</option>
-            <option>Deza Collection</option><option>Amazing Dresup</option>
-            <option>Daliya Solutions</option><option>Ama Ko Achar</option>
-            <option>ABC Enterprises</option><option>Sunrise Traders</option>
-            <option>Himalayan Crafts</option><option>Valley Foods</option>
-            <option>Nepal Boutique</option><option>Mountain Spices</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Invoice Date</label><input type="date" value="2025-04-20" /></div>
-        <div class="form-group"><label>Due Date</label><input type="date" value="2025-04-27" /></div>
-        <div class="form-group"><label>Invoice Number</label><input type="text" placeholder="Auto-generated" value="INV-2025-096" readonly style="background:#f9fafb;color:var(--muted)" /></div>
-        <div class="form-group">
-          <label>Payment Terms</label>
-          <select>
-            <option>Net 7</option><option>Net 15</option><option selected>Net 30</option><option>Net 45</option>
-          </select>
-        </div>
-
-        <!-- Line Items -->
-        <div class="form-group form-full">
-          <label>Line Items</label>
-          <div class="line-items">
-            <table>
-              <thead><tr><th>Description</th><th style="width:90px">Packages</th><th style="width:100px">Rate (Rs)</th><th style="width:100px">Amount</th><th style="width:36px"></th></tr></thead>
-              <tbody id="lineBody">
-                <tr>
-                  <td><input type="text" value="Standard Delivery" oninput="calcTotal()" /></td>
-                  <td><input type="number" value="50" min="0" oninput="calcTotal()" /></td>
-                  <td><input type="number" value="175" min="0" oninput="calcTotal()" /></td>
-                  <td class="amt-cell">Rs 8,750</td>
-                  <td><button class="btn-rm" onclick="rmLine(this)" title="Remove">&#10005;</button></td>
-                </tr>
-                <tr>
-                  <td><input type="text" value="Express Delivery" oninput="calcTotal()" /></td>
-                  <td><input type="number" value="10" min="0" oninput="calcTotal()" /></td>
-                  <td><input type="number" value="250" min="0" oninput="calcTotal()" /></td>
-                  <td class="amt-cell">Rs 2,500</td>
-                  <td><button class="btn-rm" onclick="rmLine(this)" title="Remove">&#10005;</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <button class="btn-add-line" onclick="addLine()">+ Add Line Item</button>
-        </div>
-
-        <!-- Summary -->
-        <div class="form-group form-full">
-          <div class="summary-box">
-            <div class="summary-row"><span>Subtotal</span><strong id="subtotal">Rs 11,250</strong></div>
-            <div class="summary-row"><span>Discount (Rs)</span><input type="number" id="discount" value="0" min="0" oninput="calcTotal()" /></div>
-            <div class="summary-row"><span>Tax (%)</span><input type="number" id="taxPct" value="0" min="0" max="100" step="0.5" oninput="calcTotal()" /></div>
-            <div class="summary-row total"><span>Total</span><strong id="grandTotal">Rs 11,250</strong></div>
-          </div>
-        </div>
-
-        <div class="form-group form-full">
-          <label>Notes</label>
-          <textarea rows="3" placeholder="Additional notes or payment instructions..."></textarea>
-        </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll" onchange="toggleAll(this)" /></th>
+              <th>P. ID</th>
+              <th>Vendor Name</th>
+              <th>Customer Name</th>
+              <th>Customer Contact</th>
+              <th>Customer Address</th>
+              <th>Created Date</th>
+              <th>P. Amount</th>
+              <th>Pick Up Charge</th>
+              <th>Delivery Charge</th>
+              <th>Status</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody id="pkgBody">
+            <tr data-vendor="deda collection" data-date="2025-04-18"><td><input type="checkbox" class="row-chk" /></td><td class="pid">U8IATP1L</td><td>deda collection</td><td>ruby neupane</td><td>9765524211</td><td>bmc road birgunj</td><td>Apr 18, 2025</td><td>1519</td><td>0</td><td>335</td><td><span class="badge b-green">Verified</span></td><td class="text-muted">1kg/335</td></tr>
+            <tr data-vendor="deda collection" data-date="2025-04-17"><td><input type="checkbox" class="row-chk" /></td><td class="pid">BYRV0RMA</td><td>deda collection</td><td>shristi tiwari</td><td>9845810666</td><td>bharatpur</td><td>Apr 17, 2025</td><td>0</td><td>0</td><td>120</td><td><span class="badge b-green">Verified</span></td><td class="text-muted">1kg/120</td></tr>
+            <tr data-vendor="deda collection" data-date="2025-04-16"><td><input type="checkbox" class="row-chk" /></td><td class="pid">ZN6ADBSH</td><td>deda collection</td><td>susma thapa</td><td>9768353229</td><td>nawalpur arunkhola</td><td>Apr 16, 2025</td><td>1519</td><td>0</td><td>220</td><td><span class="badge b-green">Verified</span></td><td class="text-muted"></td></tr>
+            <tr data-vendor="deda collection" data-date="2025-04-16"><td><input type="checkbox" class="row-chk" /></td><td class="pid">CTDWPZ5H</td><td>deda collection</td><td>ashma pandey</td><td>9742584448</td><td>ghorahi</td><td>Apr 16, 2025</td><td>1469</td><td>0</td><td>170</td><td><span class="badge b-green">Verified</span></td><td class="text-muted"></td></tr>
+            <tr data-vendor="deda collection" data-date="2025-04-15"><td><input type="checkbox" class="row-chk" /></td><td class="pid">CHHAW1FG</td><td>deda collection</td><td>sushma sapkota</td><td>9801309596</td><td>chitwan bharatpur</td><td>Apr 15, 2025</td><td>1420</td><td>0</td><td>170</td><td><span class="badge b-green">Verified</span></td><td class="text-muted"></td></tr>
+            <tr data-vendor="deda collection" data-date="2025-04-14"><td><input type="checkbox" class="row-chk" /></td><td class="pid">KXM7H7G2</td><td>deda collection</td><td>binisha kc</td><td>9819651564</td><td>birtamod</td><td>Apr 14, 2025</td><td>1918</td><td>0</td><td>220</td><td><span class="badge b-green">Verified</span></td><td class="text-muted"></td></tr>
+            <tr data-vendor="deda collection" data-date="2025-04-14"><td><input type="checkbox" class="row-chk" /></td><td class="pid">TM8WJ7SP</td><td>deda collection</td><td>himani shrestha</td><td>9866127522</td><td>hetauda</td><td>Apr 14, 2025</td><td>869</td><td>0</td><td>170</td><td><span class="badge b-green">Verified</span></td><td class="text-muted"></td></tr>
+            <tr data-vendor="deda collection" data-date="2025-04-13"><td><input type="checkbox" class="row-chk" /></td><td class="pid">DIMEFRG8</td><td>deda collection</td><td>susmita sunar</td><td>9816624783</td><td>lekhnath powerhouse</td><td>Apr 13, 2025</td><td>1420</td><td>0</td><td>170</td><td><span class="badge b-green">Verified</span></td><td class="text-muted"></td></tr>
+            <tr data-vendor="deda collection" data-date="2025-04-12"><td><input type="checkbox" class="row-chk" /></td><td class="pid">GPKC7NS5</td><td>deda collection</td><td>anu limbu</td><td>9703413094</td><td>biratnagar</td><td>Apr 12, 2025</td><td>0</td><td>0</td><td>170</td><td><span class="badge b-green">Verified</span></td><td class="text-muted"></td></tr>
+            <tr data-vendor="amazing dresup" data-date="2025-04-17"><td><input type="checkbox" class="row-chk" /></td><td class="pid">RK3MVNP4</td><td>amazing dresup</td><td>anita gurung</td><td>9841234567</td><td>pokhara lakeside</td><td>Apr 17, 2025</td><td>2150</td><td>0</td><td>250</td><td><span class="badge b-green">Verified</span></td><td class="text-muted">2kg/250</td></tr>
+            <tr data-vendor="amazing dresup" data-date="2025-04-15"><td><input type="checkbox" class="row-chk" /></td><td class="pid">WQ9FLHR2</td><td>amazing dresup</td><td>sita maharjan</td><td>9856789012</td><td>butwal traffic chowk</td><td>Apr 15, 2025</td><td>1850</td><td>0</td><td>170</td><td><span class="badge b-green">Verified</span></td><td class="text-muted"></td></tr>
+            <tr data-vendor="daliya solutions" data-date="2025-04-16"><td><input type="checkbox" class="row-chk" /></td><td class="pid">HN5TKWX9</td><td>daliya solutions</td><td>ram bahadur</td><td>9812345678</td><td>dharan bhanuchowk</td><td>Apr 16, 2025</td><td>980</td><td>0</td><td>120</td><td><span class="badge b-green">Verified</span></td><td class="text-muted"></td></tr>
+            <tr data-vendor="sunrise traders" data-date="2025-04-18"><td><input type="checkbox" class="row-chk" /></td><td class="pid">PL4BGYT7</td><td>sunrise traders</td><td>kopila shrestha</td><td>9867891234</td><td>janakpur station rd</td><td>Apr 18, 2025</td><td>1250</td><td>0</td><td>170</td><td><span class="badge b-green">Verified</span></td><td class="text-muted"></td></tr>
+          </tbody>
+        </table>
       </div>
-
-      <div class="form-footer">
-        <a href="invoice-all.html" class="btn-cancel">Cancel</a>
-        <button class="btn-save" onclick="alert('Invoice generated successfully!');window.location.href='invoice-all.html'">Generate Invoice</button>
+      <div class="pagination">
+        <span>Showing 1–13 of 13 packages</span>
+        <div class="pag-btns">
+          <button class="pag-btn">&#8249; Prev</button>
+          <button class="pag-btn">Next &#8250;</button>
+        </div>
       </div>
     </div>
 
@@ -212,40 +246,65 @@
 </div>
 
 <script>
-function calcTotal() {
-  let sub = 0;
-  document.querySelectorAll('#lineBody tr').forEach(row => {
-    const inputs = row.querySelectorAll('input[type=number]');
-    const pkgs = parseFloat(inputs[0].value) || 0;
-    const rate = parseFloat(inputs[1].value) || 0;
-    const amt = pkgs * rate;
-    row.querySelector('.amt-cell').textContent = 'Rs ' + amt.toLocaleString();
-    sub += amt;
+function toggleAll(master) {
+  document.querySelectorAll('.row-chk').forEach(cb => {
+    const row = cb.closest('tr');
+    if (!row.classList.contains('hidden')) cb.checked = master.checked;
   });
-  document.getElementById('subtotal').textContent = 'Rs ' + sub.toLocaleString();
-  const disc = parseFloat(document.getElementById('discount').value) || 0;
-  const tax  = parseFloat(document.getElementById('taxPct').value) || 0;
-  const afterDisc = sub - disc;
-  const total = afterDisc + (afterDisc * tax / 100);
-  document.getElementById('grandTotal').textContent = 'Rs ' + Math.round(total).toLocaleString();
 }
 
-function addLine() {
-  const row = document.createElement('tr');
-  row.innerHTML = `<td><input type="text" placeholder="Description" oninput="calcTotal()" /></td>
-    <td><input type="number" value="0" min="0" oninput="calcTotal()" /></td>
-    <td><input type="number" value="175" min="0" oninput="calcTotal()" /></td>
-    <td class="amt-cell">Rs 0</td>
-    <td><button class="btn-rm" onclick="rmLine(this)" title="Remove">&#10005;</button></td>`;
-  document.getElementById('lineBody').appendChild(row);
+function filterByVendor() {
+  const vendor = document.getElementById('fVendor').value;
+  document.querySelectorAll('#pkgBody tr').forEach(tr => {
+    if (!vendor) { tr.classList.remove('hidden'); return; }
+    tr.classList.toggle('hidden', tr.dataset.vendor !== vendor);
+  });
+  uncheckAll();
+  updateCount();
 }
 
-function rmLine(btn) {
-  const tbody = document.getElementById('lineBody');
-  if (tbody.rows.length > 1) {
-    btn.closest('tr').remove();
-    calcTotal();
-  }
+function searchPackages() {
+  const vendor = document.getElementById('fVendor').value;
+  const from = document.getElementById('fFrom').value;
+  const to = document.getElementById('fTo').value;
+  document.querySelectorAll('#pkgBody tr').forEach(tr => {
+    const d = tr.dataset.date;
+    const v = tr.dataset.vendor;
+    const matchVendor = !vendor || v === vendor;
+    const matchFrom = !from || d >= from;
+    const matchTo = !to || d <= to;
+    tr.classList.toggle('hidden', !(matchVendor && matchFrom && matchTo));
+  });
+  uncheckAll();
+  updateCount();
+}
+
+function resetFilters() {
+  document.getElementById('fPkgType').value = '';
+  document.getElementById('fVendor').value = '';
+  document.getElementById('fFrom').value = '';
+  document.getElementById('fTo').value = '';
+  document.querySelectorAll('#pkgBody tr').forEach(tr => tr.classList.remove('hidden'));
+  uncheckAll();
+  updateCount();
+}
+
+function uncheckAll() {
+  document.getElementById('selectAll').checked = false;
+  document.querySelectorAll('.row-chk').forEach(cb => cb.checked = false);
+}
+
+function updateCount() {
+  const visible = document.querySelectorAll('#pkgBody tr:not(.hidden)').length;
+  const total = document.querySelectorAll('#pkgBody tr').length;
+  document.querySelector('.pagination span').textContent = 'Showing 1–' + visible + ' of ' + visible + ' packages';
+}
+
+function generateInvoice() {
+  const checked = document.querySelectorAll('.row-chk:checked');
+  if (checked.length === 0) { alert('Please select at least one package to generate invoice.'); return; }
+  const ids = Array.from(checked).map(cb => cb.closest('tr').querySelector('.pid').textContent);
+  alert('Generating Proforma Invoice for ' + checked.length + ' package(s):\n' + ids.join(', '));
 }
 </script>
 </body>
