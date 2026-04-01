@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoices — Packrs Courier</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--teal:#3aafa9;--teal-dark:#2b7a78;--teal-light:#def2f1;--red:#e05c7a;--bg:#f0f4f4;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--border:#d1e0df;--shadow:0 2px 8px rgba(0,0,0,.08);--nav:220px;--hdr:56px}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+    /* SIDENAV */
+    .sidenav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--teal-dark);color:#fff;z-index:300;overflow-y:auto;display:flex;flex-direction:column;transition:transform .25s}
+    .sn-brand{padding:16px;font-size:1rem;font-weight:800;letter-spacing:2px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .sn-brand .sn-sub{font-size:.6rem;font-weight:600;letter-spacing:1.5px;opacity:.7;margin-top:2px}
+    .sn-links{list-style:none;padding:10px 0;flex:1}
+    .sn-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;font-weight:600;transition:background .15s,color .15s;border-left:3px solid transparent}
+    .sn-item:hover,.sn-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#fff}
+    .sn-icon{width:17px;height:17px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .sn-footer{padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}
+    @media(max-width:768px){.sidenav{transform:translateX(-100%)}.sidenav.open{transform:translateX(0)}}
+
+    /* HEADER */
+    header{position:fixed;top:0;left:var(--nav);right:0;background:var(--white);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:var(--hdr);box-shadow:var(--shadow);z-index:200}
+    .menu-btn{display:none;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text)}
+    @media(max-width:768px){header{left:0}.menu-btn{display:block}}
+    .logo{font-size:1.25rem;font-weight:800;letter-spacing:2px;color:var(--teal-dark);text-transform:uppercase}
+    .header-right{display:flex;align-items:center;gap:20px}
+    .notif-btn{position:relative;background:none;border:none;cursor:pointer;font-size:1.25rem;color:var(--muted)}
+    .notif-badge{position:absolute;top:-4px;right:-6px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .user-chip{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .user-chip .avatar{width:34px;height:34px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem}
+    .user-chip .user-info{line-height:1.2}
+    .user-chip .user-name{font-size:.85rem;font-weight:700}
+    .user-chip .user-role{font-size:.7rem;color:var(--muted);letter-spacing:1px}
+
+    /* LAYOUT */
+    .page-body{margin-left:var(--nav);padding-top:var(--hdr);min-height:100vh}
+    .page-inner{padding:20px;display:flex;flex-direction:column;gap:16px}
+    @media(max-width:768px){.page-body{margin-left:0}}
+
+    /* TITLE ROW */
+    .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
+    .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
+
+    /* STAT CARDS */
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:768px){.stat-grid{grid-template-columns:1fr}}
+    .stat-card{background:var(--white);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);border-top:4px solid var(--teal);position:relative;overflow:hidden}
+    .stat-card::after{content:'';position:absolute;bottom:-28px;right:-28px;width:90px;height:90px;border-radius:50%;background:var(--teal-light);opacity:.5}
+    .stat-card .sc-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .stat-card .sc-value{font-size:1.7rem;font-weight:800;color:var(--teal-dark);margin:6px 0 8px}
+    .stat-card .sc-meta{display:flex;flex-direction:column;gap:3px}
+    .stat-card .sc-meta span{font-size:.7rem;color:var(--muted)}
+    .stat-card.orange-top{border-top-color:#ea580c}
+    .stat-card.orange-top::after{background:#ffedd5}
+    .stat-card.red-top{border-top-color:var(--red)}
+    .stat-card.red-top::after{background:#fce4ec}
+
+    /* PANEL */
+    .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+    .panel-header{background:var(--teal-dark);color:#fff;padding:12px 16px;font-size:.82rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+    .panel-header .ph-count{font-size:.7rem;font-weight:600;opacity:.8;letter-spacing:0;text-transform:none}
+    .panel-body{padding:14px 16px}
+
+    /* TABS */
+    .tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px}
+    .tab-btn{padding:8px 18px;font-size:.78rem;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s}
+    .tab-btn:hover{color:var(--teal-dark)}
+    .tab-btn.active{color:var(--teal-dark);border-bottom-color:var(--teal)}
+
+    /* FILTER BAR */
+    .filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+    .filter-bar input[type="date"],.filter-bar input[type="text"]{padding:7px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:.78rem;font-family:'Segoe UI',Arial,sans-serif;color:var(--text);outline:none;transition:border-color .15s}
+    .filter-bar input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(58,175,169,.12)}
+    .filter-bar input[type="text"]{width:200px}
+    .btn{padding:7px 18px;border:none;border-radius:6px;font-size:.78rem;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:background .15s,transform .1s}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--teal);color:#fff}
+    .btn-primary:hover{background:var(--teal-dark)}
+    .btn-secondary{background:var(--bg);color:var(--muted);border:1.5px solid var(--border)}
+    .btn-secondary:hover{background:var(--border);color:var(--text)}
+
+    /* TABLE */
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.78rem}
+    thead tr{border-bottom:2px solid var(--teal)}
+    thead th{padding:8px 10px;text-align:left;font-size:.68rem;font-weight:700;color:var(--teal-dark);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+    tbody tr:hover{background:var(--teal-light)}
+    tbody td{padding:8px 10px;color:var(--text);white-space:nowrap}
+
+    /* BADGES */
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700}
+    .b-green{background:#dcfce7;color:#16a34a}
+    .b-orange{background:#ffedd5;color:#ea580c}
+    .b-red{background:#fce4ec;color:#e05c7a}
+
+    /* ACTION BTNS */
+    .act-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:none;border-radius:6px;cursor:pointer;transition:opacity .15s}
+    .act-btn:hover{opacity:.8}
+    .act-btn.view{background:#dbeafe;color:#2563eb}
+    .act-btn.download{background:#dcfce7;color:#16a34a}
+    .act-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    /* PAGINATION */
+    .pagination{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px}
+    .pg-btn{width:32px;height:32px;border:1.5px solid var(--border);border-radius:6px;background:var(--white);color:var(--text);font-size:.75rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
+    .pg-btn:hover,.pg-btn.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+    /* MODAL */
+    .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center}
+    .modal-overlay.show{display:flex}
+    .modal{background:var(--white);border-radius:12px;width:95%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+    .modal-header{background:var(--teal-dark);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;font-size:.88rem;font-weight:700;letter-spacing:1px}
+    .modal-close{background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;opacity:.8;transition:opacity .15s}
+    .modal-close:hover{opacity:1}
+    .modal-body{padding:20px 24px}
+    .inv-info{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin-bottom:18px}
+    .inv-info .info-label{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .inv-info .info-value{font-size:.85rem;font-weight:600;color:var(--text);margin-top:2px}
+    .inv-totals{margin-top:14px;border-top:2px solid var(--teal);padding-top:12px}
+    .inv-totals .total-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.82rem}
+    .inv-totals .total-row.grand{font-size:1rem;font-weight:800;color:var(--teal-dark);border-top:2px solid var(--border);padding-top:8px;margin-top:4px}
+    .inv-status-row{margin-top:14px;display:flex;align-items:center;gap:10px;font-size:.82rem;font-weight:600}
+  </style>
+</head>
+<body>
+
+<!-- SIDENAV -->
+<nav class="sidenav" id="sidenav">
+  <div class="sn-brand">&#9992; PACKRS<div class="sn-sub">VENDOR PORTAL</div></div>
+  <ul class="sn-links">
+    <li><a href="vendor-dashboard.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
+    <li><a href="vendor-packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>My Packages</span></a></li>
+    <li><a href="vendor-add-package.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add Package</span></a></li>
+    <li><a href="vendor-cod.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>COD Collection</span></a></li>
+    <li><a href="vendor-invoices.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoices</span></a></li>
+    <li><a href="vendor-sales.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Sales Report</span></a></li>
+    <li><a href="vendor-support.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Support</span></a></li>
+  </ul>
+  <div class="sn-footer"><a href="login.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span></a></div>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="menu-btn" onclick="document.getElementById('sidenav').classList.toggle('open')">&#9776;</button>
+    <div class="logo">&#9992; Packrs Courier</div>
+  </div>
+  <div class="header-right">
+    <button class="notif-btn" title="Notifications">&#128276;<span class="notif-badge">3</span></button>
+    <div class="user-chip">
+      <div class="avatar" id="userAvatar">VP</div>
+      <div class="user-info">
+        <div class="user-name" id="userName">Vendor Portal</div>
+        <div class="user-role">VENDOR</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PAGE BODY -->
+<div class="page-body">
+  <div class="page-inner">
+
+    <!-- Title -->
+    <div class="title-row">
+      <div>
+        <div class="page-title">Invoices</div>
+        <div class="page-sub">View your delivery charge invoices</div>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="sc-label">Total Invoiced</div>
+        <div class="sc-value">Rs. 18,450</div>
+        <div class="sc-meta"><span>12 invoices generated</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">Paid</div>
+        <div class="sc-value">Rs. 14,200</div>
+        <div class="sc-meta"><span style="color:#16a34a;font-weight:600">All payments received</span></div>
+      </div>
+      <div class="stat-card orange-top">
+        <div class="sc-label">Pending</div>
+        <div class="sc-value" style="color:#ea580c">Rs. 3,250</div>
+        <div class="sc-meta"><span>1 invoice pending</span></div>
+      </div>
+      <div class="stat-card red-top">
+        <div class="sc-label">Overdue</div>
+        <div class="sc-value" style="color:var(--red)">Rs. 1,000</div>
+        <div class="sc-meta"><span style="color:var(--red);font-weight:600">1 invoice overdue</span></div>
+      </div>
+    </div>
+
+    <!-- Invoice List Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>Invoice List</span>
+        <span class="ph-count" id="invoiceCount">12 invoices</span>
+      </div>
+      <div class="panel-body">
+        <!-- Status Tabs -->
+        <div class="tabs">
+          <button class="tab-btn active" data-status="all" onclick="filterTab(this)">All</button>
+          <button class="tab-btn" data-status="Paid" onclick="filterTab(this)">Paid</button>
+          <button class="tab-btn" data-status="Pending" onclick="filterTab(this)">Pending</button>
+          <button class="tab-btn" data-status="Overdue" onclick="filterTab(this)">Overdue</button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <input type="date" id="dateFrom" title="From date" />
+          <input type="date" id="dateTo" title="To date" />
+          <input type="text" id="searchInput" placeholder="Search invoice ID..." />
+          <button class="btn btn-primary" onclick="applyFilters()">Filter</button>
+          <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>S.N</th>
+                <th>Invoice ID</th>
+                <th>Date</th>
+                <th>Period</th>
+                <th>No. of Packages</th>
+                <th>Amount (Rs.)</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="invoiceBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div class="modal-overlay" id="viewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span id="modalTitle">Invoice Details</span>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+(function(){
+  // Session user
+  var stored = sessionStorage.getItem('user');
+  var user = stored ? JSON.parse(stored) : null;
+  var vendorName = (user && user.name) ? user.name : 'Vendor Portal';
+  var initials = vendorName.split(' ').map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();
+  document.getElementById('userName').textContent = vendorName;
+  document.getElementById('userAvatar').textContent = initials || 'VP';
+
+  // Invoice data
+  var invoices = [
+    {id:'INV-2025-012',date:'2025-04-20',period:'Apr 15-20',pkgs:42,amount:3250,status:'Pending'},
+    {id:'INV-2025-011',date:'2025-04-15',period:'Apr 10-15',pkgs:38,amount:2850,status:'Paid'},
+    {id:'INV-2025-010',date:'2025-04-10',period:'Apr 5-10',pkgs:35,amount:2600,status:'Paid'},
+    {id:'INV-2025-009',date:'2025-04-05',period:'Apr 1-5',pkgs:28,amount:2100,status:'Paid'},
+    {id:'INV-2025-008',date:'2025-03-31',period:'Mar 25-31',pkgs:45,amount:3200,status:'Paid'},
+    {id:'INV-2025-007',date:'2025-03-25',period:'Mar 20-25',pkgs:32,amount:2450,status:'Paid'},
+    {id:'INV-2025-006',date:'2025-03-20',period:'Mar 15-20',pkgs:41,amount:3000,status:'Overdue'},
+    {id:'INV-2025-005',date:'2025-03-15',period:'Mar 10-15',pkgs:30,amount:1000,status:'Paid'}
+  ];
+
+  var currentTab = 'all';
+  var perPage = 5;
+  var currentPage = 1;
+
+  function badgeClass(s){
+    if(s==='Paid') return 'b-green';
+    if(s==='Pending') return 'b-orange';
+    if(s==='Overdue') return 'b-red';
+    return '';
+  }
+
+  function fmt(n){ return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+
+  function getFiltered(){
+    var df = document.getElementById('dateFrom').value;
+    var dt = document.getElementById('dateTo').value;
+    var q = document.getElementById('searchInput').value.trim().toLowerCase();
+    return invoices.filter(function(inv){
+      if(currentTab !== 'all' && inv.status !== currentTab) return false;
+      if(df && inv.date < df) return false;
+      if(dt && inv.date > dt) return false;
+      if(q && inv.id.toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+  }
+
+  function render(){
+    var filtered = getFiltered();
+    var totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+    if(currentPage > totalPages) currentPage = totalPages;
+    var start = (currentPage - 1) * perPage;
+    var pageItems = filtered.slice(start, start + perPage);
+
+    var html = '';
+    pageItems.forEach(function(inv, i){
+      html += '<tr data-status="'+inv.status+'">' +
+        '<td>'+(start+i+1)+'</td>' +
+        '<td style="font-weight:700;color:var(--teal-dark)">'+inv.id+'</td>' +
+        '<td>'+inv.date+'</td>' +
+        '<td>'+inv.period+'</td>' +
+        '<td>'+inv.pkgs+' pkgs</td>' +
+        '<td style="font-weight:700">Rs. '+fmt(inv.amount)+'</td>' +
+        '<td><span class="badge '+badgeClass(inv.status)+'">'+inv.status+'</span></td>' +
+        '<td style="display:flex;gap:6px">' +
+          '<button class="act-btn view" title="View" onclick="viewInvoice(\''+inv.id+'\')">' +
+            '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+          '</button>' +
+          '<button class="act-btn download" title="Download" onclick="downloadInvoice(\''+inv.id+'\')">' +
+            '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+          '</button>' +
+        '</td></tr>';
+    });
+    document.getElementById('invoiceBody').innerHTML = html;
+    document.getElementById('invoiceCount').textContent = filtered.length + ' invoice' + (filtered.length !== 1 ? 's' : '');
+
+    // Pagination
+    var pgHtml = '';
+    if(totalPages > 1){
+      pgHtml += '<button class="pg-btn'+(currentPage===1?' disabled':'')+'" onclick="goPage('+(currentPage-1)+')"'+(currentPage===1?' disabled':'')+'>&laquo;</button>';
+      for(var p=1; p<=totalPages; p++){
+        pgHtml += '<button class="pg-btn'+(p===currentPage?' active':'')+'" onclick="goPage('+p+')">'+p+'</button>';
+      }
+      pgHtml += '<button class="pg-btn'+(currentPage===totalPages?' disabled':'')+'" onclick="goPage('+(currentPage+1)+')"'+(currentPage===totalPages?' disabled':'')+'>&raquo;</button>';
+    }
+    document.getElementById('pagination').innerHTML = pgHtml;
+  }
+
+  // Expose functions globally
+  window.filterTab = function(btn){
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');
+    currentTab = btn.getAttribute('data-status');
+    currentPage = 1;
+    render();
+  };
+
+  window.applyFilters = function(){
+    currentPage = 1;
+    render();
+  };
+
+  window.resetFilters = function(){
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    document.getElementById('searchInput').value = '';
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+    document.querySelector('.tab-btn[data-status="all"]').classList.add('active');
+    currentTab = 'all';
+    currentPage = 1;
+    render();
+  };
+
+  window.goPage = function(p){
+    var filtered = getFiltered();
+    var totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+    if(p < 1 || p > totalPages) return;
+    currentPage = p;
+    render();
+  };
+
+  // Sample line items for modal
+  var sampleLines = [
+    {tracking:'PKR-20250418-001',dest:'Kathmandu',weight:'1.2 kg',charge:85},
+    {tracking:'PKR-20250418-002',dest:'Pokhara',weight:'2.5 kg',charge:120},
+    {tracking:'PKR-20250417-003',dest:'Lalitpur',weight:'0.8 kg',charge:65},
+    {tracking:'PKR-20250417-004',dest:'Bhaktapur',weight:'1.5 kg',charge:75},
+    {tracking:'PKR-20250416-005',dest:'Biratnagar',weight:'3.0 kg',charge:150}
+  ];
+
+  window.viewInvoice = function(invId){
+    var inv = invoices.find(function(x){return x.id === invId});
+    if(!inv) return;
+    var subtotal = inv.amount;
+    var taxRate = 0.13;
+    var baseAmount = Math.round(subtotal / (1 + taxRate));
+    var tax = subtotal - baseAmount;
+
+    var html = '<div class="inv-info">' +
+      '<div><div class="info-label">Invoice ID</div><div class="info-value">'+inv.id+'</div></div>' +
+      '<div><div class="info-label">Date</div><div class="info-value">'+inv.date+'</div></div>' +
+      '<div><div class="info-label">Period</div><div class="info-value">'+inv.period+'</div></div>' +
+      '<div><div class="info-label">Bill To</div><div class="info-value">'+vendorName+'</div></div>' +
+    '</div>';
+
+    html += '<div class="table-wrap"><table>' +
+      '<thead><tr><th>Tracking ID</th><th>Destination</th><th>Weight</th><th>Delivery Charge</th></tr></thead><tbody>';
+    sampleLines.forEach(function(line){
+      html += '<tr><td style="font-weight:600;color:var(--teal-dark)">'+line.tracking+'</td><td>'+line.dest+'</td><td>'+line.weight+'</td><td>Rs. '+fmt(line.charge)+'</td></tr>';
+    });
+    html += '</tbody></table></div>';
+
+    html += '<div class="inv-totals">' +
+      '<div class="total-row"><span>Subtotal</span><span>Rs. '+fmt(baseAmount)+'</span></div>' +
+      '<div class="total-row"><span>Tax (13% VAT)</span><span>Rs. '+fmt(tax)+'</span></div>' +
+      '<div class="total-row grand"><span>Grand Total</span><span>Rs. '+fmt(subtotal)+'</span></div>' +
+    '</div>';
+
+    html += '<div class="inv-status-row">Payment Status: <span class="badge '+badgeClass(inv.status)+'">'+inv.status+'</span></div>';
+
+    document.getElementById('modalTitle').textContent = 'Invoice Details — ' + inv.id;
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('viewModal').classList.add('show');
+  };
+
+  window.closeModal = function(){
+    document.getElementById('viewModal').classList.remove('show');
+  };
+
+  window.downloadInvoice = function(invId){
+    alert('Downloading ' + invId + '...');
+  };
+
+  // Close modal on overlay click
+  document.getElementById('viewModal').addEventListener('click', function(e){
+    if(e.target === this) closeModal();
+  });
+
+  // Initial render
+  render();
+})();
+</script>
+</body>
+</html>
