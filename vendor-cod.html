@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COD Collection — Packrs Courier</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--teal:#3aafa9;--teal-dark:#2b7a78;--teal-light:#def2f1;--red:#e05c7a;--bg:#f0f4f4;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--border:#d1e0df;--shadow:0 2px 8px rgba(0,0,0,.08);--nav:220px;--hdr:56px}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+    /* SIDENAV */
+    .sidenav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--teal-dark);color:#fff;z-index:300;overflow-y:auto;display:flex;flex-direction:column;transition:transform .25s}
+    .sn-brand{padding:16px;font-size:1rem;font-weight:800;letter-spacing:2px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .sn-brand .sn-sub{font-size:.6rem;font-weight:600;letter-spacing:1.5px;opacity:.7;margin-top:2px}
+    .sn-links{list-style:none;padding:10px 0;flex:1}
+    .sn-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;font-weight:600;transition:background .15s,color .15s;border-left:3px solid transparent}
+    .sn-item:hover,.sn-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#fff}
+    .sn-icon{width:17px;height:17px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .sn-footer{padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}
+    @media(max-width:768px){.sidenav{transform:translateX(-100%)}.sidenav.open{transform:translateX(0)}}
+
+    /* HEADER */
+    header{position:fixed;top:0;left:var(--nav);right:0;background:var(--white);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:var(--hdr);box-shadow:var(--shadow);z-index:200}
+    .menu-btn{display:none;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text)}
+    @media(max-width:768px){header{left:0}.menu-btn{display:block}}
+    .logo{font-size:1.25rem;font-weight:800;letter-spacing:2px;color:var(--teal-dark);text-transform:uppercase}
+    .header-right{display:flex;align-items:center;gap:20px}
+    .notif-btn{position:relative;background:none;border:none;cursor:pointer;font-size:1.25rem;color:var(--muted)}
+    .notif-badge{position:absolute;top:-4px;right:-6px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .user-chip{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .user-chip .avatar{width:34px;height:34px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem}
+    .user-chip .user-info{line-height:1.2}
+    .user-chip .user-name{font-size:.85rem;font-weight:700}
+    .user-chip .user-role{font-size:.7rem;color:var(--muted);letter-spacing:1px}
+
+    /* LAYOUT */
+    .page-body{margin-left:var(--nav);padding-top:var(--hdr);min-height:100vh}
+    .page-inner{padding:20px;display:flex;flex-direction:column;gap:16px}
+    @media(max-width:768px){.page-body{margin-left:0}}
+
+    /* TITLE ROW */
+    .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
+    .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
+
+    /* STAT CARDS */
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:768px){.stat-grid{grid-template-columns:1fr}}
+    .stat-card{background:var(--white);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);border-top:4px solid var(--teal);position:relative;overflow:hidden}
+    .stat-card::after{content:'';position:absolute;bottom:-28px;right:-28px;width:90px;height:90px;border-radius:50%;background:var(--teal-light);opacity:.5}
+    .stat-card .sc-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .stat-card .sc-value{font-size:1.7rem;font-weight:800;color:var(--teal-dark);margin:6px 0 8px}
+    .stat-card .sc-meta{display:flex;flex-direction:column;gap:3px}
+    .stat-card .sc-meta span{font-size:.7rem;color:var(--muted)}
+    .stat-card.red-top{border-top-color:var(--red)}
+    .stat-card.red-top::after{background:#fce4ec}
+
+    /* PANEL */
+    .panel{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+    .panel-header{background:var(--teal-dark);color:#fff;padding:12px 16px;font-size:.82rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+    .panel-body{padding:14px 16px}
+
+    /* TABLE */
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.78rem}
+    thead tr{border-bottom:2px solid var(--teal)}
+    thead th{padding:8px 10px;text-align:left;font-size:.68rem;font-weight:700;color:var(--teal-dark);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+    tbody tr:hover{background:var(--teal-light)}
+    tbody td{padding:8px 10px;color:var(--text);white-space:nowrap}
+
+    /* BADGES */
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700}
+    .b-green{background:#dcfce7;color:#16a34a}
+    .b-blue{background:#dbeafe;color:#2563eb}
+    .b-yellow{background:#fef3c7;color:#d97706}
+    .b-red{background:#fce4ec;color:#e05c7a}
+    .b-orange{background:#ffedd5;color:#ea580c}
+
+    /* TABS */
+    .tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border)}
+    .tab-btn{padding:10px 24px;font-size:.82rem;font-weight:700;color:var(--muted);background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:color .15s,border-color .15s;letter-spacing:.5px}
+    .tab-btn:hover{color:var(--teal-dark)}
+    .tab-btn.active{color:var(--teal-dark);border-bottom-color:var(--teal)}
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+
+    /* FILTER BAR */
+    .filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .filter-bar label{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .filter-bar input,.filter-bar select{padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:.78rem;font-family:inherit;color:var(--text);background:var(--white)}
+    .filter-bar input:focus,.filter-bar select:focus{outline:none;border-color:var(--teal)}
+    .btn{padding:7px 16px;border:none;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:opacity .15s}
+    .btn-teal{background:var(--teal);color:#fff}
+    .btn-teal:hover{opacity:.85}
+    .btn-outline{background:none;border:2px solid var(--border);color:var(--muted)}
+    .btn-outline:hover{border-color:var(--teal);color:var(--teal-dark)}
+    .btn-sm{padding:4px 12px;font-size:.7rem;border-radius:5px}
+
+    /* SUMMARY CARDS */
+    .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+    @media(max-width:1100px){.summary-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:768px){.summary-grid{grid-template-columns:1fr}}
+    .summary-card{background:var(--teal-light);border-radius:10px;padding:16px 18px;border-left:4px solid var(--teal)}
+    .summary-card .sm-label{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .summary-card .sm-value{font-size:1.3rem;font-weight:800;color:var(--teal-dark);margin-top:4px}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center}
+    .modal-overlay.show{display:flex}
+    .modal{background:var(--white);border-radius:12px;width:480px;max-width:92vw;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+    .modal-head{background:var(--teal-dark);color:#fff;padding:14px 20px;font-size:.9rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;border-radius:12px 12px 0 0}
+    .modal-close{background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;line-height:1}
+    .modal-body{padding:20px}
+    .detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.8rem}
+    .detail-row:last-child{border-bottom:none}
+    .detail-label{color:var(--muted);font-weight:600}
+    .detail-value{font-weight:700;color:var(--text)}
+
+    /* DOWNLOAD LINK */
+    .dl-link{color:var(--teal-dark);font-weight:700;text-decoration:none;font-size:.75rem}
+    .dl-link:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+
+<!-- SIDENAV -->
+<nav class="sidenav" id="sidenav">
+  <div class="sn-brand">&#9992; PACKRS<div class="sn-sub">VENDOR PORTAL</div></div>
+  <ul class="sn-links">
+    <li><a href="vendor-dashboard.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
+    <li><a href="vendor-packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>My Packages</span></a></li>
+    <li><a href="vendor-add-package.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add Package</span></a></li>
+    <li><a href="vendor-cod.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>COD Collection</span></a></li>
+    <li><a href="vendor-invoices.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoices</span></a></li>
+    <li><a href="vendor-sales.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Sales Report</span></a></li>
+    <li><a href="vendor-support.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Support</span></a></li>
+  </ul>
+  <div class="sn-footer"><a href="login.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span></a></div>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="menu-btn" onclick="document.getElementById('sidenav').classList.toggle('open')">&#9776;</button>
+    <div class="logo">&#9992; Packrs Courier</div>
+  </div>
+  <div class="header-right">
+    <button class="notif-btn" title="Notifications">&#128276;<span class="notif-badge">3</span></button>
+    <div class="user-chip">
+      <div class="avatar" id="userAvatar">VP</div>
+      <div class="user-info">
+        <div class="user-name" id="userName">Vendor Portal</div>
+        <div class="user-role">VENDOR</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PAGE BODY -->
+<div class="page-body">
+  <div class="page-inner">
+
+    <!-- Title -->
+    <div class="title-row">
+      <div>
+        <div class="page-title">COD Collection &amp; Transfer</div>
+        <div class="page-sub">Track your cash on delivery payments</div>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="sc-label">Total COD</div>
+        <div class="sc-value">Rs. 3,45,600</div>
+        <div class="sc-meta">
+          <span>This Month: Rs. 52,300</span>
+          <span>Last Month: Rs. 48,700</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">Collected</div>
+        <div class="sc-value">Rs. 2,84,500</div>
+        <div class="sc-meta">
+          <span>Collection Rate: 82.3%</span>
+          <span>Avg per Package: Rs. 1,450</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">Transferred</div>
+        <div class="sc-value">Rs. 2,39,270</div>
+        <div class="sc-meta">
+          <span>Last Transfer: Apr 18</span>
+          <span>Transfer Rate: 84.1%</span>
+        </div>
+      </div>
+      <div class="stat-card red-top">
+        <div class="sc-label">Pending</div>
+        <div class="sc-value" style="color:var(--red)">Rs. 45,230</div>
+        <div class="sc-meta">
+          <span>Ready to Transfer: Rs. 32,100</span>
+          <span>Processing: Rs. 13,130</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="panel">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="tab-collection">COD Collection</button>
+        <button class="tab-btn" data-tab="tab-transfers">COD Transfers</button>
+        <button class="tab-btn" data-tab="tab-summary">COD Summary</button>
+      </div>
+
+      <!-- TAB 1: COD Collection -->
+      <div class="tab-content active" id="tab-collection">
+        <div class="panel-body">
+          <!-- Filter Bar -->
+          <div class="filter-bar">
+            <label>From</label>
+            <input type="date" id="filterFrom" value="2026-03-01" />
+            <label>To</label>
+            <input type="date" id="filterTo" value="2026-03-31" />
+            <label>Status</label>
+            <select id="filterStatus">
+              <option value="All">All</option>
+              <option value="Collected">Collected</option>
+              <option value="Pending">Pending</option>
+              <option value="Failed">Failed</option>
+            </select>
+            <button class="btn btn-teal" onclick="filterCollection()">Filter</button>
+            <button class="btn btn-outline" onclick="resetFilter()">Reset</button>
+          </div>
+
+          <!-- Collection Table -->
+          <div class="table-wrap">
+            <table id="collectionTable">
+              <thead>
+                <tr>
+                  <th>S.N</th>
+                  <th>Tracking ID</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Destination</th>
+                  <th>COD Amount (Rs.)</th>
+                  <th>Collection Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-status="Collected">
+                  <td>1</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">PKR-20260325-001</td>
+                  <td>2026-03-25</td>
+                  <td>Ram Sharma</td>
+                  <td>Kathmandu</td>
+                  <td>2,500</td>
+                  <td><span class="badge b-green">Collected</span></td>
+                  <td><button class="btn btn-teal btn-sm" onclick="viewCOD('PKR-20260325-001','2026-03-25','Ram Sharma','Kathmandu','2,500','Collected','COD collected by rider on delivery')">View</button></td>
+                </tr>
+                <tr data-status="Collected">
+                  <td>2</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">PKR-20260324-007</td>
+                  <td>2026-03-24</td>
+                  <td>Sita Thapa</td>
+                  <td>Pokhara</td>
+                  <td>1,800</td>
+                  <td><span class="badge b-green">Collected</span></td>
+                  <td><button class="btn btn-teal btn-sm" onclick="viewCOD('PKR-20260324-007','2026-03-24','Sita Thapa','Pokhara','1,800','Collected','COD collected at branch office')">View</button></td>
+                </tr>
+                <tr data-status="Pending">
+                  <td>3</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">PKR-20260324-012</td>
+                  <td>2026-03-24</td>
+                  <td>Hari Prasad</td>
+                  <td>Lalitpur</td>
+                  <td>3,200</td>
+                  <td><span class="badge b-orange">Pending</span></td>
+                  <td><button class="btn btn-teal btn-sm" onclick="viewCOD('PKR-20260324-012','2026-03-24','Hari Prasad','Lalitpur','3,200','Pending','Awaiting delivery confirmation')">View</button></td>
+                </tr>
+                <tr data-status="Collected">
+                  <td>4</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">PKR-20260323-004</td>
+                  <td>2026-03-23</td>
+                  <td>Gita Devi</td>
+                  <td>Bhaktapur</td>
+                  <td>950</td>
+                  <td><span class="badge b-green">Collected</span></td>
+                  <td><button class="btn btn-teal btn-sm" onclick="viewCOD('PKR-20260323-004','2026-03-23','Gita Devi','Bhaktapur','950','Collected','COD collected by rider on delivery')">View</button></td>
+                </tr>
+                <tr data-status="Failed">
+                  <td>5</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">PKR-20260323-009</td>
+                  <td>2026-03-23</td>
+                  <td>Bikash KC</td>
+                  <td>Biratnagar</td>
+                  <td>4,100</td>
+                  <td><span class="badge b-red">Failed</span></td>
+                  <td><button class="btn btn-teal btn-sm" onclick="viewCOD('PKR-20260323-009','2026-03-23','Bikash KC','Biratnagar','4,100','Failed','Customer refused delivery')">View</button></td>
+                </tr>
+                <tr data-status="Pending">
+                  <td>6</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">PKR-20260322-015</td>
+                  <td>2026-03-22</td>
+                  <td>Anita Gurung</td>
+                  <td>Chitwan</td>
+                  <td>1,650</td>
+                  <td><span class="badge b-orange">Pending</span></td>
+                  <td><button class="btn btn-teal btn-sm" onclick="viewCOD('PKR-20260322-015','2026-03-22','Anita Gurung','Chitwan','1,650','Pending','Package out for delivery')">View</button></td>
+                </tr>
+                <tr data-status="Collected">
+                  <td>7</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">PKR-20260321-003</td>
+                  <td>2026-03-21</td>
+                  <td>Suresh Yadav</td>
+                  <td>Janakpur</td>
+                  <td>2,750</td>
+                  <td><span class="badge b-green">Collected</span></td>
+                  <td><button class="btn btn-teal btn-sm" onclick="viewCOD('PKR-20260321-003','2026-03-21','Suresh Yadav','Janakpur','2,750','Collected','COD collected by rider on delivery')">View</button></td>
+                </tr>
+                <tr data-status="Failed">
+                  <td>8</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">PKR-20260320-018</td>
+                  <td>2026-03-20</td>
+                  <td>Puja Maharjan</td>
+                  <td>Butwal</td>
+                  <td>5,300</td>
+                  <td><span class="badge b-red">Failed</span></td>
+                  <td><button class="btn btn-teal btn-sm" onclick="viewCOD('PKR-20260320-018','2026-03-20','Puja Maharjan','Butwal','5,300','Failed','Incorrect address - could not deliver')">View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: COD Transfers -->
+      <div class="tab-content" id="tab-transfers">
+        <div class="panel-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>S.N</th>
+                  <th>Transfer ID</th>
+                  <th>Date</th>
+                  <th>Amount (Rs.)</th>
+                  <th>No. of Packages</th>
+                  <th>Bank Account</th>
+                  <th>Status</th>
+                  <th>Receipt</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">TRF-001</td>
+                  <td>2026-03-28</td>
+                  <td>65,400</td>
+                  <td>42</td>
+                  <td>NIC Asia - ****4521</td>
+                  <td><span class="badge b-green">Completed</span></td>
+                  <td><a href="#" class="dl-link" onclick="event.preventDefault();alert('Downloading receipt for TRF-001...')">Download</a></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">TRF-002</td>
+                  <td>2026-03-21</td>
+                  <td>58,200</td>
+                  <td>38</td>
+                  <td>NIC Asia - ****4521</td>
+                  <td><span class="badge b-green">Completed</span></td>
+                  <td><a href="#" class="dl-link" onclick="event.preventDefault();alert('Downloading receipt for TRF-002...')">Download</a></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">TRF-003</td>
+                  <td>2026-03-14</td>
+                  <td>72,350</td>
+                  <td>51</td>
+                  <td>NIC Asia - ****4521</td>
+                  <td><span class="badge b-blue">Processing</span></td>
+                  <td><span style="color:var(--muted);font-size:.72rem">—</span></td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">TRF-004</td>
+                  <td>2026-03-07</td>
+                  <td>43,320</td>
+                  <td>29</td>
+                  <td>NIC Asia - ****4521</td>
+                  <td><span class="badge b-green">Completed</span></td>
+                  <td><a href="#" class="dl-link" onclick="event.preventDefault();alert('Downloading receipt for TRF-004...')">Download</a></td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td style="font-weight:700;color:var(--teal-dark)">TRF-005</td>
+                  <td>2026-03-01</td>
+                  <td>32,100</td>
+                  <td>22</td>
+                  <td>NIC Asia - ****4521</td>
+                  <td><span class="badge b-orange">Pending</span></td>
+                  <td><span style="color:var(--muted);font-size:.72rem">—</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: COD Summary -->
+      <div class="tab-content" id="tab-summary">
+        <div class="panel-body">
+          <!-- Summary Cards -->
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="sm-label">Total COD This Month</div>
+              <div class="sm-value">Rs. 52,300</div>
+            </div>
+            <div class="summary-card">
+              <div class="sm-label">Total Transfers</div>
+              <div class="sm-value">Rs. 2,39,270</div>
+            </div>
+            <div class="summary-card">
+              <div class="sm-label">Pending Amount</div>
+              <div class="sm-value" style="color:var(--red)">Rs. 45,230</div>
+            </div>
+            <div class="summary-card">
+              <div class="sm-label">Average COD per Package</div>
+              <div class="sm-value">Rs. 1,450</div>
+            </div>
+          </div>
+
+          <!-- Monthly Breakdown -->
+          <div style="font-size:.82rem;font-weight:700;color:var(--teal-dark);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Monthly Breakdown</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Total COD</th>
+                  <th>Collected</th>
+                  <th>Transferred</th>
+                  <th>Pending</th>
+                  <th>Collection Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:700">March 2026</td>
+                  <td>Rs. 52,300</td>
+                  <td>Rs. 43,100</td>
+                  <td>Rs. 38,500</td>
+                  <td style="color:var(--red);font-weight:700">Rs. 9,200</td>
+                  <td><span class="badge b-green">82.4%</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700">February 2026</td>
+                  <td>Rs. 48,700</td>
+                  <td>Rs. 41,200</td>
+                  <td>Rs. 39,800</td>
+                  <td style="color:var(--red);font-weight:700">Rs. 7,500</td>
+                  <td><span class="badge b-green">84.6%</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700">January 2026</td>
+                  <td>Rs. 61,400</td>
+                  <td>Rs. 54,800</td>
+                  <td>Rs. 52,100</td>
+                  <td style="color:var(--red);font-weight:700">Rs. 6,600</td>
+                  <td><span class="badge b-green">89.3%</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700">December 2025</td>
+                  <td>Rs. 73,200</td>
+                  <td>Rs. 62,400</td>
+                  <td>Rs. 58,870</td>
+                  <td style="color:var(--red);font-weight:700">Rs. 10,800</td>
+                  <td><span class="badge b-green">85.2%</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panel -->
+
+  </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div class="modal-overlay" id="codModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span>COD Details</span>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+// User info from sessionStorage
+(function(){
+  var name = sessionStorage.getItem('packrs_name') || 'Vendor Portal';
+  var initials = sessionStorage.getItem('packrs_initials') || 'VP';
+  document.getElementById('userName').textContent = name;
+  document.getElementById('userAvatar').textContent = initials;
+})();
+
+// Tab switching
+(function(){
+  var btns = document.querySelectorAll('.tab-btn');
+  var tabs = document.querySelectorAll('.tab-content');
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      btns.forEach(function(b){ b.classList.remove('active'); });
+      tabs.forEach(function(t){ t.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById(btn.getAttribute('data-tab')).classList.add('active');
+    });
+  });
+})();
+
+// Filter collection table
+function filterCollection(){
+  var from = document.getElementById('filterFrom').value;
+  var to = document.getElementById('filterTo').value;
+  var status = document.getElementById('filterStatus').value;
+  var rows = document.querySelectorAll('#collectionTable tbody tr');
+  rows.forEach(function(row){
+    var rowStatus = row.getAttribute('data-status');
+    var rowDate = row.children[2].textContent;
+    var showStatus = (status === 'All' || rowStatus === status);
+    var showDate = true;
+    if(from && rowDate < from) showDate = false;
+    if(to && rowDate > to) showDate = false;
+    row.style.display = (showStatus && showDate) ? '' : 'none';
+  });
+}
+
+function resetFilter(){
+  document.getElementById('filterFrom').value = '2026-03-01';
+  document.getElementById('filterTo').value = '2026-03-31';
+  document.getElementById('filterStatus').value = 'All';
+  var rows = document.querySelectorAll('#collectionTable tbody tr');
+  rows.forEach(function(row){ row.style.display = ''; });
+}
+
+// View COD details modal
+function viewCOD(tracking, date, customer, dest, amount, status, remarks){
+  var statusClass = status === 'Collected' ? 'b-green' : status === 'Pending' ? 'b-orange' : 'b-red';
+  document.getElementById('modalBody').innerHTML =
+    '<div class="detail-row"><span class="detail-label">Tracking ID</span><span class="detail-value" style="color:var(--teal-dark)">' + tracking + '</span></div>' +
+    '<div class="detail-row"><span class="detail-label">Date</span><span class="detail-value">' + date + '</span></div>' +
+    '<div class="detail-row"><span class="detail-label">Customer</span><span class="detail-value">' + customer + '</span></div>' +
+    '<div class="detail-row"><span class="detail-label">Destination</span><span class="detail-value">' + dest + '</span></div>' +
+    '<div class="detail-row"><span class="detail-label">COD Amount</span><span class="detail-value">Rs. ' + amount + '</span></div>' +
+    '<div class="detail-row"><span class="detail-label">Status</span><span class="badge ' + statusClass + '">' + status + '</span></div>' +
+    '<div class="detail-row"><span class="detail-label">Remarks</span><span class="detail-value">' + remarks + '</span></div>';
+  document.getElementById('codModal').classList.add('show');
+}
+
+function closeModal(){
+  document.getElementById('codModal').classList.remove('show');
+}
+
+// Close modal on overlay click
+document.getElementById('codModal').addEventListener('click', function(e){
+  if(e.target === this) closeModal();
+});
+</script>
+<script src="js/auth.js"></script>
+</body>
+</html>
