@@ -620,6 +620,145 @@
       to   { transform: translateX(0);   opacity: 1; }
     }
 
+    /* ── QR SCANNER OVERLAY ──────────────────────────── */
+    .qr-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.7);
+      z-index: 600;
+      align-items: center;
+      justify-content: center;
+    }
+    .qr-overlay.show { display: flex; }
+    .qr-scanner-box {
+      background: var(--white);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 440px;
+      overflow: hidden;
+      animation: modalIn .2s ease;
+    }
+    .qr-scanner-head {
+      background: var(--teal-dark);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 800;
+      font-size: .9rem;
+    }
+    .qr-scanner-head button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+    .qr-video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      background: #111;
+      overflow: hidden;
+    }
+    .qr-video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .qr-viewfinder {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px; height: 200px;
+      border: 3px solid var(--teal);
+      border-radius: 12px;
+      box-shadow: 0 0 0 9999px rgba(0,0,0,.35);
+    }
+    .qr-viewfinder::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--teal);
+      animation: qrScanLine 2s ease-in-out infinite;
+    }
+    @keyframes qrScanLine {
+      0%, 100% { top: 0; }
+      50% { top: calc(100% - 3px); }
+    }
+    .qr-scanner-body {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .qr-scanner-body .scan-label {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 6px;
+    }
+    .qr-scanner-body .scan-label span { color: var(--red); }
+    .qr-scanner-body input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: .85rem;
+      color: var(--text);
+      outline: none;
+    }
+    .qr-scanner-body input:focus { border-color: var(--teal); }
+    .qr-scanner-footer {
+      padding: 14px 20px;
+      text-align: center;
+      font-size: .82rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    .qr-scanner-footer .qr-status {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .qr-scanner-footer .qr-hint {
+      font-size: .75rem;
+    }
+    .qr-scanned-count {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: var(--teal-light);
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+    }
+    .qr-error-msg {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    .qr-error-msg svg {
+      width: 48px; height: 48px;
+      color: var(--border);
+      margin-bottom: 12px;
+    }
+    .qr-error-msg .btn-retry {
+      margin-top: 14px;
+      padding: 8px 20px;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
     /* ── PRINT STYLES ────────────────────────────────── */
     @media print {
       .sidenav, header, .filter-panel, .table-panel,
@@ -802,7 +941,10 @@
         </div>
         <div id="actionBtns" class="action-btns-row">
           <button class="act-btn act-btn-outline" onclick="assignCourier()">Assign Courier</button>
-          <button class="act-btn act-btn-dark" onclick="window.location.href='warehouse-qr.html'">&#9634; Assign Rider QR</button>
+          <button class="act-btn act-btn-dark" onclick="openQRScanner()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7" stroke-dasharray="2 2"/></svg>
+            Assign Rider QR
+          </button>
           <button class="act-btn act-btn-teal" onclick="assignRider()">Assign Rider</button>
           <button class="act-btn act-btn-teal" onclick="generateLabel()">Generate Label</button>
           <button class="act-btn act-btn-outline" onclick="printSelected()">Print</button>
@@ -911,6 +1053,66 @@
     <div class="modal-footer">
       <button class="act-btn act-btn-teal" onclick="confirmAssignCourier()">Assign</button>
       <button class="act-btn act-btn-outline" onclick="closeAssignCourierModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QR SCANNER OVERLAY ════════════════════════════════════ -->
+<div class="qr-overlay" id="qrOverlay">
+  <div class="qr-scanner-box">
+    <div class="qr-scanner-head">
+      <span>Scan Package QR Code</span>
+      <button onclick="closeQRScanner()">&times;</button>
+    </div>
+    <div class="qr-video-wrap" id="qrVideoWrap">
+      <video id="qrVideo" playsinline></video>
+      <div class="qr-viewfinder"></div>
+    </div>
+    <div class="qr-scanner-body">
+      <div class="scan-label">Or enter Package Number <span>*</span></div>
+      <input type="text" id="qrManualInput" placeholder="Type package number and press Enter" />
+    </div>
+    <div class="qr-scanned-count">
+      <span>Scanned packages: <span id="qrScannedNum">0</span></span>
+      <button class="act-btn act-btn-teal" style="padding:6px 14px;font-size:.78rem;" onclick="closeQRAndAssign()">Assign Rider to Scanned</button>
+    </div>
+    <div class="qr-scanner-footer">
+      <div class="qr-status" id="qrStatus">Initializing camera...</div>
+      <div class="qr-hint">Position the QR code within the frame to scan</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ASSIGN QR RIDER MODAL ════════════════════════════════ -->
+<div class="modal-bg" id="assignQRRiderModal">
+  <div class="modal" style="max-width:550px;">
+    <div class="modal-head">
+      <h3>Assign Rider to Scanned Packages</h3>
+      <button class="modal-x" onclick="closeAssignQRRiderModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:8px;" id="qrAssignInfo"></p>
+      <div style="max-height:150px;overflow-y:auto;margin-bottom:14px;border:1px solid var(--border);border-radius:6px;padding:8px;">
+        <table style="width:100%;font-size:.78rem;">
+          <thead><tr style="background:var(--teal-light);"><th style="padding:4px 8px;">S.N.</th><th style="padding:4px 8px;">Package No.</th><th style="padding:4px 8px;">Customer</th><th style="padding:4px 8px;">Amount</th></tr></thead>
+          <tbody id="qrAssignTableBody"></tbody>
+        </table>
+      </div>
+      <div class="filter-group">
+        <label>Select Rider</label>
+        <select id="qrRiderSelect">
+          <option value="">-- Choose a rider --</option>
+          <option value="Amit Maharjan">Amit Maharjan</option>
+          <option value="Sandesh Dangol">Sandesh Dangol</option>
+          <option value="Rohan Maharjan">Rohan Maharjan</option>
+          <option value="Dinesh Dangol">Dinesh Dangol</option>
+          <option value="Nikesh Maharjan">Nikesh Maharjan</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="act-btn act-btn-teal" onclick="confirmQRAssignRider()">Assign</button>
+      <button class="act-btn act-btn-outline" onclick="closeAssignQRRiderModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -1164,6 +1366,187 @@
     }
     generateLabel();
     setTimeout(() => window.print(), 300);
+  }
+
+  // ── QR SCANNER ─────────────────────────────────────
+  let qrStream = null;
+  let qrScanning = false;
+  let qrAnimFrame = null;
+  const qrScannedPackages = [];
+
+  function openQRScanner() {
+    qrScannedPackages.length = 0;
+    updateQRCount();
+    document.getElementById('qrOverlay').classList.add('show');
+    document.getElementById('qrStatus').textContent = 'Initializing camera...';
+    document.getElementById('qrStatus').style.color = '';
+    document.getElementById('qrManualInput').value = '';
+    startCamera();
+  }
+
+  function closeQRScanner() {
+    document.getElementById('qrOverlay').classList.remove('show');
+    stopCamera();
+  }
+
+  function stopCamera() {
+    qrScanning = false;
+    if (qrAnimFrame) {
+      cancelAnimationFrame(qrAnimFrame);
+      qrAnimFrame = null;
+    }
+    if (qrStream) {
+      qrStream.getTracks().forEach(t => t.stop());
+      qrStream = null;
+    }
+    const video = document.getElementById('qrVideo');
+    if (video) video.srcObject = null;
+  }
+
+  async function startCamera() {
+    const video = document.getElementById('qrVideo');
+    const statusEl = document.getElementById('qrStatus');
+    const videoWrap = document.getElementById('qrVideoWrap');
+
+    try {
+      qrStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } }
+      });
+      video.srcObject = qrStream;
+      await video.play();
+      statusEl.textContent = 'Camera ready — scanning...';
+      statusEl.style.color = '#16a34a';
+      qrScanning = true;
+      scanFrame();
+    } catch (err) {
+      statusEl.textContent = 'Camera unavailable — use manual input below';
+      statusEl.style.color = '#d97706';
+      videoWrap.innerHTML = `
+        <div class="qr-error-msg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <div>Could not access camera.</div>
+          <div style="font-size:.75rem;margin-top:4px;">Allow camera permissions or type package numbers manually.</div>
+          <button class="btn-retry" onclick="retryCameraAccess()">Retry Camera</button>
+        </div>`;
+    }
+  }
+
+  function retryCameraAccess() {
+    const videoWrap = document.getElementById('qrVideoWrap');
+    videoWrap.innerHTML = '<video id="qrVideo" playsinline></video><div class="qr-viewfinder"></div>';
+    startCamera();
+  }
+
+  function scanFrame() {
+    if (!qrScanning) return;
+    const video = document.getElementById('qrVideo');
+    if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
+      qrAnimFrame = requestAnimationFrame(scanFrame);
+      return;
+    }
+
+    if ('BarcodeDetector' in window) {
+      const detector = new BarcodeDetector({ formats: ['qr_code'] });
+      detector.detect(video).then(codes => {
+        if (codes.length > 0) {
+          handleQRResult(codes[0].rawValue);
+          return;
+        }
+        qrAnimFrame = requestAnimationFrame(scanFrame);
+      }).catch(() => {
+        qrAnimFrame = requestAnimationFrame(scanFrame);
+      });
+    } else {
+      document.getElementById('qrStatus').textContent = 'QR detection not supported — use manual input below';
+      document.getElementById('qrStatus').style.color = '#d97706';
+      qrScanning = false;
+    }
+  }
+
+  function handleQRResult(value) {
+    qrScanning = false;
+    const statusEl = document.getElementById('qrStatus');
+    const val = value.trim().toUpperCase();
+    processQRScannedPackage(val);
+    statusEl.textContent = 'Scanned: ' + val;
+    statusEl.style.color = '#16a34a';
+
+    setTimeout(() => {
+      if (document.getElementById('qrOverlay').classList.contains('show')) {
+        statusEl.textContent = 'Camera ready — scanning...';
+        qrScanning = true;
+        scanFrame();
+      }
+    }, 1500);
+  }
+
+  // Manual input inside QR scanner
+  document.getElementById('qrManualInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = this.value.trim().toUpperCase();
+      if (!val) return;
+      processQRScannedPackage(val);
+      this.value = '';
+    }
+  });
+
+  function processQRScannedPackage(val) {
+    if (qrScannedPackages.find(p => p.pkgNum === val)) {
+      showToast('Package ' + val + ' already scanned.', 'error');
+      return;
+    }
+    const pkg = warehousePackages.find(p => p.pkgNum === val);
+    if (pkg) {
+      qrScannedPackages.push({ ...pkg });
+      showToast('Package ' + val + ' scanned!', 'success');
+      updateQRCount();
+    } else {
+      showToast('Package ' + val + ' not found.', 'error');
+    }
+  }
+
+  function updateQRCount() {
+    document.getElementById('qrScannedNum').textContent = qrScannedPackages.length;
+  }
+
+  // Close scanner and open assign rider modal with scanned packages
+  function closeQRAndAssign() {
+    if (qrScannedPackages.length === 0) {
+      showToast('Scan at least one package first.', 'error');
+      return;
+    }
+    closeQRScanner();
+
+    const tbody = document.getElementById('qrAssignTableBody');
+    tbody.innerHTML = '';
+    qrScannedPackages.forEach((p, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td style="padding:4px 8px;">${i + 1}</td><td style="padding:4px 8px;" class="pkg-id">${p.pkgNum}</td><td style="padding:4px 8px;">${p.customer}</td><td style="padding:4px 8px;">Rs ${p.amount}</td>`;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('qrAssignInfo').textContent =
+      `${qrScannedPackages.length} package(s) scanned and ready to assign.`;
+    document.getElementById('qrRiderSelect').value = '';
+    document.getElementById('assignQRRiderModal').classList.add('show');
+  }
+
+  function closeAssignQRRiderModal() {
+    document.getElementById('assignQRRiderModal').classList.remove('show');
+  }
+
+  function confirmQRAssignRider() {
+    const rider = document.getElementById('qrRiderSelect').value;
+    if (!rider) {
+      showToast('Please select a rider.', 'error');
+      return;
+    }
+    const count = qrScannedPackages.length;
+    const pkgNums = qrScannedPackages.map(p => p.pkgNum).join(', ');
+    closeAssignQRRiderModal();
+    qrScannedPackages.length = 0;
+    showToast(`Successfully assigned ${rider} to ${count} package(s): ${pkgNums}`, 'success');
   }
 </script>
 </body>

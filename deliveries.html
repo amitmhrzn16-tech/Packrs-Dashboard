@@ -450,6 +450,50 @@
     }
     .action-btn:hover { opacity: .85; }
     .action-btn.transit { background: var(--teal); }
+    .action-btn.plus {
+      background: #2563eb;
+      font-size: .9rem;
+      padding: 4px 12px;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .action-btn.plus:hover { background: #1d4ed8; }
+
+    /* ── BULK ACTION BAR ─────────────────────────────────── */
+    .bulk-action-bar {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      background: #eef6f6;
+      border-bottom: 2px solid var(--teal);
+    }
+    .bulk-action-bar.show { display: flex; }
+    .bulk-count {
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+    }
+    .bulk-btn {
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: .75rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      color: #fff;
+      transition: opacity .15s;
+    }
+    .bulk-btn:hover { opacity: .85; }
+    .bulk-btn.delivered  { background: #16a34a; }
+    .bulk-btn.cnr        { background: #e05c7a; }
+    .bulk-btn.postponed  { background: #d97706; }
+    .bulk-btn.online     { background: #7c3aed; }
+    .bulk-btn.vendor     { background: #2563eb; }
 
     /* ── PAGINATION ──────────────────────────────────────── */
     .pagination {
@@ -667,6 +711,70 @@
       resize: vertical;
       min-height: 80px;
     }
+    /* ── LATEST COMMENTS ────────────────────────────────── */
+    .comments-section {
+      margin-bottom: 18px;
+    }
+    .comments-section-title {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .comments-section-title .count-badge {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      font-size: .65rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+    .comment-list {
+      max-height: 160px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .comment-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: .78rem;
+    }
+    .comment-item:last-child { border-bottom: none; }
+    .comment-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .comment-status {
+      font-weight: 700;
+      font-size: .7rem;
+    }
+    .comment-date {
+      color: var(--muted);
+      font-size: .68rem;
+    }
+    .comment-remark {
+      color: var(--teal-dark);
+      font-weight: 600;
+      font-size: .72rem;
+    }
+    .comment-text {
+      color: var(--muted);
+      font-size: .72rem;
+      margin-top: 2px;
+    }
+    .no-comments {
+      padding: 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
     .modal-footer {
       display: flex;
       justify-content: flex-end;
@@ -934,6 +1042,15 @@
         </fieldset>
         <span class="in-transit-badge">In Transit</span>
       </div>
+      <!-- Bulk action bar -->
+      <div class="bulk-action-bar" id="bulkActionBar">
+        <span class="bulk-count" id="bulkCount">0 selected</span>
+        <button class="bulk-btn delivered" onclick="bulkStatusUpdate('delivered')">Delivered</button>
+        <button class="bulk-btn cnr" onclick="bulkStatusUpdate('cnr')">Call Not Received</button>
+        <button class="bulk-btn postponed" onclick="bulkStatusUpdate('postponed')">Postponed</button>
+        <button class="bulk-btn online" onclick="bulkStatusUpdate('online-pay')">Online Pay</button>
+        <button class="bulk-btn vendor" onclick="bulkStatusUpdate('online-pay-vendor')">Online Pay Vendor</button>
+      </div>
       <div class="table-wrap">
         <table id="deliveryTable">
           <thead>
@@ -987,6 +1104,17 @@
         <dt>Address</dt><dd id="modalAddress">—</dd>
       </div>
       <div id="modalStatusBadge"></div>
+
+      <!-- Latest Comments -->
+      <div class="comments-section" id="commentsSection">
+        <div class="comments-section-title">
+          Latest Comments <span class="count-badge" id="commentCount">0</span>
+        </div>
+        <div class="comment-list" id="commentList">
+          <div class="no-comments">No comments yet.</div>
+        </div>
+      </div>
+
       <div class="form-group">
         <label>Remarks <span class="required">*</span></label>
         <select id="modalRemarks">
@@ -1018,18 +1146,25 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-  // ── MOCK DATA ─────────────────────────────────────────
+  // ── MOCK DATA (with comments history) ─────────────────────
   const deliveries = [
-    { id:'KHJK3SUX', branch:'Head Office', vendor:'Bendthernd.0',    customer:'suprima bhattarai',  mobile:'9742557472', address:'gaidakot nawalparasi buddha chowk',  created:'2026/03/31', amount:0,    pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
-    { id:'LUUTLYDY', branch:'Chabahil',    vendor:'shoes splash',    customer:'nisha ale',           mobile:'9827303254', address:'bhairahawa',                          created:'2026/03/31', amount:1450, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
-    { id:'U7042BZ9', branch:'Chabahil',    vendor:'shoes splash',    customer:'mariyam khatun',      mobile:'9816428008', address:'pokhara miyapatan',                   created:'2026/03/31', amount:2100, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
-    { id:'WRD75KOF', branch:'Chabahil',    vendor:"people's smart",  customer:'sabina chettri',      mobile:'9763512408', address:'sankhuwasabha khandbari',              created:'2026/03/31', amount:1300, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
-    { id:'MJY9AECU', branch:'Chabahil',    vendor:"people's smart",  customer:'purnima gautam',      mobile:'9866005303', address:'valbari butwal',                       created:'2026/03/31', amount:2700, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
-    { id:'4PMWDRB1', branch:'Chabahil',    vendor:"people's smart",  customer:'binita thapa',        mobile:'9842824468', address:'deepnagar butwal',                     created:'2026/03/31', amount:1700, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
-    { id:'XKR82MNP', branch:'Head Office', vendor:'Bendthernd.0',    customer:'ram sharma',          mobile:'9801234567', address:'kalimati kathmandu',                   created:'2026/03/30', amount:850,  pkgType:'Inside Valley',  deliveryDate:'', courier:'NCM', status:'In Transit' },
-    { id:'QWE45TYU', branch:'Chabahil',    vendor:'shoes splash',    customer:'sita devi',           mobile:'9812345678', address:'bharatpur chitwan',                    created:'2026/03/30', amount:1200, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
-    { id:'PLM09OKN', branch:'Head Office', vendor:'Bendthernd.0',    customer:'hari bahadur',        mobile:'9845678901', address:'lakeside pokhara',                     created:'2026/03/29', amount:950,  pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
-    { id:'ZXC67VBN', branch:'Chabahil',    vendor:"people's smart",  customer:'geeta kumari',        mobile:'9867890123', address:'itahari sunsari',                      created:'2026/03/29', amount:3200, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
+    { id:'KHJK3SUX', branch:'Head Office', vendor:'Bendthernd.0',    customer:'suprima bhattarai',  mobile:'9742557472', address:'gaidakot nawalparasi buddha chowk',  created:'2026/03/31', amount:0,    pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit', activated:false, comments:[
+      { status:'Postponed', remark:'Customer not available', comment:'Will deliver tomorrow morning', date:'2026/03/30 14:20' },
+      { status:'Call Not Received', remark:'Phone switched off', comment:'Tried 3 times', date:'2026/03/29 10:15' }
+    ]},
+    { id:'LUUTLYDY', branch:'Chabahil',    vendor:'shoes splash',    customer:'nisha ale',           mobile:'9827303254', address:'bhairahawa',                          created:'2026/03/31', amount:1450, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit', activated:false, comments:[
+      { status:'Postponed', remark:'Customer requested postpone', comment:'Requested delivery on Friday', date:'2026/03/30 09:00' }
+    ]},
+    { id:'U7042BZ9', branch:'Chabahil',    vendor:'shoes splash',    customer:'mariyam khatun',      mobile:'9816428008', address:'pokhara miyapatan',                   created:'2026/03/31', amount:2100, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit', activated:false, comments:[] },
+    { id:'WRD75KOF', branch:'Chabahil',    vendor:"people's smart",  customer:'sabina chettri',      mobile:'9763512408', address:'sankhuwasabha khandbari',              created:'2026/03/31', amount:1300, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit', activated:false, comments:[] },
+    { id:'MJY9AECU', branch:'Chabahil',    vendor:"people's smart",  customer:'purnima gautam',      mobile:'9866005303', address:'valbari butwal',                       created:'2026/03/31', amount:2700, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit', activated:false, comments:[
+      { status:'Call Not Received', remark:'Customer not available', comment:'No one at home', date:'2026/03/30 16:45' }
+    ]},
+    { id:'4PMWDRB1', branch:'Chabahil',    vendor:"people's smart",  customer:'binita thapa',        mobile:'9842824468', address:'deepnagar butwal',                     created:'2026/03/31', amount:1700, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit', activated:false, comments:[] },
+    { id:'XKR82MNP', branch:'Head Office', vendor:'Bendthernd.0',    customer:'ram sharma',          mobile:'9801234567', address:'kalimati kathmandu',                   created:'2026/03/30', amount:850,  pkgType:'Inside Valley',  deliveryDate:'', courier:'NCM', status:'In Transit', activated:false, comments:[] },
+    { id:'QWE45TYU', branch:'Chabahil',    vendor:'shoes splash',    customer:'sita devi',           mobile:'9812345678', address:'bharatpur chitwan',                    created:'2026/03/30', amount:1200, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit', activated:false, comments:[] },
+    { id:'PLM09OKN', branch:'Head Office', vendor:'Bendthernd.0',    customer:'hari bahadur',        mobile:'9845678901', address:'lakeside pokhara',                     created:'2026/03/29', amount:950,  pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit', activated:false, comments:[] },
+    { id:'ZXC67VBN', branch:'Chabahil',    vendor:"people's smart",  customer:'geeta kumari',        mobile:'9867890123', address:'itahari sunsari',                      created:'2026/03/29', amount:3200, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit', activated:false, comments:[] },
   ];
 
   let activeDropdown = null;
@@ -1052,23 +1187,12 @@
 
     items.forEach((d, i) => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="chk-col"><input type="checkbox" data-id="${d.id}" /></td>
-        <td>${i + 1}</td>
-        <td>${d.branch}</td>
-        <td class="pkg-id">${d.id}</td>
-        <td>${d.vendor}</td>
-        <td>${d.customer}</td>
-        <td>${d.mobile}</td>
-        <td style="white-space:normal;min-width:160px;">${d.address}</td>
-        <td>${d.created}</td>
-        <td>${d.amount}</td>
-        <td>${d.pkgType}</td>
-        <td>${d.deliveryDate || '—'}</td>
-        <td>${d.courier}</td>
-        <td>
+      // Determine action button: "In Transit" first, then "+" after activation
+      let actionHTML;
+      if (d.activated) {
+        actionHTML = `
           <div class="action-wrapper">
-            <button class="action-btn transit" onclick="toggleDropdown(event, '${d.id}')">${d.status}</button>
+            <button class="action-btn plus" onclick="toggleDropdown(event, '${d.id}')" title="Set delivery status">+</button>
             <div class="action-dropdown" id="dropdown-${d.id}">
               <div class="action-dropdown-title">Update Status</div>
               <button class="action-dropdown-item" onclick="openStatusModal('${d.id}', 'delivered')">
@@ -1087,13 +1211,43 @@
                 <span class="dot dot-vendor"></span> Online Pay Vendor
               </button>
             </div>
-          </div>
-        </td>
+          </div>`;
+      } else {
+        actionHTML = `<button class="action-btn transit" onclick="activateRow(event, '${d.id}')">In Transit</button>`;
+      }
+
+      tr.innerHTML = `
+        <td class="chk-col"><input type="checkbox" data-id="${d.id}" onchange="updateBulkBar()" /></td>
+        <td>${i + 1}</td>
+        <td>${d.branch}</td>
+        <td class="pkg-id">${d.id}</td>
+        <td>${d.vendor}</td>
+        <td>${d.customer}</td>
+        <td>${d.mobile}</td>
+        <td style="white-space:normal;min-width:160px;">${d.address}</td>
+        <td>${d.created}</td>
+        <td>${d.amount}</td>
+        <td>${d.pkgType}</td>
+        <td>${d.deliveryDate || '—'}</td>
+        <td>${d.courier}</td>
+        <td>${actionHTML}</td>
       `;
       tbody.appendChild(tr);
     });
 
     document.getElementById('pagInfo').textContent = `Showing 1–${items.length} of ${items.length} deliveries`;
+    updateBulkBar();
+  }
+
+  // ── ACTIVATE ROW (In Transit -> +) ───────────────────────
+  function activateRow(e, id) {
+    e.stopPropagation();
+    const pkg = deliveries.find(d => d.id === id);
+    if (pkg) {
+      pkg.activated = true;
+      renderTable();
+      showToast(`Package ${id} ready for status update. Click + to set status.`, 'success');
+    }
   }
 
   // ── DROPDOWN TOGGLE ──────────────────────────────────────
@@ -1116,9 +1270,44 @@
     }
   });
 
+  // ── BULK SELECT & ACTIONS ────────────────────────────────
+  function getSelectedIds() {
+    return [...document.querySelectorAll('#deliveryTbody input[type="checkbox"]:checked')]
+      .map(cb => cb.dataset.id);
+  }
+
+  function updateBulkBar() {
+    const selected = getSelectedIds();
+    const bar = document.getElementById('bulkActionBar');
+    if (selected.length > 0) {
+      bar.classList.add('show');
+      document.getElementById('bulkCount').textContent = selected.length + ' selected';
+    } else {
+      bar.classList.remove('show');
+    }
+  }
+
+  function bulkStatusUpdate(status) {
+    const ids = getSelectedIds();
+    if (ids.length === 0) return;
+
+    // Activate all selected, then open modal for first one
+    ids.forEach(id => {
+      const pkg = deliveries.find(d => d.id === id);
+      if (pkg) pkg.activated = true;
+    });
+
+    // Store bulk IDs for batch processing
+    bulkIds = ids;
+    openStatusModal(ids[0], status, true);
+  }
+
+  let bulkIds = [];
+
   // ── MODAL ────────────────────────────────────────────────
   let currentPkgId = null;
   let currentStatus = null;
+  let isBulkMode = false;
 
   const statusLabels = {
     'delivered':         'Delivered',
@@ -1128,7 +1317,7 @@
     'online-pay-vendor': 'Online Pay Vendor',
   };
 
-  function openStatusModal(pkgId, status) {
+  function openStatusModal(pkgId, status, bulk) {
     if (activeDropdown) {
       activeDropdown.classList.remove('show');
       activeDropdown = null;
@@ -1136,19 +1325,23 @@
 
     currentPkgId = pkgId;
     currentStatus = status;
+    isBulkMode = bulk || false;
 
     const pkg = deliveries.find(d => d.id === pkgId);
     if (!pkg) return;
 
-    document.getElementById('modalPkgId').textContent = pkg.id;
-    document.getElementById('modalCustName').textContent = pkg.customer;
-    document.getElementById('modalMobile').textContent = pkg.mobile;
-    document.getElementById('modalAddress').textContent = pkg.address;
-    document.getElementById('modalTitle').textContent = 'Update to: ' + statusLabels[status];
+    document.getElementById('modalPkgId').textContent = isBulkMode ? bulkIds.join(', ') : pkg.id;
+    document.getElementById('modalCustName').textContent = isBulkMode ? `${bulkIds.length} packages` : pkg.customer;
+    document.getElementById('modalMobile').textContent = isBulkMode ? '—' : pkg.mobile;
+    document.getElementById('modalAddress').textContent = isBulkMode ? '—' : pkg.address;
+    document.getElementById('modalTitle').textContent = (isBulkMode ? 'Bulk Update: ' : 'Update to: ') + statusLabels[status];
 
     const badgeEl = document.getElementById('modalStatusBadge');
     const cssClass = status === 'cnr' ? 'cnr' : status;
     badgeEl.innerHTML = `<span class="modal-status-label ${cssClass}">${statusLabels[status]}</span>`;
+
+    // Render latest comments
+    renderComments(pkg);
 
     document.getElementById('modalRemarks').value = '';
     document.getElementById('modalComment').value = '';
@@ -1156,10 +1349,40 @@
     document.getElementById('statusModal').classList.add('show');
   }
 
+  function renderComments(pkg) {
+    const list = document.getElementById('commentList');
+    const countEl = document.getElementById('commentCount');
+    const comments = pkg.comments || [];
+
+    countEl.textContent = comments.length;
+
+    if (comments.length === 0) {
+      list.innerHTML = '<div class="no-comments">No previous comments.</div>';
+      return;
+    }
+
+    list.innerHTML = comments.map(c => `
+      <div class="comment-item">
+        <div class="comment-item-header">
+          <span class="comment-status" style="color:${getStatusColor(c.status)}">${c.status}</span>
+          <span class="comment-date">${c.date}</span>
+        </div>
+        <div class="comment-remark">${c.remark}</div>
+        ${c.comment ? `<div class="comment-text">${c.comment}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  function getStatusColor(status) {
+    const map = { 'Delivered':'#16a34a', 'Call Not Received':'#e05c7a', 'Postponed':'#d97706', 'Online Pay':'#7c3aed', 'Online Pay Vendor':'#2563eb' };
+    return map[status] || '#6b7280';
+  }
+
   function closeModal() {
     document.getElementById('statusModal').classList.remove('show');
     currentPkgId = null;
     currentStatus = null;
+    isBulkMode = false;
   }
 
   function submitStatusUpdate() {
@@ -1170,16 +1393,36 @@
     }
 
     const comment = document.getElementById('modalComment').value;
-    const pkg = deliveries.find(d => d.id === currentPkgId);
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '/') + ' ' + now.toTimeString().slice(0,5);
 
-    if (pkg) {
-      pkg.status = statusLabels[currentStatus];
-      pkg.deliveryDate = new Date().toISOString().slice(0, 10).replace(/-/g, '/');
-    }
+    const idsToUpdate = isBulkMode ? bulkIds : [currentPkgId];
 
+    idsToUpdate.forEach(id => {
+      const pkg = deliveries.find(d => d.id === id);
+      if (pkg) {
+        // Add comment to history
+        pkg.comments.unshift({
+          status: statusLabels[currentStatus],
+          remark: remarks,
+          comment: comment,
+          date: dateStr
+        });
+        pkg.status = statusLabels[currentStatus];
+        pkg.deliveryDate = now.toISOString().slice(0, 10).replace(/-/g, '/');
+      }
+    });
+
+    const count = idsToUpdate.length;
     closeModal();
+    bulkIds = [];
+
+    // Uncheck all
+    document.querySelectorAll('#deliveryTbody input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.getElementById('selectAll').checked = false;
+
     renderTable();
-    showToast(`Package ${currentPkgId || ''} status updated to "${statusLabels[currentStatus] || ''}" successfully!`, 'success');
+    showToast(`${count} package${count > 1 ? 's' : ''} updated to "${statusLabels[currentStatus]}" successfully!`, 'success');
   }
 
   // Close modal on overlay click
@@ -1240,6 +1483,7 @@
     document.querySelectorAll('#deliveryTbody input[type="checkbox"]').forEach(cb => {
       cb.checked = this.checked;
     });
+    updateBulkBar();
   });
 
   // ── PAGINATION (demo) ────────────────────────────────────
