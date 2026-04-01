@@ -117,6 +117,56 @@
     /* CHART */
     .chart-wrap{position:relative;height:220px}
 
+    /* SECTION DIVIDER */
+    .section-divider{display:flex;align-items:center;gap:12px;margin:8px 0}
+    .section-divider .divider-line{flex:1;height:2px;background:var(--border)}
+    .section-title{font-size:1.1rem;font-weight:800;color:var(--teal-dark);white-space:nowrap;display:flex;align-items:center;gap:8px}
+    .section-title svg{width:20px;height:20px;fill:none;stroke:var(--teal-dark);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    /* LOCATION STAT CARDS */
+    .loc-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:1100px){.loc-stat-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.loc-stat-grid{grid-template-columns:1fr 1fr}}
+    .loc-stat-card{background:var(--white);border:2px solid var(--border);border-radius:12px;padding:16px 20px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+    .loc-stat-card .stat-icon{font-size:1.6rem;position:absolute;top:14px;right:18px;opacity:.35;z-index:1}
+    .loc-stat-card .stat-label{color:var(--teal-dark)}
+    .loc-stat-card .stat-value{color:var(--text);font-size:1.6rem;font-weight:800;line-height:1.1;margin:6px 0 0}
+
+    /* TWO COL */
+    .panels-2{display:grid;grid-template-columns:60% 1fr;gap:16px}
+    @media(max-width:900px){.panels-2{grid-template-columns:1fr}}
+
+    /* MAP */
+    .map-placeholder{position:relative;background:#1a1a2e;height:400px;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+    .map-label{color:var(--teal);font-size:1rem;font-weight:700;z-index:2;position:relative}
+    .map-emoji{font-size:2rem;z-index:2;position:relative}
+    .map-grid-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(58,175,169,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(58,175,169,.08) 1px,transparent 1px);background-size:40px 40px}
+    .map-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:#22c55e;z-index:3}
+    .map-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;background:rgba(34,197,94,.35);animation:pulse-dot 1.8s ease-in-out infinite}
+    @keyframes pulse-dot{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.7);opacity:0}}
+    .map-dot.delivery{background:#3aafa9}
+    .map-dot.delivery::after{background:rgba(58,175,169,.35)}
+    .map-dot.idle{background:#f59e0b}
+    .map-dot.idle::after{background:rgba(245,158,11,.35)}
+    .map-filter{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding-top:12px}
+    .map-filter label{font-size:.75rem;font-weight:700;color:var(--teal-dark);white-space:nowrap}
+    .map-filter select{padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;background:var(--white);outline:none;color:var(--text)}
+    .map-filter select:focus{border-color:var(--teal)}
+
+    /* RIDER LIST */
+    .rider-list{max-height:480px;overflow-y:auto;display:flex;flex-direction:column}
+    .rider-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)}
+    .rider-item:last-child{border-bottom:none}
+    .rider-avatar{width:36px;height:36px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.78rem;flex-shrink:0}
+    .rider-info{flex:1;min-width:0}
+    .rider-name{font-size:.82rem;font-weight:700;color:var(--text)}
+    .rider-phone{font-size:.7rem;color:var(--muted)}
+    .rider-meta{font-size:.68rem;color:var(--muted);margin-top:1px}
+    .rider-right{text-align:right;flex-shrink:0}
+    .b-teal{background:var(--teal-light);color:var(--teal-dark)}
+    .b-amber{background:#fef3c7;color:#d97706}
+    .b-muted{background:#f3f4f6;color:var(--muted)}
+
     /* MODAL */
     .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center}
     .modal-bg.open{display:flex}
@@ -175,7 +225,7 @@
     <li><a href="manifesto.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Manifesto</span></a></li>
     <li><a href="invoices.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoice</span></a></li>
     <li><a href="accounts.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Accounting</span></a></li>
-    <li><a href="rider-location.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Rider Location</span></a></li>
+    <li><a href="riders.html#rider-location" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Rider Location</span></a></li>
     <li><a href="communication.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Communication</span></a></li>
     <li><a href="reports.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Reports</span></a></li>
     <li><a href="vendor-report.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg><span>Vendor Report</span></a></li>
@@ -308,6 +358,228 @@
           <button class="pag-btn">&#8249; Prev</button>
           <button class="pag-btn">Next &#8250;</button>
         </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- RIDER LOCATION SUBSECTION -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section-divider" id="rider-location">
+      <span class="divider-line"></span>
+      <span class="section-title">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Rider Location
+      </span>
+      <span class="divider-line"></span>
+    </div>
+
+    <!-- Location Stat Cards -->
+    <div class="loc-stat-grid">
+      <div class="loc-stat-card">
+        <span class="stat-icon">&#127758;</span>
+        <div class="stat-label">Online Riders</div>
+        <div class="stat-value">12</div>
+      </div>
+      <div class="loc-stat-card">
+        <span class="stat-icon">&#128308;</span>
+        <div class="stat-label">Offline</div>
+        <div class="stat-value">8</div>
+      </div>
+      <div class="loc-stat-card">
+        <span class="stat-icon">&#128666;</span>
+        <div class="stat-label">On Delivery</div>
+        <div class="stat-value">9</div>
+      </div>
+      <div class="loc-stat-card">
+        <span class="stat-icon">&#9200;</span>
+        <div class="stat-label">Idle</div>
+        <div class="stat-value">3</div>
+      </div>
+    </div>
+
+    <!-- Map + Active Riders -->
+    <div class="panels-2">
+      <div class="panel">
+        <div class="panel-hdr">
+          <span>Live Map View</span>
+          <span style="font-size:.75rem;font-weight:600;opacity:.8;">&#128308; GPS Tracking Active</span>
+        </div>
+        <div class="panel-body">
+          <div class="map-placeholder">
+            <div class="map-grid-lines"></div>
+            <div class="map-dot delivery" style="top:18%;left:25%"></div>
+            <div class="map-dot" style="top:30%;left:58%"></div>
+            <div class="map-dot delivery" style="top:52%;left:40%"></div>
+            <div class="map-dot idle" style="top:65%;left:72%"></div>
+            <div class="map-dot delivery" style="top:78%;left:18%"></div>
+            <div class="map-emoji">&#128506;</div>
+            <div class="map-label">Live Map — GPS Tracking Active</div>
+          </div>
+          <div class="map-filter">
+            <label>City:</label>
+            <select>
+              <option>All Cities</option>
+              <option>Kathmandu</option>
+              <option>Pokhara</option>
+              <option>Lalitpur</option>
+              <option>Bhaktapur</option>
+            </select>
+            <label>Status:</label>
+            <select>
+              <option>All Status</option>
+              <option>Online</option>
+              <option>Offline</option>
+              <option>On Delivery</option>
+              <option>Idle</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hdr">
+          <span>Active Riders</span>
+          <span style="font-size:.75rem;font-weight:600;opacity:.8;">12 riders</span>
+        </div>
+        <div class="panel-body" style="padding:12px 16px">
+          <div class="rider-list">
+            <div class="rider-item">
+              <div class="rider-avatar">AT</div>
+              <div class="rider-info">
+                <div class="rider-name">Amit Tamang</div>
+                <div class="rider-phone">9801234567</div>
+                <div class="rider-meta">2 min ago &middot; Thamel, KTM</div>
+              </div>
+              <div class="rider-right"><span class="badge b-teal">On Delivery</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">RS</div>
+              <div class="rider-info">
+                <div class="rider-name">Rajan Shrestha</div>
+                <div class="rider-phone">9812345678</div>
+                <div class="rider-meta">Just now &middot; Lazimpat, KTM</div>
+              </div>
+              <div class="rider-right"><span class="badge b-green">Online</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">SM</div>
+              <div class="rider-info">
+                <div class="rider-name">Sunil Magar</div>
+                <div class="rider-phone">9823456789</div>
+                <div class="rider-meta">5 min ago &middot; Patan, LTP</div>
+              </div>
+              <div class="rider-right"><span class="badge b-teal">On Delivery</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">BR</div>
+              <div class="rider-info">
+                <div class="rider-name">Bibek Rai</div>
+                <div class="rider-phone">9834567890</div>
+                <div class="rider-meta">1 min ago &middot; Bhaktapur</div>
+              </div>
+              <div class="rider-right"><span class="badge b-green">Online</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">NK</div>
+              <div class="rider-info">
+                <div class="rider-name">Nabin KC</div>
+                <div class="rider-phone">9845678901</div>
+                <div class="rider-meta">12 min ago &middot; Chabahil, KTM</div>
+              </div>
+              <div class="rider-right"><span class="badge b-amber">Idle</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">PT</div>
+              <div class="rider-info">
+                <div class="rider-name">Pawan Thapa</div>
+                <div class="rider-phone">9856789012</div>
+                <div class="rider-meta">3 min ago &middot; Kupondol, KTM</div>
+              </div>
+              <div class="rider-right"><span class="badge b-teal">On Delivery</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">SS</div>
+              <div class="rider-info">
+                <div class="rider-name">Sagar Sharma</div>
+                <div class="rider-phone">9867890123</div>
+                <div class="rider-meta">Just now &middot; Baluwatar, KTM</div>
+              </div>
+              <div class="rider-right"><span class="badge b-green">Online</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">DB</div>
+              <div class="rider-info">
+                <div class="rider-name">Dinesh Basnet</div>
+                <div class="rider-phone">9878901234</div>
+                <div class="rider-meta">2 hr ago &middot; &#8212;</div>
+              </div>
+              <div class="rider-right"><span class="badge b-muted">Offline</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">KL</div>
+              <div class="rider-info">
+                <div class="rider-name">Kiran Lama</div>
+                <div class="rider-phone">9889012345</div>
+                <div class="rider-meta">8 min ago &middot; Kirtipur</div>
+              </div>
+              <div class="rider-right"><span class="badge b-teal">On Delivery</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">PJ</div>
+              <div class="rider-info">
+                <div class="rider-name">Prabin Joshi</div>
+                <div class="rider-phone">9890123456</div>
+                <div class="rider-meta">4 min ago &middot; Banasthali</div>
+              </div>
+              <div class="rider-right"><span class="badge b-green">Online</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">AG</div>
+              <div class="rider-info">
+                <div class="rider-name">Anil Gurung</div>
+                <div class="rider-phone">9801122334</div>
+                <div class="rider-meta">1 hr ago &middot; &#8212;</div>
+              </div>
+              <div class="rider-right"><span class="badge b-muted">Offline</span></div>
+            </div>
+            <div class="rider-item">
+              <div class="rider-avatar">RK</div>
+              <div class="rider-info">
+                <div class="rider-name">Roshan Karki</div>
+                <div class="rider-phone">9812233445</div>
+                <div class="rider-meta">6 min ago &middot; Budhanilkantha</div>
+              </div>
+              <div class="rider-right"><span class="badge b-teal">On Delivery</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rider Activity Log -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span>Rider Activity Log</span>
+        <span style="font-size:.75rem;font-weight:600;opacity:.8;">Today</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Time</th><th>Rider</th><th>Event</th><th>Location</th><th>Details</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>10:42 AM</td><td>Amit Tamang</td><td><span class="badge b-teal">Package Picked Up</span></td><td>Thamel, KTM</td><td>PKG-00821 picked up from sender</td></tr>
+            <tr><td>10:35 AM</td><td>Kiran Lama</td><td><span class="badge b-green">Package Delivered</span></td><td>Kirtipur</td><td>PKG-00798 delivered successfully — signed by recipient</td></tr>
+            <tr><td>10:28 AM</td><td>Rajan Shrestha</td><td><span class="badge" style="background:#e0f2fe;color:#0369a1;">Location Update</span></td><td>Lazimpat, KTM</td><td>GPS ping — rider en route to pickup</td></tr>
+            <tr><td>10:15 AM</td><td>Pawan Thapa</td><td><span class="badge b-teal">Package Picked Up</span></td><td>Kupondol, KTM</td><td>PKG-00834 picked up from Kupondol branch</td></tr>
+            <tr><td>09:58 AM</td><td>Roshan Karki</td><td><span class="badge" style="background:#e0f2fe;color:#0369a1;">Location Update</span></td><td>Budhanilkantha</td><td>GPS ping — heading south on Ring Road</td></tr>
+            <tr><td>09:45 AM</td><td>Sunil Magar</td><td><span class="badge b-green">Package Delivered</span></td><td>Patan, LTP</td><td>PKG-00812 delivered — OTP confirmed</td></tr>
+            <tr><td>09:30 AM</td><td>Bibek Rai</td><td><span class="badge b-amber">Started Shift</span></td><td>Bhaktapur</td><td>Rider checked in — shift started at depot</td></tr>
+            <tr><td>09:12 AM</td><td>Nabin KC</td><td><span class="badge b-amber">Idle</span></td><td>Chabahil, KTM</td><td>Waiting for next assignment — no active package</td></tr>
+            <tr><td>08:55 AM</td><td>Dinesh Basnet</td><td><span class="badge b-muted">Ended Shift</span></td><td>&#8212;</td><td>Rider logged out — shift ended, 6 deliveries completed</td></tr>
+            <tr><td>08:40 AM</td><td>Prabin Joshi</td><td><span class="badge b-amber">Started Shift</span></td><td>Banasthali</td><td>Rider checked in — assigned 4 packages for the day</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
