@@ -283,12 +283,12 @@
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       white-space: nowrap;
       transition: background .15s;
     }
     .btn-scan-qr:hover { background: var(--teal-dark); }
-    .btn-scan-qr svg { width: 18px; height: 18px; }
+    .btn-scan-qr svg { width: 20px; height: 20px; flex-shrink: 0; }
 
     /* ── QR SCANNER OVERLAY ──────────────────────────── */
     .qr-overlay {
@@ -395,6 +395,50 @@
       font-weight: 700;
       cursor: pointer;
     }
+    .qr-scanner-body {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .qr-scanner-body .qr-manual-label {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 6px;
+    }
+    .qr-scanner-body input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: .85rem;
+      color: var(--text);
+      outline: none;
+    }
+    .qr-scanner-body input:focus { border-color: var(--teal); }
+    .qr-scanned-count {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: var(--teal-light);
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+    }
+    .qr-done-btn {
+      padding: 6px 14px;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: .78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .qr-done-btn:hover { background: var(--teal-dark); }
 
     /* ── SCANNED LIST TABLE ──────────────────────────── */
     .table-panel {
@@ -754,9 +798,13 @@
         <div class="scan-input-row">
           <input type="text" class="scan-input" id="scanInput" placeholder="Package Number" autofocus />
           <button class="btn-scan-qr" onclick="openQRScanner()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-              <rect x="14" y="14" width="7" height="7" stroke-dasharray="2 2"/>
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <rect x="1" y="1" width="4" height="4"/><rect x="7" y="1" width="4" height="4"/><rect x="1" y="7" width="4" height="4"/>
+              <rect x="7" y="7" width="4" height="4" opacity=".3"/>
+              <rect x="14" y="1" width="4" height="4"/><rect x="20" y="1" width="4" height="4"/><rect x="14" y="7" width="4" height="4"/>
+              <rect x="1" y="14" width="4" height="4"/><rect x="7" y="14" width="4" height="4"/><rect x="1" y="20" width="4" height="4"/>
+              <rect x="14" y="14" width="4" height="4" opacity=".3"/><rect x="20" y="14" width="4" height="4" opacity=".3"/>
+              <rect x="14" y="20" width="4" height="4" opacity=".3"/><rect x="20" y="20" width="4" height="4" opacity=".3"/>
             </svg>
             Scan QR
           </button>
@@ -768,12 +816,28 @@
     <div class="qr-overlay" id="qrOverlay">
       <div class="qr-scanner-box">
         <div class="qr-scanner-head">
-          <span>Scan Package QR Code</span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="16" height="16" style="vertical-align:middle;margin-right:6px;">
+              <rect x="1" y="1" width="4" height="4"/><rect x="7" y="1" width="4" height="4"/><rect x="1" y="7" width="4" height="4"/>
+              <rect x="14" y="1" width="4" height="4"/><rect x="20" y="1" width="4" height="4"/><rect x="14" y="7" width="4" height="4"/>
+              <rect x="1" y="14" width="4" height="4"/><rect x="7" y="14" width="4" height="4"/><rect x="1" y="20" width="4" height="4"/>
+              <rect x="14" y="14" width="3" height="3" opacity=".5"/><rect x="20" y="20" width="3" height="3" opacity=".5"/>
+            </svg>
+            Scan Package QR Code
+          </span>
           <button onclick="closeQRScanner()">&times;</button>
         </div>
         <div class="qr-video-wrap" id="qrVideoWrap">
           <video id="qrVideo" playsinline></video>
           <div class="qr-viewfinder"></div>
+        </div>
+        <div class="qr-scanner-body">
+          <div class="qr-manual-label">Or enter Package Number manually</div>
+          <input type="text" id="qrManualInput" placeholder="Type package number and press Enter" />
+        </div>
+        <div class="qr-scanned-count">
+          <span>Scanned: <strong id="qrScannedNum">0</strong> package(s)</span>
+          <button class="qr-done-btn" onclick="closeQRScanner()">Done</button>
         </div>
         <div class="qr-scanner-footer">
           <div class="qr-status" id="qrStatus">Initializing camera...</div>
@@ -889,15 +953,21 @@
   let qrAnimFrame = null;
 
   function openQRScanner() {
-    const overlay = document.getElementById('qrOverlay');
-    overlay.classList.add('show');
+    document.getElementById('qrOverlay').classList.add('show');
     document.getElementById('qrStatus').textContent = 'Initializing camera...';
+    document.getElementById('qrStatus').style.color = '';
+    document.getElementById('qrManualInput').value = '';
+    updateQRCount();
     startCamera();
   }
 
   function closeQRScanner() {
     document.getElementById('qrOverlay').classList.remove('show');
     stopCamera();
+  }
+
+  function updateQRCount() {
+    document.getElementById('qrScannedNum').textContent = scannedPackages.length;
   }
 
   function stopCamera() {
@@ -1020,6 +1090,7 @@
       scannedPackages.push({ ...pkg });
       showToast('Package ' + val + ' scanned successfully!', 'success');
       renderScannedTable();
+      updateQRCount();
     } else {
       showToast('Package ' + val + ' not found in the system.', 'error');
     }
@@ -1043,6 +1114,17 @@
 
   // Listen for Enter key on scan input
   document.getElementById('scanInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = this.value.trim().toUpperCase();
+      if (!val) return;
+      processScannedPackage(val);
+      this.value = '';
+    }
+  });
+
+  // Manual input inside QR scanner overlay
+  document.getElementById('qrManualInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
       const val = this.value.trim().toUpperCase();
