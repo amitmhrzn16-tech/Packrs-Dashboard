@@ -240,6 +240,66 @@
     }
     .breadcrumb a:hover { text-decoration: underline; }
 
+    /* ── STAT CARDS ──────────────────────────────────── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media(max-width:1100px) { .stat-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:600px)  { .stat-grid { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--teal);
+      color: #fff;
+      border-radius: 12px;
+      padding: 18px 20px 14px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .stat-card.orange { background: #e67e22; }
+    .stat-card.red { background: #e05c7a; }
+    .stat-card.blue { background: #2563eb; }
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: -28px; right: -28px;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.1);
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: -18px; right: 30px;
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.07);
+    }
+    .stat-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: .85;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 6px 0 8px;
+    }
+    .stat-subs { display: flex; flex-direction: column; gap: 2px; }
+    .stat-sub {
+      font-size: .72rem;
+      opacity: .8;
+      display: flex;
+      justify-content: space-between;
+    }
+    .stat-sub span:last-child { font-weight: 700; }
+
     /* ── FILTER PANEL ─────────────────────────────────── */
     .filter-panel {
       background: var(--white);
@@ -848,6 +908,46 @@
       </div>
     </div>
 
+    <!-- Mini Dashboard -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Warehouse Packages</div>
+        <div class="stat-value">320</div>
+        <div class="stat-subs">
+          <div class="stat-sub"><span>Inside Valley</span><span>180</span></div>
+          <div class="stat-sub"><span>Outside Valley</span><span>120</span></div>
+          <div class="stat-sub"><span>International</span><span>20</span></div>
+        </div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-label">Total Unassigned Packages</div>
+        <div class="stat-value">145</div>
+        <div class="stat-subs">
+          <div class="stat-sub"><span>Inside Valley</span><span>85</span></div>
+          <div class="stat-sub"><span>Outside Valley</span><span>48</span></div>
+          <div class="stat-sub"><span>International</span><span>12</span></div>
+        </div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-label">Total Return Receive</div>
+        <div class="stat-value">56</div>
+        <div class="stat-subs">
+          <div class="stat-sub"><span>Inside Valley</span><span>30</span></div>
+          <div class="stat-sub"><span>Outside Valley</span><span>20</span></div>
+          <div class="stat-sub"><span>International</span><span>6</span></div>
+        </div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">Unassigned 3+ Days</div>
+        <div class="stat-value">38</div>
+        <div class="stat-subs">
+          <div class="stat-sub"><span>Inside Valley</span><span>20</span></div>
+          <div class="stat-sub"><span>Outside Valley</span><span>14</span></div>
+          <div class="stat-sub"><span>International</span><span>4</span></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Search/Filter Panel -->
     <div class="filter-panel">
       <div class="filter-grid">
@@ -941,7 +1041,7 @@
         </div>
         <div id="actionBtns" class="action-btns-row">
           <button class="act-btn act-btn-outline" onclick="assignCourier()">Assign Courier</button>
-          <button class="act-btn act-btn-dark" onclick="openQRScanner()">
+          <button class="act-btn act-btn-dark" onclick="window.location.href='warehouse-qr.html'">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7" stroke-dasharray="2 2"/></svg>
             Assign Rider QR
           </button>

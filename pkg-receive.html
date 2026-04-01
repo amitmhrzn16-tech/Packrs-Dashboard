@@ -426,8 +426,6 @@
     ],
   };
 
-  };
-
   const riders = [
     { name:'Amit Maharjan',   zone:'Kathmandu Central',  initials:'AM' },
     { name:'Sandesh Dangol',  zone:'Lalitpur / Bhaktapur', initials:'SD' },
@@ -565,20 +563,82 @@
     document.getElementById('bulkAssignBtn').disabled = count === 0;
   }
 
-  // ═══ RIDER DROPDOWN ═══
+  // ═══ RECEIVE DROPDOWN ═══
+  function renderLoggedInUser() {
+    const list   = document.getElementById('riderList');
+    const search = document.getElementById('riderSearch');
+    if (search) search.style.display = 'none';
+
+    const userName     = document.querySelector('.user-name')?.textContent?.trim()
+                      || sessionStorage.getItem('packrs_name') || 'Unknown';
+    const userRole     = document.querySelector('.user-role')?.textContent?.trim() || 'Admin';
+    const userInitials = document.querySelector('.avatar')?.textContent?.trim()
+                      || sessionStorage.getItem('packrs_initials') || 'U';
+    const userEmail    = sessionStorage.getItem('packrs_email') || '';
+
+    const colorMap = {
+      'ADMIN':'#1a9e8f', 'Admin':'#1a9e8f',
+      'SUB-ADMIN':'#7c3aed', 'Sub-Admin':'#7c3aed',
+      'OPERATION MANAGER':'#d97706', 'Operation Manager':'#d97706',
+      'STAFF':'#2563eb', 'Staff':'#2563eb',
+      'VIEWER':'#6b7280', 'Viewer':'#6b7280',
+    };
+    const color = colorMap[userRole] || '#1a9e8f';
+
+    list.innerHTML = `
+      <div style="padding:8px 14px 5px;font-size:10px;font-weight:700;color:#94a3b8;
+                  letter-spacing:.08em;text-transform:uppercase;background:#f8fafc;
+                  border-bottom:1px solid #e9f0f0;">Logged-in User</div>
+      <div onclick="loggedInReceive()"
+           style="display:flex;align-items:center;gap:12px;padding:14px 16px;
+                  cursor:pointer;background:#fff;transition:background .15s;"
+           onmouseover="this.style.background='#f0faf8'"
+           onmouseout="this.style.background='#fff'">
+        <div style="width:42px;height:42px;border-radius:50%;background:${color};color:#fff;
+                    display:flex;align-items:center;justify-content:center;font-size:14px;
+                    font-weight:700;flex-shrink:0;box-shadow:0 2px 8px ${color}55;">
+          ${userInitials}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:14px;color:#1a2f3a;">${userName}</div>
+          <div style="font-size:11px;color:#6b8a99;margin-top:2px;">${userEmail}</div>
+        </div>
+        <div style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;
+                    background:${color}18;color:${color};flex-shrink:0;">${userRole}</div>
+      </div>
+      <div style="padding:8px 16px 10px;font-size:11px;color:#94a3b8;text-align:center;
+                  border-top:1px solid #f0f0f0;background:#fafcfc;">
+        Tap to confirm receive as <strong style="color:${color};">${userName}</strong>
+      </div>`;
+  }
+
+  function loggedInReceive() {
+    if (!document.getElementById('receiveCondition')) {
+      const inp = document.createElement('input');
+      inp.type = 'hidden'; inp.id = 'receiveCondition'; inp.value = 'Good';
+      document.body.appendChild(inp);
+    }
+    confirmReceive();
+  }
+
+  function filterRiders() {}
+
   function toggleRiderDropdown() {
     const dd = document.getElementById('riderDropdown');
     dd.classList.toggle('open');
     if (dd.classList.contains('open')) {
-      document.getElementById('confirmCount').textContent = selectedPkgs.size;
+      const hdr = dd.querySelector('.rider-dropdown-hdr');
+      if (hdr) hdr.textContent = 'Confirm Receive (' + selectedPkgs.size
+        + ' package' + (selectedPkgs.size !== 1 ? 's' : '') + ')';
+      renderLoggedInUser();
     }
   }
 
   function closeRiderDropdown() {
     document.getElementById('riderDropdown').classList.remove('open');
+    const s = document.getElementById('riderSearch');
+    if (s) s.style.display = '';
   }
-
-
 
   function confirmReceive() {
     if (!currentVendor || selectedPkgs.size === 0) return;

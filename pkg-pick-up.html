@@ -429,8 +429,6 @@
     ],
   };
 
-  };
-
   const riders = [
     { name:'Amit Maharjan',   zone:'Kathmandu Central',  initials:'AM' },
     { name:'Sandesh Dangol',  zone:'Lalitpur / Bhaktapur', initials:'SD' },
@@ -569,19 +567,50 @@
   }
 
   // ═══ RIDER DROPDOWN ═══
+  function renderRiderList(filter) {
+    const list = document.getElementById('riderList');
+    const query = (filter || '').toLowerCase();
+    const filtered = riders.filter(r =>
+      r.name.toLowerCase().includes(query) ||
+      r.zone.toLowerCase().includes(query)
+    );
+    list.innerHTML = filtered.length === 0
+      ? '<div style="padding:12px;color:#888;text-align:center;">No riders found</div>'
+      : filtered.map(r => `
+          <div class="rider-item" onclick="selectRiderAndConfirm('${r.name}')">
+            <div class="rider-avatar">${r.initials}</div>
+            <div>
+              <div class="rider-name">${r.name}</div>
+              <div class="rider-zone">${r.zone}</div>
+            </div>
+          </div>
+        `).join('');
+  }
+
+  function filterRiders() {
+    const query = document.getElementById('riderSearch').value;
+    renderRiderList(query);
+  }
+
+  function selectRiderAndConfirm(riderName) {
+    confirmPickUp();
+    document.getElementById('riderSearch').value = '';
+  }
+
   function toggleRiderDropdown() {
     const dd = document.getElementById('riderDropdown');
     dd.classList.toggle('open');
     if (dd.classList.contains('open')) {
-      document.getElementById('confirmCount').textContent = selectedPkgs.size;
+      const hdr = dd.querySelector('.rider-dropdown-hdr');
+      if (hdr) hdr.textContent = 'Confirm Pick Up (' + selectedPkgs.size + ' package' + (selectedPkgs.size !== 1 ? 's' : '') + ')';
+      document.getElementById('riderSearch').value = '';
+      renderRiderList('');
     }
   }
 
   function closeRiderDropdown() {
     document.getElementById('riderDropdown').classList.remove('open');
   }
-
-
 
   function confirmPickUp() {
     if (!currentVendor || selectedPkgs.size === 0) return;
