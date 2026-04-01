@@ -33,7 +33,7 @@
     .page-title{font-size:1.25rem;font-weight:800;color:var(--text)}
     .page-sub{font-size:.8rem;color:var(--muted);margin-top:2px}
     /* STAT CARDS */
-    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
     @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
     .stat-card{background:var(--teal);color:#fff;border-radius:12px;padding:18px 20px 14px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
     .stat-card::after{content:'';position:absolute;bottom:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1)}
@@ -92,6 +92,83 @@
     .comm-layout{display:grid;grid-template-columns:1fr 340px;gap:16px}
     @media(max-width:960px){.comm-layout{grid-template-columns:1fr}}
     .hidden{display:none}
+    /* WHATSAPP / WHATCHIMP */
+    .wa-sub-nav{display:flex;gap:0;background:var(--teal-light);border-bottom:2px solid var(--border);padding:0 20px}
+    .wa-sub-btn{padding:11px 18px;font-size:.8rem;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s}
+    .wa-sub-btn:hover{color:var(--teal)}
+    .wa-sub-btn.active{color:var(--teal-dark);border-bottom-color:var(--teal)}
+    .wa-sub-pane{display:none;padding:0}
+    .wa-sub-pane.active{display:block}
+    /* Inbox Layout */
+    .wa-inbox{display:grid;grid-template-columns:280px 1fr;height:520px;border-top:1px solid var(--border)}
+    @media(max-width:768px){.wa-inbox{grid-template-columns:1fr;height:auto}}
+    .wa-contacts{border-right:1px solid var(--border);overflow-y:auto;background:#fafbfb}
+    .wa-search{padding:10px;border-bottom:1px solid var(--border)}
+    .wa-search input{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;outline:none}
+    .wa-search input:focus{border-color:var(--teal)}
+    .wa-filter-row{display:flex;gap:4px;padding:6px 10px;border-bottom:1px solid var(--border)}
+    .wa-filter-btn{flex:1;padding:5px 0;font-size:.68rem;font-weight:700;border:1.5px solid var(--border);border-radius:5px;background:var(--white);color:var(--muted);cursor:pointer;text-align:center;transition:all .15s}
+    .wa-filter-btn.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+    .wa-contact{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .12s}
+    .wa-contact:hover,.wa-contact.active{background:var(--teal-light)}
+    .wa-contact-avatar{width:36px;height:36px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.75rem;flex-shrink:0}
+    .wa-contact-info{flex:1;min-width:0}
+    .wa-contact-name{font-size:.8rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wa-contact-preview{font-size:.7rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wa-contact-meta{text-align:right;flex-shrink:0}
+    .wa-contact-time{font-size:.65rem;color:var(--muted)}
+    .wa-contact-unread{display:inline-block;background:var(--teal);color:#fff;font-size:.6rem;font-weight:700;width:18px;height:18px;border-radius:50%;text-align:center;line-height:18px;margin-top:2px}
+    /* Chat Area */
+    .wa-chat{display:flex;flex-direction:column;background:#f0f4f4}
+    .wa-chat-header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--white);border-bottom:1px solid var(--border)}
+    .wa-chat-name{font-size:.85rem;font-weight:700;color:var(--text)}
+    .wa-chat-status{font-size:.68rem;color:var(--muted)}
+    .wa-chat-actions{margin-left:auto;display:flex;gap:6px}
+    .wa-chat-link{font-size:.7rem;color:var(--teal-dark);text-decoration:none;font-weight:700;padding:4px 10px;border:1.5px solid var(--teal);border-radius:5px;transition:all .15s}
+    .wa-chat-link:hover{background:var(--teal);color:#fff}
+    .wa-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+    .wa-msg{max-width:70%;padding:8px 12px;border-radius:10px;font-size:.8rem;line-height:1.45;position:relative}
+    .wa-msg-in{background:var(--white);align-self:flex-start;border:1px solid var(--border);border-bottom-left-radius:2px}
+    .wa-msg-out{background:var(--teal-light);align-self:flex-end;border:1px solid #c5e8e6;border-bottom-right-radius:2px}
+    .wa-msg-time{font-size:.6rem;color:var(--muted);margin-top:3px;text-align:right}
+    .wa-reply-bar{display:flex;gap:8px;padding:10px 14px;background:var(--white);border-top:1px solid var(--border)}
+    .wa-reply-bar input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:20px;font-size:.8rem;outline:none}
+    .wa-reply-bar input:focus{border-color:var(--teal)}
+    .wa-reply-bar button{background:var(--teal);color:#fff;border:none;padding:0 18px;border-radius:20px;font-size:.8rem;font-weight:700;cursor:pointer}
+    .wa-reply-bar button:hover{background:var(--teal-dark)}
+    .wa-empty-chat{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;flex-direction:column;gap:8px}
+    .wa-empty-chat svg{width:48px;height:48px;stroke:var(--border);fill:none;stroke-width:1.5}
+    /* Bulk Send */
+    .wa-bulk-steps{display:flex;gap:0;background:var(--teal-light);padding:12px 20px;border-bottom:1px solid var(--border)}
+    .wa-step{display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:var(--muted)}
+    .wa-step.active{color:var(--teal-dark)}
+    .wa-step.done{color:var(--success)}
+    .wa-step-num{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800}
+    .wa-step.active .wa-step-num{border-color:var(--teal);background:var(--teal);color:#fff}
+    .wa-step.done .wa-step-num{border-color:var(--success);background:var(--success);color:#fff}
+    .wa-step-arrow{margin:0 8px;color:var(--border);font-size:.7rem}
+    .wa-bulk-body{padding:20px}
+    .wa-bulk-pane{display:none}.wa-bulk-pane.active{display:block}
+    /* Permission toggles */
+    .wa-perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:12px}
+    .wa-perm-card{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px}
+    .wa-perm-name{font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:10px}
+    .wa-perm-role{font-size:.68rem;color:var(--muted);font-weight:600}
+    .wa-perm-toggles{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .wa-toggle-row{display:flex;align-items:center;justify-content:space-between}
+    .wa-toggle-label{font-size:.75rem;font-weight:600;color:var(--text)}
+    .wa-switch{position:relative;width:36px;height:20px;flex-shrink:0}
+    .wa-switch input{opacity:0;width:0;height:0}
+    .wa-switch .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:.2s;border-radius:20px}
+    .wa-switch .slider::before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:var(--white);transition:.2s;border-radius:50%}
+    .wa-switch input:checked+.slider{background:var(--teal)}
+    .wa-switch input:checked+.slider::before{transform:translateX(16px)}
+    .wa-add-member{background:var(--teal-light);border:2px dashed var(--teal);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;cursor:pointer;transition:background .15s}
+    .wa-add-member:hover{background:#d4edec}
+    .wa-add-member span{font-size:.8rem;font-weight:700;color:var(--teal-dark)}
+    /* WhatsApp badge */
+    .b-whatsapp{background:#dcfce7;color:#128c7e}
+    .stat-card.wa-card{background:linear-gradient(135deg,#128c7e,#25d366)}
   </style>
 </head>
 <body>
@@ -190,6 +267,10 @@
         <div class="stat-label">SMS Credit Balance</div>
         <div class="stat-value">0</div>
       </div>
+      <div class="stat-card wa-card">
+        <div class="stat-label">WhatsApp (WhatChimp)</div>
+        <div class="stat-value" id="waMessageCount">312</div>
+      </div>
     </div>
 
     <!-- TAB PANEL -->
@@ -198,6 +279,7 @@
         <button class="tab-btn active" data-tab="sms">Send SMS</button>
         <button class="tab-btn" data-tab="email">Send Email</button>
         <button class="tab-btn" data-tab="bulk">Bulk Notification</button>
+        <button class="tab-btn" data-tab="whatsapp">&#128172; WhatsApp</button>
         <button class="tab-btn" data-tab="history">History</button>
       </div>
 
@@ -340,6 +422,215 @@
         </div>
       </div>
 
+      <!-- TAB: WhatsApp (WhatChimp) -->
+      <div id="tab-whatsapp" class="tab-pane">
+        <!-- Sub-navigation -->
+        <div class="wa-sub-nav">
+          <button class="wa-sub-btn active" data-wasub="inbox">Inbox</button>
+          <button class="wa-sub-btn" data-wasub="bulk">Bulk Send</button>
+          <button class="wa-sub-btn" data-wasub="permissions">Permissions</button>
+        </div>
+
+        <!-- SUB: Inbox -->
+        <div id="wasub-inbox" class="wa-sub-pane active">
+          <div class="wa-inbox">
+            <!-- Contact Sidebar -->
+            <div class="wa-contacts" id="waContacts">
+              <div class="wa-search">
+                <input type="text" id="waContactSearch" placeholder="Search contacts..." oninput="filterWaContacts()" />
+              </div>
+              <div class="wa-filter-row">
+                <button class="wa-filter-btn active" data-wafilter="all" onclick="setWaFilter(this)">All</button>
+                <button class="wa-filter-btn" data-wafilter="client" onclick="setWaFilter(this)">Clients</button>
+                <button class="wa-filter-btn" data-wafilter="vendor" onclick="setWaFilter(this)">Vendors</button>
+                <button class="wa-filter-btn" data-wafilter="rider" onclick="setWaFilter(this)">Riders</button>
+              </div>
+              <div id="waContactList">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+            <!-- Chat Area -->
+            <div class="wa-chat" id="waChatArea">
+              <div class="wa-empty-chat" id="waEmptyState">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span>Select a conversation to start messaging</span>
+              </div>
+              <div id="waChatView" class="hidden" style="display:none;flex-direction:column;height:100%">
+                <div class="wa-chat-header">
+                  <div class="wa-contact-avatar" id="waChatAvatar">--</div>
+                  <div>
+                    <div class="wa-chat-name" id="waChatName">--</div>
+                    <div class="wa-chat-status" id="waChatStatusText">--</div>
+                  </div>
+                  <div class="wa-chat-actions">
+                    <a href="#" class="wa-chat-link" id="waChimpLink" target="_blank" rel="noopener">Open in WhatChimp &#8599;</a>
+                  </div>
+                </div>
+                <div class="wa-messages" id="waChatMessages">
+                  <!-- Messages rendered by JS -->
+                </div>
+                <div class="wa-reply-bar">
+                  <input type="text" id="waReplyInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendWaReply()" />
+                  <button onclick="sendWaReply()">Send</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB: Bulk Send -->
+        <div id="wasub-bulk" class="wa-sub-pane">
+          <!-- Step indicator -->
+          <div class="wa-bulk-steps">
+            <div class="wa-step active" id="waStep1">
+              <span class="wa-step-num">1</span> Choose Template
+            </div>
+            <span class="wa-step-arrow">&#9654;</span>
+            <div class="wa-step" id="waStep2">
+              <span class="wa-step-num">2</span> Select Recipients
+            </div>
+            <span class="wa-step-arrow">&#9654;</span>
+            <div class="wa-step" id="waStep3">
+              <span class="wa-step-num">3</span> Preview &amp; Send
+            </div>
+          </div>
+
+          <!-- Step 1: Template -->
+          <div class="wa-bulk-body">
+            <div class="wa-bulk-pane active" id="waBulkStep1">
+              <div style="font-size:.85rem;font-weight:800;color:var(--teal-dark);margin-bottom:12px">Select an Approved WhatsApp Template</div>
+              <div class="tmpl-grid" id="waTemplateGrid">
+                <div class="tmpl-card" onclick="selectWaTemplate(this,'delivery_update','Your package {{1}} is now {{2}}. Track: {{3}}')" style="cursor:pointer">
+                  <div class="tmpl-title">Delivery Update</div>
+                  <div class="tmpl-text">Your package {{1}} is now {{2}}. Track: {{3}}</div>
+                  <span class="badge b-green" style="align-self:flex-start">Approved</span>
+                </div>
+                <div class="tmpl-card" onclick="selectWaTemplate(this,'payment_receipt','Payment of NPR {{1}} received for invoice {{2}}. Thank you!')" style="cursor:pointer">
+                  <div class="tmpl-title">Payment Receipt</div>
+                  <div class="tmpl-text">Payment of NPR {{1}} received for invoice {{2}}. Thank you!</div>
+                  <span class="badge b-green" style="align-self:flex-start">Approved</span>
+                </div>
+                <div class="tmpl-card" onclick="selectWaTemplate(this,'pickup_schedule','Hi {{1}}, your pickup is scheduled for {{2}} at {{3}}.')" style="cursor:pointer">
+                  <div class="tmpl-title">Pickup Schedule</div>
+                  <div class="tmpl-text">Hi {{1}}, your pickup is scheduled for {{2}} at {{3}}.</div>
+                  <span class="badge b-green" style="align-self:flex-start">Approved</span>
+                </div>
+                <div class="tmpl-card" onclick="selectWaTemplate(this,'invoice_reminder','Invoice {{1}} of NPR {{2}} is due on {{3}}. Please clear the balance.')" style="cursor:pointer">
+                  <div class="tmpl-title">Invoice Reminder</div>
+                  <div class="tmpl-text">Invoice {{1}} of NPR {{2}} is due on {{3}}. Please clear the balance.</div>
+                  <span class="badge b-green" style="align-self:flex-start">Approved</span>
+                </div>
+                <div class="tmpl-card" onclick="selectWaTemplate(this,'welcome_vendor','Welcome to Packrs, {{1}}! Your vendor account is active. Support: {{2}}')" style="cursor:pointer">
+                  <div class="tmpl-title">Welcome Vendor</div>
+                  <div class="tmpl-text">Welcome to Packrs, {{1}}! Your vendor account is active. Support: {{2}}</div>
+                  <span class="badge b-green" style="align-self:flex-start">Approved</span>
+                </div>
+                <div class="tmpl-card" onclick="selectWaTemplate(this,'shift_reminder','Reminder: Your shift starts at {{1}} on {{2}}. Check your assigned packages.')" style="cursor:pointer">
+                  <div class="tmpl-title">Shift Reminder</div>
+                  <div class="tmpl-text">Reminder: Your shift starts at {{1}} on {{2}}. Check your assigned packages.</div>
+                  <span class="badge b-green" style="align-self:flex-start">Approved</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Recipients -->
+            <div class="wa-bulk-pane" id="waBulkStep2">
+              <div style="font-size:.85rem;font-weight:800;color:var(--teal-dark);margin-bottom:12px">Select Recipients</div>
+              <div class="form-group">
+                <label>Recipient Group</label>
+                <select id="waBulkRecipientGroup">
+                  <option value="all">All Contacts</option>
+                  <option value="clients">All Clients</option>
+                  <option value="vendors">All Vendors</option>
+                  <option value="riders">All Riders</option>
+                </select>
+              </div>
+              <div style="margin-top:12px">
+                <div style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px">Or select individual recipients:</div>
+                <div id="waBulkRecipientList" style="max-height:220px;overflow-y:auto;border:1.5px solid var(--border);border-radius:8px;padding:8px">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+              <div style="margin-top:14px;display:flex;gap:8px">
+                <button class="btn-outline" onclick="goWaBulkStep(1)">&#9664; Back</button>
+                <button class="btn-teal" onclick="goWaBulkStep(3)">Next: Preview &#9654;</button>
+              </div>
+            </div>
+
+            <!-- Step 3: Preview & Send -->
+            <div class="wa-bulk-pane" id="waBulkStep3">
+              <div style="font-size:.85rem;font-weight:800;color:var(--teal-dark);margin-bottom:12px">Fill Variables &amp; Preview</div>
+              <div id="waVariableFields">
+                <!-- Dynamically generated variable inputs -->
+              </div>
+              <div style="margin-top:14px;padding:14px;background:var(--teal-light);border-radius:10px;border:1.5px solid #c5e8e6">
+                <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:6px">MESSAGE PREVIEW</div>
+                <div id="waPreviewText" style="font-size:.82rem;color:var(--text);line-height:1.5">--</div>
+              </div>
+              <div style="margin-top:10px;font-size:.78rem;color:var(--muted)">
+                <strong>Template:</strong> <span id="waPreviewTemplate">--</span> &nbsp;|&nbsp;
+                <strong>Recipients:</strong> <span id="waPreviewRecipients">--</span>
+              </div>
+              <div style="margin-top:14px;display:flex;gap:8px">
+                <button class="btn-outline" onclick="goWaBulkStep(2)">&#9664; Back</button>
+                <button class="btn-teal" onclick="sendWaBulk()" id="waSendBulkBtn">Send via WhatChimp</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB: Permissions -->
+        <div id="wasub-permissions" class="wa-sub-pane">
+          <div style="padding:20px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <div>
+                <div style="font-size:.88rem;font-weight:800;color:var(--teal-dark)">WhatsApp Permissions</div>
+                <div style="font-size:.75rem;color:var(--muted);margin-top:2px">Control who can use WhatsApp features via WhatChimp</div>
+              </div>
+              <button class="btn-teal" onclick="document.getElementById('waAddMemberModal').classList.toggle('hidden')" style="font-size:.78rem;padding:8px 16px">+ Add Member</button>
+            </div>
+
+            <!-- Add Member inline form -->
+            <div id="waAddMemberModal" class="hidden" style="background:var(--teal-light);border:1.5px solid var(--teal);border-radius:10px;padding:16px;margin-bottom:16px">
+              <div style="font-size:.82rem;font-weight:800;color:var(--teal-dark);margin-bottom:10px">Add Team Member</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end">
+                <div class="form-group" style="margin-bottom:0">
+                  <label>Name</label>
+                  <input type="text" id="waNewMemberName" placeholder="Full name" />
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label>Role</label>
+                  <select id="waNewMemberRole">
+                    <option value="Admin">Admin</option>
+                    <option value="Agent">Agent</option>
+                    <option value="Viewer">Viewer</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label>Email</label>
+                  <input type="email" id="waNewMemberEmail" placeholder="email@company.com" />
+                </div>
+                <button class="btn-teal" onclick="addWaMember()" style="height:36px;font-size:.78rem">Add</button>
+              </div>
+            </div>
+
+            <div class="wa-perm-grid" id="waPermGrid">
+              <!-- Populated by JS -->
+            </div>
+
+            <!-- Webhook setup info -->
+            <div style="margin-top:24px;padding:16px;background:#fff8e1;border:1.5px solid #ffd54f;border-radius:10px">
+              <div style="font-size:.82rem;font-weight:800;color:#f57f17;margin-bottom:6px">&#9888; WhatChimp Webhook Setup</div>
+              <div style="font-size:.78rem;color:var(--text);line-height:1.5">
+                To receive real-time incoming messages, register your webhook URL in WhatChimp Dashboard &rarr; Settings &rarr; API &amp; Webhooks:<br>
+                <code style="background:#fff3e0;padding:2px 6px;border-radius:4px;font-size:.75rem">POST https://your-domain.com/api/whatchimp-webhook</code><br>
+                Set the Verify Token to match your <code style="background:#fff3e0;padding:2px 6px;border-radius:4px;font-size:.75rem">WHATCHIMP_VERIFY_TOKEN</code> environment variable.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- TAB 4: History -->
       <div id="tab-history" class="tab-pane">
         <div style="padding:20px">
@@ -439,6 +730,22 @@
                   <td><span class="badge b-green">Delivered</span></td>
                   <td><button class="act-btn act-view">View</button></td>
                 </tr>
+                <tr>
+                  <td>2024-03-28 11:15</td>
+                  <td><span class="badge b-whatsapp">WhatsApp</span></td>
+                  <td>All Clients (15)</td>
+                  <td>&#8220;Your package is now in transit...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
+                <tr>
+                  <td>2024-03-27 08:30</td>
+                  <td><span class="badge b-whatsapp">WhatsApp</span></td>
+                  <td>All Riders (20)</td>
+                  <td>&#8220;Reminder: Your shift starts at 9 AM...&#8221;</td>
+                  <td><span class="badge b-green">Delivered</span></td>
+                  <td><button class="act-btn act-view">View</button></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -497,6 +804,315 @@
       grp.classList.add('hidden');
     }
   }
+
+  // ===== WHATSAPP / WHATCHIMP INTEGRATION =====
+  // Mock data — replace with real WhatChimp API calls
+  var waContacts = [
+    {id:1, name:'Pokhara Streetwear', type:'client', phone:'+977-9801234567', lastMsg:'When will my package arrive?', time:'10:32 AM', unread:2, messages:[
+      {dir:'in', text:'Hi, I shipped 3 packages yesterday.', time:'9:15 AM'},
+      {dir:'out', text:'Yes, we received them at the warehouse.', time:'9:20 AM'},
+      {dir:'in', text:'Great! When will my package arrive?', time:'10:32 AM'}
+    ]},
+    {id:2, name:'Daliya Solutions', type:'vendor', phone:'+977-9807654321', lastMsg:'Invoice has been sent.', time:'9:45 AM', unread:0, messages:[
+      {dir:'out', text:'Your invoice #INV-2024-102 is ready.', time:'9:30 AM'},
+      {dir:'in', text:'Invoice has been sent.', time:'9:45 AM'}
+    ]},
+    {id:3, name:'Amit Tamang', type:'rider', phone:'+977-9812345678', lastMsg:'On my way to pickup point.', time:'11:05 AM', unread:1, messages:[
+      {dir:'out', text:'Please pick up from Kathmandu Hub.', time:'10:50 AM'},
+      {dir:'in', text:'On my way to pickup point.', time:'11:05 AM'}
+    ]},
+    {id:4, name:'Nepal Fashion Hub', type:'client', phone:'+977-9823456789', lastMsg:'Thanks for the update!', time:'Yesterday', unread:0, messages:[
+      {dir:'out', text:'Your package PKG-2024-445 has been delivered.', time:'Yesterday'},
+      {dir:'in', text:'Thanks for the update!', time:'Yesterday'}
+    ]},
+    {id:5, name:'Rajan Shrestha', type:'rider', phone:'+977-9834567890', lastMsg:'Delivered all 5 packages.', time:'Yesterday', unread:0, messages:[
+      {dir:'out', text:'You have 5 deliveries assigned today.', time:'Yesterday'},
+      {dir:'in', text:'Delivered all 5 packages.', time:'Yesterday'}
+    ]},
+    {id:6, name:'KTM Express Logistics', type:'vendor', phone:'+977-9845678901', lastMsg:'Can we schedule pickup for tomorrow?', time:'Mar 30', unread:1, messages:[
+      {dir:'in', text:'Hi, we have 12 packages ready.', time:'Mar 30'},
+      {dir:'in', text:'Can we schedule pickup for tomorrow?', time:'Mar 30'}
+    ]},
+    {id:7, name:'Biratnagar Mart', type:'client', phone:'+977-9856789012', lastMsg:'Please check tracking for PKG-889.', time:'Mar 29', unread:0, messages:[
+      {dir:'in', text:'Please check tracking for PKG-889.', time:'Mar 29'},
+      {dir:'out', text:'It\'s currently in transit. ETA tomorrow.', time:'Mar 29'}
+    ]},
+    {id:8, name:'Suman Gurung', type:'rider', phone:'+977-9867890123', lastMsg:'Shift completed for today.', time:'Mar 29', unread:0, messages:[
+      {dir:'out', text:'Your shift starts at 8 AM tomorrow.', time:'Mar 28'},
+      {dir:'in', text:'Shift completed for today.', time:'Mar 29'}
+    ]}
+  ];
+
+  var waPermissions = [
+    {id:1, name:'Admin User', role:'Super Admin', email:'admin@packrs.com', viewInbox:true, reply:true, bulk:true, manage:true},
+    {id:2, name:'Sita Sharma', role:'Agent', email:'sita@packrs.com', viewInbox:true, reply:true, bulk:false, manage:false},
+    {id:3, name:'Ram Karki', role:'Agent', email:'ram@packrs.com', viewInbox:true, reply:true, bulk:true, manage:false},
+    {id:4, name:'Priya Thapa', role:'Viewer', email:'priya@packrs.com', viewInbox:true, reply:false, bulk:false, manage:false}
+  ];
+
+  var waActiveFilter = 'all';
+  var waActiveContact = null;
+  var waSelectedTemplate = null;
+  var waSelectedTemplateText = '';
+
+  // Render contacts
+  function renderWaContacts(){
+    var list = document.getElementById('waContactList');
+    var search = document.getElementById('waContactSearch').value.toLowerCase();
+    var html = '';
+    waContacts.forEach(function(c){
+      if(waActiveFilter !== 'all' && c.type !== waActiveFilter) return;
+      if(search && c.name.toLowerCase().indexOf(search) === -1 && c.phone.indexOf(search) === -1) return;
+      var initials = c.name.split(' ').map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();
+      var activeClass = waActiveContact && waActiveContact.id === c.id ? ' active' : '';
+      html += '<div class="wa-contact'+activeClass+'" onclick="openWaChat('+c.id+')">';
+      html += '<div class="wa-contact-avatar">'+initials+'</div>';
+      html += '<div class="wa-contact-info"><div class="wa-contact-name">'+c.name+'</div><div class="wa-contact-preview">'+c.lastMsg+'</div></div>';
+      html += '<div class="wa-contact-meta"><div class="wa-contact-time">'+c.time+'</div>';
+      if(c.unread > 0) html += '<div class="wa-contact-unread">'+c.unread+'</div>';
+      html += '</div></div>';
+    });
+    if(!html) html = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:.8rem">No contacts found</div>';
+    list.innerHTML = html;
+  }
+
+  function filterWaContacts(){ renderWaContacts(); }
+
+  function setWaFilter(btn){
+    document.querySelectorAll('.wa-filter-btn').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');
+    waActiveFilter = btn.getAttribute('data-wafilter');
+    renderWaContacts();
+  }
+
+  // Open chat
+  function openWaChat(id){
+    var contact = waContacts.find(function(c){ return c.id === id; });
+    if(!contact) return;
+    waActiveContact = contact;
+    contact.unread = 0;
+    renderWaContacts();
+
+    document.getElementById('waEmptyState').style.display = 'none';
+    var chatView = document.getElementById('waChatView');
+    chatView.classList.remove('hidden');
+    chatView.style.display = 'flex';
+
+    var initials = contact.name.split(' ').map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();
+    document.getElementById('waChatAvatar').textContent = initials;
+    document.getElementById('waChatName').textContent = contact.name;
+    document.getElementById('waChatStatusText').textContent = contact.phone + ' \u00b7 ' + contact.type.charAt(0).toUpperCase() + contact.type.slice(1);
+    // WhatChimp dashboard link — replace with actual URL
+    document.getElementById('waChimpLink').href = 'https://app.whatchimp.com/inbox?phone=' + encodeURIComponent(contact.phone);
+
+    renderWaMessages();
+  }
+
+  function renderWaMessages(){
+    if(!waActiveContact) return;
+    var container = document.getElementById('waChatMessages');
+    var html = '';
+    waActiveContact.messages.forEach(function(m){
+      var cls = m.dir === 'in' ? 'wa-msg-in' : 'wa-msg-out';
+      html += '<div class="wa-msg '+cls+'">';
+      html += '<div>'+m.text+'</div>';
+      html += '<div class="wa-msg-time">'+m.time+'</div>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+    container.scrollTop = container.scrollHeight;
+  }
+
+  // Send reply
+  function sendWaReply(){
+    var input = document.getElementById('waReplyInput');
+    var text = input.value.trim();
+    if(!text || !waActiveContact) return;
+
+    // TODO: Replace with actual WhatChimp API call:
+    // fetch('/api/whatchimp/send', { method:'POST', headers:{'Content-Type':'application/json'},
+    //   body: JSON.stringify({ phone: waActiveContact.phone, message: text }) })
+
+    waActiveContact.messages.push({dir:'out', text:text, time:'Just now'});
+    waActiveContact.lastMsg = text;
+    waActiveContact.time = 'Just now';
+    input.value = '';
+    renderWaMessages();
+    renderWaContacts();
+  }
+
+  // WhatsApp sub-tab switching
+  document.querySelectorAll('.wa-sub-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var sub = this.getAttribute('data-wasub');
+      document.querySelectorAll('.wa-sub-btn').forEach(function(b){b.classList.remove('active')});
+      document.querySelectorAll('.wa-sub-pane').forEach(function(p){p.classList.remove('active')});
+      this.classList.add('active');
+      document.getElementById('wasub-'+sub).classList.add('active');
+    });
+  });
+
+  // === Bulk Send ===
+  function selectWaTemplate(el, name, text){
+    waSelectedTemplate = name;
+    waSelectedTemplateText = text;
+    // Highlight selected
+    document.querySelectorAll('#waTemplateGrid .tmpl-card').forEach(function(c){c.style.borderColor='var(--border)'});
+    el.style.borderColor = 'var(--teal)';
+    // Auto-advance to step 2
+    setTimeout(function(){ goWaBulkStep(2); }, 300);
+  }
+
+  function goWaBulkStep(step){
+    if(step >= 2 && !waSelectedTemplate){
+      alert('Please select a template first.');
+      return;
+    }
+    // Update step indicators
+    for(var i=1; i<=3; i++){
+      var el = document.getElementById('waStep'+i);
+      el.classList.remove('active','done');
+      if(i < step) el.classList.add('done');
+      if(i === step) el.classList.add('active');
+    }
+    // Show pane
+    document.querySelectorAll('.wa-bulk-pane').forEach(function(p){p.classList.remove('active')});
+    document.getElementById('waBulkStep'+step).classList.add('active');
+
+    if(step === 2) renderBulkRecipients();
+    if(step === 3) renderBulkPreview();
+  }
+
+  function renderBulkRecipients(){
+    var list = document.getElementById('waBulkRecipientList');
+    var html = '';
+    waContacts.forEach(function(c){
+      html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 4px;font-size:.78rem;cursor:pointer">';
+      html += '<input type="checkbox" class="wa-bulk-check" value="'+c.id+'" checked style="accent-color:var(--teal);width:15px;height:15px" />';
+      html += '<span style="font-weight:600">'+c.name+'</span>';
+      html += '<span style="color:var(--muted);font-size:.7rem">'+c.phone+' \u00b7 '+c.type+'</span>';
+      html += '</label>';
+    });
+    list.innerHTML = html;
+  }
+
+  function renderBulkPreview(){
+    // Parse variables from template
+    var vars = waSelectedTemplateText.match(/\{\{\d+\}\}/g) || [];
+    var unique = [];
+    vars.forEach(function(v){ if(unique.indexOf(v)===-1) unique.push(v); });
+
+    var fields = document.getElementById('waVariableFields');
+    var html = '';
+    unique.forEach(function(v, idx){
+      html += '<div class="form-group">';
+      html += '<label>Variable '+v+'</label>';
+      html += '<input type="text" class="wa-var-input" data-var="'+v+'" placeholder="Value for '+v+'" oninput="updateWaPreview()" />';
+      html += '</div>';
+    });
+    fields.innerHTML = html;
+
+    document.getElementById('waPreviewTemplate').textContent = waSelectedTemplate;
+    var checked = document.querySelectorAll('.wa-bulk-check:checked');
+    document.getElementById('waPreviewRecipients').textContent = checked.length + ' recipient(s)';
+    updateWaPreview();
+  }
+
+  function updateWaPreview(){
+    var text = waSelectedTemplateText;
+    document.querySelectorAll('.wa-var-input').forEach(function(inp){
+      var v = inp.getAttribute('data-var');
+      var val = inp.value || v;
+      text = text.split(v).join(val);
+    });
+    document.getElementById('waPreviewText').textContent = text;
+  }
+
+  function sendWaBulk(){
+    var checked = document.querySelectorAll('.wa-bulk-check:checked');
+    if(checked.length === 0){
+      alert('Please select at least one recipient.');
+      return;
+    }
+
+    var btn = document.getElementById('waSendBulkBtn');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+
+    // TODO: Replace with actual WhatChimp broadcast API call:
+    // var recipientIds = Array.from(checked).map(function(c){return c.value});
+    // var variables = {};
+    // document.querySelectorAll('.wa-var-input').forEach(function(inp){
+    //   variables[inp.getAttribute('data-var')] = inp.value;
+    // });
+    // fetch('/api/whatchimp/broadcast', { method:'POST', headers:{'Content-Type':'application/json'},
+    //   body: JSON.stringify({ template: waSelectedTemplate, recipients: recipientIds, variables: variables }) })
+
+    setTimeout(function(){
+      btn.textContent = 'Sent Successfully!';
+      btn.style.background = '#10b981';
+      setTimeout(function(){
+        btn.textContent = 'Send via WhatChimp';
+        btn.style.background = '';
+        btn.disabled = false;
+        goWaBulkStep(1);
+        waSelectedTemplate = null;
+        waSelectedTemplateText = '';
+        document.querySelectorAll('#waTemplateGrid .tmpl-card').forEach(function(c){c.style.borderColor='var(--border)'});
+      }, 2000);
+    }, 1500);
+  }
+
+  // === Permissions ===
+  function renderWaPermissions(){
+    var grid = document.getElementById('waPermGrid');
+    var html = '';
+    waPermissions.forEach(function(p){
+      html += '<div class="wa-perm-card">';
+      html += '<div class="wa-perm-name">'+p.name+' <span class="wa-perm-role">&middot; '+p.role+'</span></div>';
+      html += '<div style="font-size:.7rem;color:var(--muted)">'+p.email+'</div>';
+      html += '<div class="wa-perm-toggles">';
+      html += waToggleHTML(p.id, 'viewInbox', 'View Inbox', p.viewInbox);
+      html += waToggleHTML(p.id, 'reply', 'Reply to Messages', p.reply);
+      html += waToggleHTML(p.id, 'bulk', 'Bulk Broadcast', p.bulk);
+      html += waToggleHTML(p.id, 'manage', 'Manage Users', p.manage);
+      html += '</div></div>';
+    });
+    grid.innerHTML = html;
+  }
+
+  function waToggleHTML(userId, perm, label, checked){
+    var chk = checked ? ' checked' : '';
+    return '<div class="wa-toggle-row"><span class="wa-toggle-label">'+label+'</span>'
+      +'<label class="wa-switch"><input type="checkbox"'+chk+' onchange="toggleWaPerm('+userId+',\''+perm+'\')" /><span class="slider"></span></label></div>';
+  }
+
+  function toggleWaPerm(userId, perm){
+    var user = waPermissions.find(function(p){ return p.id === userId; });
+    if(user) user[perm] = !user[perm];
+    // TODO: Persist to backend
+  }
+
+  function addWaMember(){
+    var name = document.getElementById('waNewMemberName').value.trim();
+    var role = document.getElementById('waNewMemberRole').value;
+    var email = document.getElementById('waNewMemberEmail').value.trim();
+    if(!name || !email){ alert('Name and email are required.'); return; }
+    waPermissions.push({
+      id: waPermissions.length + 1,
+      name: name, role: role, email: email,
+      viewInbox: role !== 'Viewer', reply: role === 'Admin' || role === 'Agent',
+      bulk: role === 'Admin', manage: role === 'Admin'
+    });
+    document.getElementById('waNewMemberName').value = '';
+    document.getElementById('waNewMemberEmail').value = '';
+    document.getElementById('waAddMemberModal').classList.add('hidden');
+    renderWaPermissions();
+  }
+
+  // Init WhatsApp module
+  renderWaContacts();
+  renderWaPermissions();
 
   // Use template
   function useTemplate(text){
