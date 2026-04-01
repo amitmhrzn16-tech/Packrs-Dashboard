@@ -575,6 +575,95 @@
       color: var(--primary);
     }
 
+    /* ─── COD Date Filter ───────────────── */
+    .cod-date-filter {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .cod-date-filter .cdf-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .cod-date-filter input[type="date"] {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-family: var(--font);
+      color: var(--text-primary);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .cod-date-filter input[type="date"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(58,175,169,0.12);
+    }
+
+    .cod-day-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .cod-day-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .cod-day-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .cod-day-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .cod-date-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-left: auto;
+    }
+
+    .cod-date-label strong {
+      color: var(--text-primary);
+    }
+
+    .cod-no-data {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
+
+    .cod-no-data .cod-no-icon {
+      font-size: 40px;
+      margin-bottom: 8px;
+      opacity: 0.4;
+    }
+
+    .cod-no-data p {
+      font-size: 13px;
+    }
+
     /* ─── COD Submit Modal ──────────────── */
     .cod-modal-summary {
       display: flex;
@@ -1069,28 +1158,41 @@
               </div>
             </div>
 
-            <!-- Auto-calculated Summary -->
+            <!-- Date Filter -->
+            <div class="cod-date-filter">
+              <span class="cdf-label">&#128197; View Date:</span>
+              <input type="date" id="codDatePicker" onchange="filterCodByDate(this.value)" />
+              <div class="cod-day-btns">
+                <button class="cod-day-btn active" id="btnToday" onclick="setCodDay('today')">Today</button>
+                <button class="cod-day-btn" id="btnYesterday" onclick="setCodDay('yesterday')">Yesterday</button>
+                <button class="cod-day-btn" id="btn2DaysAgo" onclick="setCodDay('2days')">2 Days Ago</button>
+                <button class="cod-day-btn" id="btn3DaysAgo" onclick="setCodDay('3days')">3 Days Ago</button>
+              </div>
+              <span class="cod-date-label">Showing: <strong id="codDateDisplay">Today</strong></span>
+            </div>
+
+            <!-- Auto-calculated Summary (dynamic) -->
             <div class="cod-summary-grid">
               <div class="cod-summary-item highlight">
-                <div class="csi-value" id="codTotalDelivered">42</div>
+                <div class="csi-value" id="codTotalDelivered">0</div>
                 <div class="csi-label">Successful Deliveries</div>
               </div>
               <div class="cod-summary-item">
-                <div class="csi-value" id="codTotalCash" style="color:var(--success);">Rs 18,450</div>
+                <div class="csi-value" id="codTotalCash" style="color:var(--success);">Rs 0</div>
                 <div class="csi-label">Cash Collected</div>
               </div>
               <div class="cod-summary-item">
-                <div class="csi-value" id="codTotalOnline" style="color:#7c3aed;">Rs 8,200</div>
+                <div class="csi-value" id="codTotalOnline" style="color:#7c3aed;">Rs 0</div>
                 <div class="csi-label">Online Payment</div>
               </div>
               <div class="cod-summary-item">
-                <div class="csi-value" id="codTotalVendor" style="color:#2563eb;">Rs 5,600</div>
+                <div class="csi-value" id="codTotalVendor" style="color:#2563eb;">Rs 0</div>
                 <div class="csi-label">Online Pay Vendor</div>
               </div>
             </div>
 
-            <!-- COD Details Table -->
-            <div class="table-wrap" style="max-height:280px;overflow-y:auto;">
+            <!-- COD Details Table (dynamic) -->
+            <div class="table-wrap" style="max-height:320px;overflow-y:auto;">
               <table class="cod-table">
                 <thead>
                   <tr>
@@ -1103,99 +1205,19 @@
                   </tr>
                 </thead>
                 <tbody id="codTableBody">
-                  <tr>
-                    <td>1</td>
-                    <td style="font-weight:700;">PKG-00843</td>
-                    <td>Srijana Thapa</td>
-                    <td class="cod-amount cash">Rs 2,400</td>
-                    <td><span class="badge badge-success">Cash Collected</span></td>
-                    <td><span class="badge badge-success">Delivered</span></td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td style="font-weight:700;">PKG-00841</td>
-                    <td>Ram Karki</td>
-                    <td class="cod-amount">Rs 0</td>
-                    <td><span class="badge badge-gray">Prepaid</span></td>
-                    <td><span class="badge badge-success">Delivered</span></td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td style="font-weight:700;">PKG-00838</td>
-                    <td>Anita Gurung</td>
-                    <td class="cod-amount cash">Rs 1,850</td>
-                    <td><span class="badge badge-success">Cash Collected</span></td>
-                    <td><span class="badge badge-success">Delivered</span></td>
-                  </tr>
-                  <tr>
-                    <td>4</td>
-                    <td style="font-weight:700;">PKG-00835</td>
-                    <td>Bikram Shrestha</td>
-                    <td class="cod-amount online">Rs 3,200</td>
-                    <td><span class="badge badge-purple">Online Pay</span></td>
-                    <td><span class="badge badge-success">Delivered</span></td>
-                  </tr>
-                  <tr>
-                    <td>5</td>
-                    <td style="font-weight:700;">PKG-00832</td>
-                    <td>Dipak Maharjan</td>
-                    <td class="cod-amount vendor">Rs 2,800</td>
-                    <td><span class="badge badge-info">Online Pay Vendor</span></td>
-                    <td><span class="badge badge-success">Delivered</span></td>
-                  </tr>
-                  <tr>
-                    <td>6</td>
-                    <td style="font-weight:700;">PKG-00829</td>
-                    <td>Sunita Tamang</td>
-                    <td class="cod-amount cash">Rs 1,200</td>
-                    <td><span class="badge badge-success">Cash Collected</span></td>
-                    <td><span class="badge badge-success">Delivered</span></td>
-                  </tr>
-                  <tr>
-                    <td>7</td>
-                    <td style="font-weight:700;">PKG-00826</td>
-                    <td>Nabin Poudel</td>
-                    <td class="cod-amount online">Rs 5,000</td>
-                    <td><span class="badge badge-purple">Online Pay</span></td>
-                    <td><span class="badge badge-success">Delivered</span></td>
-                  </tr>
-                  <tr>
-                    <td>8</td>
-                    <td style="font-weight:700;">PKG-00823</td>
-                    <td>Kamala Rai</td>
-                    <td class="cod-amount vendor">Rs 2,800</td>
-                    <td><span class="badge badge-info">Online Pay Vendor</span></td>
-                    <td><span class="badge badge-success">Delivered</span></td>
-                  </tr>
-                  <tr>
-                    <td>9</td>
-                    <td style="font-weight:700;">PKG-00820</td>
-                    <td>Rajesh Hamal</td>
-                    <td class="cod-amount cash">Rs 3,400</td>
-                    <td><span class="badge badge-success">Cash Collected</span></td>
-                    <td><span class="badge badge-success">Delivered</span></td>
-                  </tr>
-                  <tr>
-                    <td>10</td>
-                    <td style="font-weight:700;">PKG-00817</td>
-                    <td>Gita Adhikari</td>
-                    <td class="cod-amount cash">Rs 9,600</td>
-                    <td><span class="badge badge-success">Cash Collected</span></td>
-                    <td><span class="badge badge-success">Delivered</span></td>
-                  </tr>
-                  <tr class="cod-totals-row">
-                    <td colspan="3" style="text-align:right;font-size:12px;">TOTALS &rarr;</td>
-                    <td class="cod-amount" style="color:var(--text-primary);">Rs 32,250</td>
-                    <td colspan="2" style="font-size:11px;">Cash: Rs 18,450 &bull; Online: Rs 8,200 &bull; Vendor: Rs 5,600</td>
-                  </tr>
+                  <!-- Rendered by JS -->
                 </tbody>
               </table>
             </div>
+            <div class="cod-no-data" id="codNoData" style="display:none;">
+              <div class="cod-no-icon">&#128230;</div>
+              <p>No deliveries found for this date.</p>
+            </div>
 
             <!-- Submit Bar -->
-            <div class="cod-submit-bar">
+            <div class="cod-submit-bar" id="codSubmitBar">
               <div class="cod-total-display">
-                Total Collection: <span>Rs 32,250</span>
+                Total Collection: <span id="codGrandTotal">Rs 0</span>
               </div>
               <div style="display:flex;gap:10px;">
                 <button class="btn btn-outline btn-sm" onclick="window.print()">&#128424; Print Report</button>
@@ -1558,11 +1580,11 @@
         </div>
         <div class="receipt-row">
           <span class="rr-label">Cash Amount</span>
-          <span class="rr-value" style="color:var(--success);">Rs 18,450</span>
+          <span class="rr-value" id="receiptCashAmt" style="color:var(--success);">Rs 0</span>
         </div>
         <div class="receipt-row">
           <span class="rr-label">Online Amount</span>
-          <span class="rr-value" style="color:#7c3aed;">Rs 13,800</span>
+          <span class="rr-value" id="receiptOnlineAmt" style="color:#7c3aed;">Rs 0</span>
         </div>
         <div class="receipt-row">
           <span class="rr-label">Submitted At</span>
@@ -1573,7 +1595,7 @@
           <span class="rr-value" id="receiptNote" style="max-width:200px;text-align:right;">—</span>
         </div>
         <div class="receipt-total">
-          <div class="rt-amount">Rs 32,250</div>
+          <div class="rt-amount" id="receiptTotalAmt">Rs 0</div>
           <div class="rt-label">Total Submitted</div>
         </div>
       </div>
@@ -1653,6 +1675,193 @@
     if (av) av.textContent = initials;
   })();
 
+  // ─── COD Day-Wise Package Data ──────────
+  function getDateStr(daysAgo) {
+    var d = new Date();
+    d.setDate(d.getDate() - daysAgo);
+    return d.toISOString().slice(0, 10);
+  }
+
+  var codData = {};
+  // Today
+  codData[getDateStr(0)] = [
+    { id:'PKG-00843', customer:'Srijana Thapa',    amount:2400,  type:'cash',   status:'Delivered' },
+    { id:'PKG-00841', customer:'Ram Karki',         amount:0,     type:'prepaid',status:'Delivered' },
+    { id:'PKG-00838', customer:'Anita Gurung',      amount:1850,  type:'cash',   status:'Delivered' },
+    { id:'PKG-00835', customer:'Bikram Shrestha',   amount:3200,  type:'online', status:'Delivered' },
+    { id:'PKG-00832', customer:'Dipak Maharjan',    amount:2800,  type:'vendor', status:'Delivered' },
+    { id:'PKG-00829', customer:'Sunita Tamang',     amount:1200,  type:'cash',   status:'Delivered' },
+    { id:'PKG-00826', customer:'Nabin Poudel',      amount:5000,  type:'online', status:'Delivered' },
+    { id:'PKG-00823', customer:'Kamala Rai',         amount:2800,  type:'vendor', status:'Delivered' },
+    { id:'PKG-00820', customer:'Rajesh Hamal',      amount:3400,  type:'cash',   status:'Delivered' },
+    { id:'PKG-00817', customer:'Gita Adhikari',     amount:9600,  type:'cash',   status:'Delivered' }
+  ];
+  // Yesterday
+  codData[getDateStr(1)] = [
+    { id:'PKG-00812', customer:'Raju Shrestha',     amount:1500,  type:'cash',   status:'Delivered' },
+    { id:'PKG-00809', customer:'Mina Maharjan',     amount:2200,  type:'online', status:'Delivered' },
+    { id:'PKG-00806', customer:'Arjun Tamang',      amount:0,     type:'prepaid',status:'Delivered' },
+    { id:'PKG-00803', customer:'Sabina KC',          amount:3100,  type:'cash',   status:'Delivered' },
+    { id:'PKG-00800', customer:'Deepak Bista',      amount:1800,  type:'vendor', status:'Delivered' },
+    { id:'PKG-00797', customer:'Laxmi Thapa',       amount:4500,  type:'cash',   status:'Delivered' },
+    { id:'PKG-00794', customer:'Binod Gurung',      amount:2700,  type:'online', status:'Delivered' },
+    { id:'PKG-00791', customer:'Kiran Rana',         amount:0,     type:'prepaid',status:'Delivered' }
+  ];
+  // 2 Days Ago
+  codData[getDateStr(2)] = [
+    { id:'PKG-00788', customer:'Sarita Poudel',     amount:1200,  type:'cash',   status:'Delivered' },
+    { id:'PKG-00785', customer:'Ganesh Lama',       amount:3800,  type:'online', status:'Delivered' },
+    { id:'PKG-00782', customer:'Puja Karki',         amount:2500,  type:'vendor', status:'Delivered' },
+    { id:'PKG-00779', customer:'Suresh Dangol',     amount:900,   type:'cash',   status:'Delivered' },
+    { id:'PKG-00776', customer:'Nirmala Rai',       amount:0,     type:'prepaid',status:'Delivered' },
+    { id:'PKG-00773', customer:'Prabin Thapa',      amount:6200,  type:'cash',   status:'Delivered' }
+  ];
+  // 3 Days Ago
+  codData[getDateStr(3)] = [
+    { id:'PKG-00770', customer:'Rita Basnet',       amount:1800,  type:'cash',   status:'Delivered' },
+    { id:'PKG-00767', customer:'Aman Shrestha',     amount:4200,  type:'online', status:'Delivered' },
+    { id:'PKG-00764', customer:'Suman Tamang',      amount:0,     type:'prepaid',status:'Delivered' },
+    { id:'PKG-00761', customer:'Devi Gurung',       amount:3500,  type:'vendor', status:'Delivered' },
+    { id:'PKG-00758', customer:'Keshav Poudel',     amount:2100,  type:'cash',   status:'Delivered' },
+    { id:'PKG-00755', customer:'Bina Maharjan',     amount:1600,  type:'online', status:'Delivered' },
+    { id:'PKG-00752', customer:'Roshan KC',          amount:2900,  type:'cash',   status:'Delivered' }
+  ];
+
+  var currentCodDate = getDateStr(0);
+
+  // ─── Render COD Table for a date ────────
+  function renderCodTable(dateStr) {
+    var pkgs = codData[dateStr] || [];
+    var tbody = document.getElementById('codTableBody');
+    var noData = document.getElementById('codNoData');
+    var submitBar = document.getElementById('codSubmitBar');
+
+    if (pkgs.length === 0) {
+      tbody.innerHTML = '';
+      noData.style.display = '';
+      submitBar.style.display = 'none';
+      document.getElementById('codTotalDelivered').textContent = '0';
+      document.getElementById('codTotalCash').textContent = 'Rs 0';
+      document.getElementById('codTotalOnline').textContent = 'Rs 0';
+      document.getElementById('codTotalVendor').textContent = 'Rs 0';
+      document.getElementById('codGrandTotal').textContent = 'Rs 0';
+      return;
+    }
+
+    noData.style.display = 'none';
+    submitBar.style.display = '';
+
+    var totalCash = 0, totalOnline = 0, totalVendor = 0, totalAll = 0;
+    var rows = '';
+
+    pkgs.forEach(function(p, i) {
+      var amtClass = '';
+      var badgeHtml = '';
+      if (p.type === 'cash') {
+        amtClass = 'cash'; badgeHtml = '<span class="badge badge-success">Cash Collected</span>';
+        totalCash += p.amount;
+      } else if (p.type === 'online') {
+        amtClass = 'online'; badgeHtml = '<span class="badge badge-purple">Online Pay</span>';
+        totalOnline += p.amount;
+      } else if (p.type === 'vendor') {
+        amtClass = 'vendor'; badgeHtml = '<span class="badge badge-info">Online Pay Vendor</span>';
+        totalVendor += p.amount;
+      } else {
+        badgeHtml = '<span class="badge badge-gray">Prepaid</span>';
+      }
+      totalAll += p.amount;
+
+      rows += '<tr>' +
+        '<td>' + (i + 1) + '</td>' +
+        '<td style="font-weight:700;">' + p.id + '</td>' +
+        '<td>' + p.customer + '</td>' +
+        '<td class="cod-amount ' + amtClass + '">Rs ' + p.amount.toLocaleString() + '</td>' +
+        '<td>' + badgeHtml + '</td>' +
+        '<td><span class="badge badge-success">' + p.status + '</span></td>' +
+        '</tr>';
+    });
+
+    // Totals row
+    rows += '<tr class="cod-totals-row">' +
+      '<td colspan="3" style="text-align:right;font-size:12px;">TOTALS &rarr;</td>' +
+      '<td class="cod-amount" style="color:var(--text-primary);">Rs ' + totalAll.toLocaleString() + '</td>' +
+      '<td colspan="2" style="font-size:11px;">Cash: Rs ' + totalCash.toLocaleString() +
+        ' &bull; Online: Rs ' + totalOnline.toLocaleString() +
+        ' &bull; Vendor: Rs ' + totalVendor.toLocaleString() + '</td>' +
+      '</tr>';
+
+    tbody.innerHTML = rows;
+
+    // Update summary cards
+    document.getElementById('codTotalDelivered').textContent = pkgs.length;
+    document.getElementById('codTotalCash').textContent = 'Rs ' + totalCash.toLocaleString();
+    document.getElementById('codTotalOnline').textContent = 'Rs ' + totalOnline.toLocaleString();
+    document.getElementById('codTotalVendor').textContent = 'Rs ' + totalVendor.toLocaleString();
+    document.getElementById('codGrandTotal').textContent = 'Rs ' + totalAll.toLocaleString();
+
+    // Also update the submit modal summary
+    document.getElementById('cmsCash').textContent = 'Rs ' + totalCash.toLocaleString();
+    document.getElementById('cmsOnline').textContent = 'Rs ' + (totalOnline + totalVendor).toLocaleString();
+    document.getElementById('cmsVendor').textContent = 'Rs ' + totalVendor.toLocaleString();
+    document.getElementById('cmsTotal').textContent = 'Rs ' + totalAll.toLocaleString();
+  }
+
+  // ─── Date Filter Controls ──────────────
+  function setCodDay(which) {
+    var daysAgo = { 'today': 0, 'yesterday': 1, '2days': 2, '3days': 3 }[which] || 0;
+    var dateStr = getDateStr(daysAgo);
+    currentCodDate = dateStr;
+
+    document.getElementById('codDatePicker').value = dateStr;
+
+    // Update button states
+    document.querySelectorAll('.cod-day-btn').forEach(function(b) { b.classList.remove('active'); });
+    var btnMap = { 'today':'btnToday', 'yesterday':'btnYesterday', '2days':'btn2DaysAgo', '3days':'btn3DaysAgo' };
+    var activeBtn = document.getElementById(btnMap[which]);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    // Update display label
+    var labels = { 'today': 'Today', 'yesterday': 'Yesterday', '2days': '2 Days Ago', '3days': '3 Days Ago' };
+    var d = new Date(dateStr + 'T00:00:00');
+    var formatted = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    document.getElementById('codDateDisplay').textContent = (labels[which] || '') + ' (' + formatted + ')';
+
+    renderCodTable(dateStr);
+  }
+
+  function filterCodByDate(dateStr) {
+    currentCodDate = dateStr;
+
+    // Clear quick-select buttons
+    document.querySelectorAll('.cod-day-btn').forEach(function(b) { b.classList.remove('active'); });
+
+    // Check if it matches a quick button
+    for (var i = 0; i <= 3; i++) {
+      if (dateStr === getDateStr(i)) {
+        var keys = ['today','yesterday','2days','3days'];
+        var btnMap = { 'today':'btnToday', 'yesterday':'btnYesterday', '2days':'btn2DaysAgo', '3days':'btn3DaysAgo' };
+        document.getElementById(btnMap[keys[i]]).classList.add('active');
+        break;
+      }
+    }
+
+    var d = new Date(dateStr + 'T00:00:00');
+    var formatted = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    document.getElementById('codDateDisplay').textContent = formatted;
+
+    renderCodTable(dateStr);
+  }
+
+  // Initialize: set date picker to today and render
+  (function() {
+    var today = getDateStr(0);
+    document.getElementById('codDatePicker').value = today;
+    var d = new Date(today + 'T00:00:00');
+    var formatted = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    document.getElementById('codDateDisplay').textContent = 'Today (' + formatted + ')';
+    renderCodTable(today);
+  })();
+
   // ─── Submit COD ─────────────────────────
   var selectedUser = null;
 
@@ -1678,12 +1887,22 @@
       errorEl.classList.add('show');
       var grid = document.getElementById('userSelectGrid');
       grid.classList.remove('shake');
-      void grid.offsetWidth; // trigger reflow
+      void grid.offsetWidth;
       grid.classList.add('shake');
       return;
     }
 
     closeModal('submitCodModal');
+
+    // Calculate current amounts from active data
+    var pkgs = codData[currentCodDate] || [];
+    var cashAmt = 0, onlineAmt = 0, vendorAmt = 0;
+    pkgs.forEach(function(p) {
+      if (p.type === 'cash') cashAmt += p.amount;
+      else if (p.type === 'online') onlineAmt += p.amount;
+      else if (p.type === 'vendor') vendorAmt += p.amount;
+    });
+    var totalAmt = cashAmt + onlineAmt + vendorAmt;
 
     // Populate receipt
     var riderName = sessionStorage.getItem('packrs_name') || 'Rider';
@@ -1697,6 +1916,11 @@
     var roleEl = document.getElementById('receiptToRole');
     roleEl.textContent = selectedUser.role;
     roleEl.className = 'usc-role ' + selectedUser.role.toLowerCase();
+
+    // Dynamic amounts in receipt
+    document.getElementById('receiptCashAmt').textContent = 'Rs ' + cashAmt.toLocaleString();
+    document.getElementById('receiptOnlineAmt').textContent = 'Rs ' + (onlineAmt + vendorAmt).toLocaleString();
+    document.getElementById('receiptTotalAmt').textContent = 'Rs ' + totalAmt.toLocaleString();
 
     var now = new Date();
     var timeStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
