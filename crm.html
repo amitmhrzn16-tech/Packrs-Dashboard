@@ -103,6 +103,10 @@
         <div class="role">ADMIN</div>
       </div>
     </div>
+    <a href="#" class="logout-link" style="display:flex;align-items:center;gap:8px;padding:8px;color:var(--text-sidebar);text-decoration:none;font-size:13px;font-weight:500;margin-top:8px;border-radius:var(--radius-sm);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </a>
   </div>
 </aside>
 
@@ -942,5 +946,6 @@ function fillProvider(val) {
   showToast(`${val.charAt(0).toUpperCase()+val.slice(1)} settings loaded`, 'success');
 }
 </script>
+<script src="js/auth.js"></script>
 </body>
 </html>
