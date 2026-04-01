@@ -272,6 +272,129 @@
     }
     .scan-input:focus { border-color: var(--teal-dark); }
     .scan-input::placeholder { color: #b0b8b7; }
+    .btn-scan-qr {
+      padding: 10px 18px;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .btn-scan-qr:hover { background: var(--teal-dark); }
+    .btn-scan-qr svg { width: 18px; height: 18px; }
+
+    /* ── QR SCANNER OVERLAY ──────────────────────────── */
+    .qr-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.7);
+      z-index: 600;
+      align-items: center;
+      justify-content: center;
+    }
+    .qr-overlay.show { display: flex; }
+    .qr-scanner-box {
+      background: var(--white);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 440px;
+      overflow: hidden;
+      animation: modalIn .2s ease;
+    }
+    .qr-scanner-head {
+      background: var(--teal-dark);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 800;
+      font-size: .9rem;
+    }
+    .qr-scanner-head button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+    .qr-video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      background: #111;
+      overflow: hidden;
+    }
+    .qr-video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .qr-viewfinder {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px; height: 200px;
+      border: 3px solid var(--teal);
+      border-radius: 12px;
+      box-shadow: 0 0 0 9999px rgba(0,0,0,.35);
+    }
+    .qr-viewfinder::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--teal);
+      animation: qrScanLine 2s ease-in-out infinite;
+    }
+    @keyframes qrScanLine {
+      0%, 100% { top: 0; }
+      50% { top: calc(100% - 3px); }
+    }
+    .qr-scanner-footer {
+      padding: 14px 20px;
+      text-align: center;
+      font-size: .82rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    .qr-scanner-footer .qr-status {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .qr-scanner-footer .qr-hint {
+      font-size: .75rem;
+    }
+    .qr-error-msg {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    .qr-error-msg svg {
+      width: 48px; height: 48px;
+      color: var(--border);
+      margin-bottom: 12px;
+    }
+    .qr-error-msg .btn-retry {
+      margin-top: 14px;
+      padding: 8px 20px;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
     /* ── SCANNED LIST TABLE ──────────────────────────── */
     .table-panel {
@@ -630,6 +753,31 @@
         <div class="scan-label">Package Number <span>*</span></div>
         <div class="scan-input-row">
           <input type="text" class="scan-input" id="scanInput" placeholder="Package Number" autofocus />
+          <button class="btn-scan-qr" onclick="openQRScanner()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7" stroke-dasharray="2 2"/>
+            </svg>
+            Scan QR
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Scanner Overlay -->
+    <div class="qr-overlay" id="qrOverlay">
+      <div class="qr-scanner-box">
+        <div class="qr-scanner-head">
+          <span>Scan Package QR Code</span>
+          <button onclick="closeQRScanner()">&times;</button>
+        </div>
+        <div class="qr-video-wrap" id="qrVideoWrap">
+          <video id="qrVideo" playsinline></video>
+          <div class="qr-viewfinder"></div>
+        </div>
+        <div class="qr-scanner-footer">
+          <div class="qr-status" id="qrStatus">Initializing camera...</div>
+          <div class="qr-hint">Position the QR code within the frame to scan</div>
         </div>
       </div>
     </div>
@@ -735,6 +883,148 @@
     document.getElementById('sidenav').classList.toggle('open');
   });
 
+  // ── QR SCANNER ──────────────────────────────────
+  let qrStream = null;
+  let qrScanning = false;
+  let qrAnimFrame = null;
+
+  function openQRScanner() {
+    const overlay = document.getElementById('qrOverlay');
+    overlay.classList.add('show');
+    document.getElementById('qrStatus').textContent = 'Initializing camera...';
+    startCamera();
+  }
+
+  function closeQRScanner() {
+    document.getElementById('qrOverlay').classList.remove('show');
+    stopCamera();
+  }
+
+  function stopCamera() {
+    qrScanning = false;
+    if (qrAnimFrame) {
+      cancelAnimationFrame(qrAnimFrame);
+      qrAnimFrame = null;
+    }
+    if (qrStream) {
+      qrStream.getTracks().forEach(t => t.stop());
+      qrStream = null;
+    }
+    const video = document.getElementById('qrVideo');
+    video.srcObject = null;
+  }
+
+  async function startCamera() {
+    const video = document.getElementById('qrVideo');
+    const statusEl = document.getElementById('qrStatus');
+    const videoWrap = document.getElementById('qrVideoWrap');
+
+    try {
+      qrStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } }
+      });
+      video.srcObject = qrStream;
+      await video.play();
+      statusEl.textContent = 'Camera ready — scanning...';
+      statusEl.style.color = '#16a34a';
+      qrScanning = true;
+      scanFrame();
+    } catch (err) {
+      statusEl.textContent = 'Camera access denied or unavailable';
+      statusEl.style.color = '#e05c7a';
+      videoWrap.innerHTML = `
+        <div class="qr-error-msg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <div>Could not access camera.</div>
+          <div style="font-size:.75rem;margin-top:4px;">Please allow camera permissions or use manual input.</div>
+          <button class="btn-retry" onclick="retryCameraAccess()">Retry</button>
+        </div>`;
+    }
+  }
+
+  function retryCameraAccess() {
+    const videoWrap = document.getElementById('qrVideoWrap');
+    videoWrap.innerHTML = `
+      <video id="qrVideo" playsinline></video>
+      <div class="qr-viewfinder"></div>`;
+    startCamera();
+  }
+
+  function scanFrame() {
+    if (!qrScanning) return;
+    const video = document.getElementById('qrVideo');
+
+    if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+      qrAnimFrame = requestAnimationFrame(scanFrame);
+      return;
+    }
+
+    // Try BarcodeDetector API (Chrome, Edge, Android)
+    if ('BarcodeDetector' in window) {
+      const detector = new BarcodeDetector({ formats: ['qr_code'] });
+      detector.detect(video).then(codes => {
+        if (codes.length > 0) {
+          handleQRResult(codes[0].rawValue);
+          return;
+        }
+        qrAnimFrame = requestAnimationFrame(scanFrame);
+      }).catch(() => {
+        qrAnimFrame = requestAnimationFrame(scanFrame);
+      });
+    } else {
+      // Fallback: canvas-based pixel sampling (for browsers without BarcodeDetector)
+      // Use manual input fallback message
+      const statusEl = document.getElementById('qrStatus');
+      statusEl.textContent = 'QR detection not supported in this browser. Use manual input.';
+      statusEl.style.color = '#d97706';
+      // Keep camera running for visual feedback, scan every 500ms
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+      // Without a JS QR library, prompt user to type manually
+      qrAnimFrame = requestAnimationFrame(scanFrame);
+    }
+  }
+
+  function handleQRResult(value) {
+    qrScanning = false;
+    const statusEl = document.getElementById('qrStatus');
+    statusEl.textContent = 'Scanned: ' + value;
+    statusEl.style.color = '#16a34a';
+
+    // Process the scanned value
+    processScannedPackage(value.trim().toUpperCase());
+
+    // Resume scanning after a short delay
+    setTimeout(() => {
+      if (document.getElementById('qrOverlay').classList.contains('show')) {
+        statusEl.textContent = 'Camera ready — scanning...';
+        qrScanning = true;
+        scanFrame();
+      }
+    }, 1500);
+  }
+
+  function processScannedPackage(val) {
+    if (!val) return;
+
+    if (scannedPackages.find(p => p.pkgNum === val)) {
+      showToast('Package ' + val + ' is already scanned.', 'error');
+      return;
+    }
+
+    const pkg = packageDB.find(p => p.pkgNum === val);
+    if (pkg) {
+      scannedPackages.push({ ...pkg });
+      showToast('Package ' + val + ' scanned successfully!', 'success');
+      renderScannedTable();
+    } else {
+      showToast('Package ' + val + ' not found in the system.', 'error');
+    }
+  }
+
   // Simulated package database (same data as warehouse page)
   const packageDB = [
     { branch:'Chabahil', pkgNum:'JKVOPOR2', vendor:"people's smart", customer:'dipika',       street:'budhanilkantha bhangal', city:'Kathmandu', mobile:'9767581367', amount:0,    type:'Inside Valley',  status:'Receive' },
@@ -757,24 +1047,7 @@
       e.preventDefault();
       const val = this.value.trim().toUpperCase();
       if (!val) return;
-
-      // Check if already scanned
-      if (scannedPackages.find(p => p.pkgNum === val)) {
-        showToast('Package ' + val + ' is already scanned.', 'error');
-        this.value = '';
-        return;
-      }
-
-      // Look up in database
-      const pkg = packageDB.find(p => p.pkgNum === val);
-      if (pkg) {
-        scannedPackages.push({ ...pkg });
-        showToast('Package ' + val + ' scanned successfully!', 'success');
-        renderScannedTable();
-      } else {
-        showToast('Package ' + val + ' not found in the system.', 'error');
-      }
-
+      processScannedPackage(val);
       this.value = '';
     }
   });
