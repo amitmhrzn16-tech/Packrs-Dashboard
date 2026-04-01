@@ -141,22 +141,56 @@
     .map-label{color:var(--teal);font-size:1rem;font-weight:700;z-index:2;position:relative}
     .map-emoji{font-size:2rem;z-index:2;position:relative}
     .map-grid-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(58,175,169,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(58,175,169,.08) 1px,transparent 1px);background-size:40px 40px}
-    .map-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:#22c55e;z-index:3}
+    .map-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:#22c55e;z-index:3;cursor:pointer;transition:top .8s ease,left .8s ease,width .2s,height .2s,box-shadow .2s}
     .map-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;background:rgba(34,197,94,.35);animation:pulse-dot 1.8s ease-in-out infinite}
     @keyframes pulse-dot{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.7);opacity:0}}
     .map-dot.delivery{background:#3aafa9}
     .map-dot.delivery::after{background:rgba(58,175,169,.35)}
     .map-dot.idle{background:#f59e0b}
     .map-dot.idle::after{background:rgba(245,158,11,.35)}
-    .map-filter{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding-top:12px}
-    .map-filter label{font-size:.75rem;font-weight:700;color:var(--teal-dark);white-space:nowrap}
-    .map-filter select{padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;background:var(--white);outline:none;color:var(--text)}
-    .map-filter select:focus{border-color:var(--teal)}
+    .map-dot.offline{background:#9ca3af}
+    .map-dot.offline::after{background:rgba(156,163,175,.25);animation:none}
+    .map-dot.dot-hidden{display:none}
+    .map-dot.selected{width:22px;height:22px;box-shadow:0 0 0 6px rgba(58,175,169,.35),0 0 20px rgba(58,175,169,.5);z-index:10}
+    .map-dot.selected::after{animation:pulse-dot .9s ease-in-out infinite}
+
+    /* MAP POPUP */
+    .map-popup{position:absolute;background:var(--white);border-radius:10px;padding:10px 14px;box-shadow:0 6px 24px rgba(0,0,0,.22);z-index:20;min-width:180px;pointer-events:none;opacity:0;transition:opacity .2s;font-size:.75rem}
+    .map-popup.visible{opacity:1}
+    .map-popup .mp-name{font-weight:800;color:var(--text);font-size:.82rem}
+    .map-popup .mp-loc{color:var(--muted);margin-top:2px}
+    .map-popup .mp-status{margin-top:4px}
+    .map-popup .mp-time{color:var(--muted);font-size:.68rem;margin-top:3px}
+    .map-popup::before{content:'';position:absolute;bottom:-6px;left:20px;width:12px;height:12px;background:var(--white);transform:rotate(45deg);box-shadow:3px 3px 6px rgba(0,0,0,.08)}
+
+    /* MAP FILTER BAR */
+    .loc-filter-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 20px;background:var(--teal-light);border-bottom:1px solid var(--border)}
+    .loc-filter-bar label{font-size:.72rem;font-weight:700;color:var(--teal-dark);white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
+    .loc-filter-bar input[type=search]{padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;color:var(--text);background:var(--white);outline:none;min-width:130px}
+    .loc-filter-bar input:focus{border-color:var(--teal)}
+    .loc-filter-bar select{padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;background:var(--white);outline:none;color:var(--text)}
+    .loc-filter-bar select:focus{border-color:var(--teal)}
+    .btn-clear-loc{background:transparent;color:var(--muted);border:1.5px solid var(--border);padding:5px 10px;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px}
+    .btn-clear-loc:hover{color:var(--red);border-color:var(--red)}
+    .loc-filter-counter{font-size:.68rem;color:var(--muted);margin-left:auto;white-space:nowrap}
+
+    /* RIDER PANEL FILTER */
+    .rider-panel-filter{display:flex;align-items:center;gap:6px;padding:8px 16px;border-bottom:1px solid var(--border)}
+    .rider-panel-filter input[type=search]{padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.75rem;color:var(--text);background:var(--white);outline:none;flex:1;min-width:0}
+    .rider-panel-filter input:focus{border-color:var(--teal)}
+    .rider-panel-filter select{padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.75rem;background:var(--white);outline:none;color:var(--text)}
+
+    /* GPS PULSE INDICATOR */
+    .gps-pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:4px;animation:gps-blink 1.5s ease-in-out infinite}
+    @keyframes gps-blink{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,197,94,.6)}50%{opacity:.7;box-shadow:0 0 0 4px rgba(34,197,94,0)}}
 
     /* RIDER LIST */
     .rider-list{max-height:480px;overflow-y:auto;display:flex;flex-direction:column}
-    .rider-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)}
+    .rider-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;border-left:3px solid transparent;padding-left:4px}
     .rider-item:last-child{border-bottom:none}
+    .rider-item:hover{background:var(--teal-light)}
+    .rider-item.selected{background:var(--teal-light);border-left-color:var(--teal)}
+    .rider-item.ri-hidden{display:none}
     .rider-avatar{width:36px;height:36px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.78rem;flex-shrink:0}
     .rider-info{flex:1;min-width:0}
     .rider-name{font-size:.82rem;font-weight:700;color:var(--text)}
@@ -452,175 +486,84 @@
 
     <!-- Map + Active Riders -->
     <div class="panels-2">
-      <div class="panel">
+      <!-- LEFT: LIVE MAP -->
+      <div class="panel" id="mapPanel">
         <div class="panel-hdr">
-          <span>Live Map View</span>
-          <span style="font-size:.75rem;font-weight:600;opacity:.8;">&#128308; GPS Tracking Active</span>
+          <span><span class="gps-pulse"></span> Live Map View</span>
+          <span style="font-size:.75rem;font-weight:600;opacity:.8;"><span class="gps-pulse"></span> GPS Tracking Active</span>
+        </div>
+        <div class="loc-filter-bar">
+          <label>Filter Rider:</label>
+          <input type="search" id="locSearch" placeholder="Search by name..." oninput="applyLocFilters()" />
+          <select id="locStatusFilter" onchange="applyLocFilters()">
+            <option value="">All Status</option>
+            <option value="On Delivery">On Delivery</option>
+            <option value="Online">Online</option>
+            <option value="Idle">Idle</option>
+            <option value="Offline">Offline</option>
+          </select>
+          <select id="locCityFilter" onchange="applyLocFilters()">
+            <option value="">All Cities</option>
+            <option value="Kathmandu">Kathmandu</option>
+            <option value="Pokhara">Pokhara</option>
+            <option value="Lalitpur">Lalitpur</option>
+            <option value="Bhaktapur">Bhaktapur</option>
+          </select>
+          <button class="btn-clear-loc" onclick="clearLocFilters()">&#10005; Clear</button>
+          <span class="loc-filter-counter" id="locCounter">Showing 12 of 12 riders</span>
         </div>
         <div class="panel-body">
-          <div class="map-placeholder">
+          <div class="map-placeholder" id="mapArea">
             <div class="map-grid-lines"></div>
-            <div class="map-dot delivery" style="top:18%;left:25%"></div>
-            <div class="map-dot" style="top:30%;left:58%"></div>
-            <div class="map-dot delivery" style="top:52%;left:40%"></div>
-            <div class="map-dot idle" style="top:65%;left:72%"></div>
-            <div class="map-dot delivery" style="top:78%;left:18%"></div>
-            <div class="map-emoji">&#128506;</div>
-            <div class="map-label">Live Map — GPS Tracking Active</div>
-          </div>
-          <div class="map-filter">
-            <label>City:</label>
-            <select>
-              <option>All Cities</option>
-              <option>Kathmandu</option>
-              <option>Pokhara</option>
-              <option>Lalitpur</option>
-              <option>Bhaktapur</option>
-            </select>
-            <label>Status:</label>
-            <select>
-              <option>All Status</option>
-              <option>Online</option>
-              <option>Offline</option>
-              <option>On Delivery</option>
-              <option>Idle</option>
-            </select>
+            <!-- Dots are injected by JS -->
+            <div class="map-emoji" style="opacity:.15">&#128506;</div>
+            <div class="map-label" style="opacity:.25">Live Map — GPS Active</div>
+            <div class="map-popup" id="mapPopup">
+              <div class="mp-name" id="mpName"></div>
+              <div class="mp-loc" id="mpLoc"></div>
+              <div class="mp-status" id="mpStatus"></div>
+              <div class="mp-time" id="mpTime"></div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="panel">
+      <!-- RIGHT: ACTIVE RIDERS -->
+      <div class="panel" id="riderListPanel">
         <div class="panel-hdr">
-          <span>Active Riders</span>
-          <span style="font-size:.75rem;font-weight:600;opacity:.8;">12 riders</span>
+          <span><span class="gps-pulse"></span> Active Riders</span>
+          <span style="font-size:.75rem;font-weight:600;opacity:.8;" id="riderListCount">12 riders</span>
+        </div>
+        <div class="rider-panel-filter">
+          <input type="search" id="riderPanelSearch" placeholder="Search rider..." oninput="applyLocFilters()" />
+          <select id="riderPanelStatus" onchange="applyLocFilters()">
+            <option value="">All</option>
+            <option value="On Delivery">On Delivery</option>
+            <option value="Online">Online</option>
+            <option value="Idle">Idle</option>
+            <option value="Offline">Offline</option>
+          </select>
         </div>
         <div class="panel-body" style="padding:12px 16px">
-          <div class="rider-list">
-            <div class="rider-item">
-              <div class="rider-avatar">AT</div>
-              <div class="rider-info">
-                <div class="rider-name">Amit Tamang</div>
-                <div class="rider-phone">9801234567</div>
-                <div class="rider-meta">2 min ago &middot; Thamel, KTM</div>
-              </div>
-              <div class="rider-right"><span class="badge b-teal">On Delivery</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">RS</div>
-              <div class="rider-info">
-                <div class="rider-name">Rajan Shrestha</div>
-                <div class="rider-phone">9812345678</div>
-                <div class="rider-meta">Just now &middot; Lazimpat, KTM</div>
-              </div>
-              <div class="rider-right"><span class="badge b-green">Online</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">SM</div>
-              <div class="rider-info">
-                <div class="rider-name">Sunil Magar</div>
-                <div class="rider-phone">9823456789</div>
-                <div class="rider-meta">5 min ago &middot; Patan, LTP</div>
-              </div>
-              <div class="rider-right"><span class="badge b-teal">On Delivery</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">BR</div>
-              <div class="rider-info">
-                <div class="rider-name">Bibek Rai</div>
-                <div class="rider-phone">9834567890</div>
-                <div class="rider-meta">1 min ago &middot; Bhaktapur</div>
-              </div>
-              <div class="rider-right"><span class="badge b-green">Online</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">NK</div>
-              <div class="rider-info">
-                <div class="rider-name">Nabin KC</div>
-                <div class="rider-phone">9845678901</div>
-                <div class="rider-meta">12 min ago &middot; Chabahil, KTM</div>
-              </div>
-              <div class="rider-right"><span class="badge b-amber">Idle</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">PT</div>
-              <div class="rider-info">
-                <div class="rider-name">Pawan Thapa</div>
-                <div class="rider-phone">9856789012</div>
-                <div class="rider-meta">3 min ago &middot; Kupondol, KTM</div>
-              </div>
-              <div class="rider-right"><span class="badge b-teal">On Delivery</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">SS</div>
-              <div class="rider-info">
-                <div class="rider-name">Sagar Sharma</div>
-                <div class="rider-phone">9867890123</div>
-                <div class="rider-meta">Just now &middot; Baluwatar, KTM</div>
-              </div>
-              <div class="rider-right"><span class="badge b-green">Online</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">DB</div>
-              <div class="rider-info">
-                <div class="rider-name">Dinesh Basnet</div>
-                <div class="rider-phone">9878901234</div>
-                <div class="rider-meta">2 hr ago &middot; &#8212;</div>
-              </div>
-              <div class="rider-right"><span class="badge b-muted">Offline</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">KL</div>
-              <div class="rider-info">
-                <div class="rider-name">Kiran Lama</div>
-                <div class="rider-phone">9889012345</div>
-                <div class="rider-meta">8 min ago &middot; Kirtipur</div>
-              </div>
-              <div class="rider-right"><span class="badge b-teal">On Delivery</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">PJ</div>
-              <div class="rider-info">
-                <div class="rider-name">Prabin Joshi</div>
-                <div class="rider-phone">9890123456</div>
-                <div class="rider-meta">4 min ago &middot; Banasthali</div>
-              </div>
-              <div class="rider-right"><span class="badge b-green">Online</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">AG</div>
-              <div class="rider-info">
-                <div class="rider-name">Anil Gurung</div>
-                <div class="rider-phone">9801122334</div>
-                <div class="rider-meta">1 hr ago &middot; &#8212;</div>
-              </div>
-              <div class="rider-right"><span class="badge b-muted">Offline</span></div>
-            </div>
-            <div class="rider-item">
-              <div class="rider-avatar">RK</div>
-              <div class="rider-info">
-                <div class="rider-name">Roshan Karki</div>
-                <div class="rider-phone">9812233445</div>
-                <div class="rider-meta">6 min ago &middot; Budhanilkantha</div>
-              </div>
-              <div class="rider-right"><span class="badge b-teal">On Delivery</span></div>
-            </div>
+          <div class="rider-list" id="riderLocList">
+            <!-- Rider items injected by JS -->
           </div>
         </div>
       </div>
     </div>
 
     <!-- Rider Activity Log -->
-    <div class="panel">
+    <div class="panel" id="activityPanel">
       <div class="panel-hdr">
         <span>Rider Activity Log</span>
-        <span style="font-size:.75rem;font-weight:600;opacity:.8;">Today</span>
+        <span style="font-size:.75rem;font-weight:600;opacity:.8;">Today &middot; <span id="actTotalLabel">25 events</span></span>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr><th>Time</th><th>Rider</th><th>Event</th><th>Location</th><th>Details</th></tr>
           </thead>
-          <tbody>
+          <tbody id="actBody">
             <tr><td>10:42 AM</td><td>Amit Tamang</td><td><span class="badge b-teal">Package Picked Up</span></td><td>Thamel, KTM</td><td>PKG-00821 picked up from sender</td></tr>
             <tr><td>10:35 AM</td><td>Kiran Lama</td><td><span class="badge b-green">Package Delivered</span></td><td>Kirtipur</td><td>PKG-00798 delivered successfully — signed by recipient</td></tr>
             <tr><td>10:28 AM</td><td>Rajan Shrestha</td><td><span class="badge" style="background:#e0f2fe;color:#0369a1;">Location Update</span></td><td>Lazimpat, KTM</td><td>GPS ping — rider en route to pickup</td></tr>
@@ -631,8 +574,32 @@
             <tr><td>09:12 AM</td><td>Nabin KC</td><td><span class="badge b-amber">Idle</span></td><td>Chabahil, KTM</td><td>Waiting for next assignment — no active package</td></tr>
             <tr><td>08:55 AM</td><td>Dinesh Basnet</td><td><span class="badge b-muted">Ended Shift</span></td><td>&#8212;</td><td>Rider logged out — shift ended, 6 deliveries completed</td></tr>
             <tr><td>08:40 AM</td><td>Prabin Joshi</td><td><span class="badge b-amber">Started Shift</span></td><td>Banasthali</td><td>Rider checked in — assigned 4 packages for the day</td></tr>
+            <tr><td>08:22 AM</td><td>Sagar Sharma</td><td><span class="badge b-green">Package Delivered</span></td><td>Baluwatar, KTM</td><td>PKG-00795 delivered — left at reception desk</td></tr>
+            <tr><td>08:10 AM</td><td>Amit Tamang</td><td><span class="badge b-teal">Package Picked Up</span></td><td>Thamel, KTM</td><td>PKG-00818 picked up from Thamel office</td></tr>
+            <tr><td>07:55 AM</td><td>Roshan Karki</td><td><span class="badge b-teal">Package Picked Up</span></td><td>Budhanilkantha</td><td>PKG-00810 picked up from warehouse</td></tr>
+            <tr><td>07:45 AM</td><td>Kiran Lama</td><td><span class="badge" style="background:#e0f2fe;color:#0369a1;">Location Update</span></td><td>Kirtipur</td><td>GPS ping — approaching delivery zone</td></tr>
+            <tr><td>07:30 AM</td><td>Pawan Thapa</td><td><span class="badge b-amber">Started Shift</span></td><td>Kupondol, KTM</td><td>Rider checked in — assigned 6 packages</td></tr>
+            <tr><td>07:18 AM</td><td>Sunil Magar</td><td><span class="badge b-teal">Package Picked Up</span></td><td>Patan, LTP</td><td>PKG-00805 picked up from Patan branch</td></tr>
+            <tr><td>07:05 AM</td><td>Rajan Shrestha</td><td><span class="badge b-amber">Started Shift</span></td><td>Lazimpat, KTM</td><td>Rider checked in — morning shift started</td></tr>
+            <tr><td>06:55 AM</td><td>Amit Tamang</td><td><span class="badge b-amber">Started Shift</span></td><td>Thamel, KTM</td><td>Rider checked in — assigned 8 packages for the day</td></tr>
+            <tr><td>06:45 AM</td><td>Kiran Lama</td><td><span class="badge b-amber">Started Shift</span></td><td>Kirtipur</td><td>Rider checked in — early morning shift</td></tr>
+            <tr><td>06:30 AM</td><td>Roshan Karki</td><td><span class="badge b-amber">Started Shift</span></td><td>Budhanilkantha</td><td>Rider checked in — 5 packages scheduled</td></tr>
+            <tr><td>06:15 AM</td><td>Sagar Sharma</td><td><span class="badge b-amber">Started Shift</span></td><td>Baluwatar, KTM</td><td>Rider checked in — assigned 4 packages</td></tr>
+            <tr><td>06:00 AM</td><td>Bibek Rai</td><td><span class="badge b-amber">Started Shift</span></td><td>Bhaktapur</td><td>Rider checked in — early morning depot arrival</td></tr>
+            <tr><td>05:50 AM</td><td>Nabin KC</td><td><span class="badge b-amber">Started Shift</span></td><td>Chabahil, KTM</td><td>Rider checked in — 3 packages assigned</td></tr>
+            <tr><td>05:30 AM</td><td>Sunil Magar</td><td><span class="badge b-amber">Started Shift</span></td><td>Patan, LTP</td><td>Rider checked in — first shift of the day</td></tr>
+            <tr><td>05:15 AM</td><td>Prabin Joshi</td><td><span class="badge" style="background:#e0f2fe;color:#0369a1;">Location Update</span></td><td>Banasthali</td><td>GPS ping — rider heading to depot</td></tr>
           </tbody>
         </table>
+      </div>
+      <div class="pagination" id="actPagination">
+        <span id="actPageInfo">Showing 1–5 of 25 events</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="pag-btn" id="actPrev" onclick="actPage(-1)">&#8249; Prev</button>
+          <span id="actPageNums" style="font-size:.75rem;font-weight:700;color:var(--teal-dark)"></span>
+          <button class="pag-btn" id="actNext" onclick="actPage(1)">Next &#8250;</button>
+          <button class="pag-btn" style="background:var(--teal);color:#fff;margin-left:6px" onclick="openModal('activityFullModal')">View All</button>
+        </div>
       </div>
     </div>
 
@@ -886,6 +853,46 @@
   </div>
 </div>
 
+<!-- ACTIVITY LOG FULL MODAL -->
+<div class="modal-bg" id="activityFullModal">
+  <div class="modal" style="width:750px">
+    <div class="modal-head">
+      <h3>Rider Activity Log — Full View</h3>
+      <button class="modal-x" onclick="closeModal('activityFullModal')">&#10005;</button>
+    </div>
+    <div class="modal-body" style="padding:0">
+      <div style="display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--teal-light);border-bottom:1px solid var(--border)">
+        <label style="font-size:.72rem;font-weight:700;color:var(--teal-dark)">Search:</label>
+        <input type="search" id="actFullSearch" placeholder="Rider or event..." oninput="renderFullLog()" style="padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;color:var(--text);outline:none;flex:1" />
+        <label style="font-size:.72rem;font-weight:700;color:var(--teal-dark)">Event:</label>
+        <select id="actFullEventFilter" onchange="renderFullLog()" style="padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;color:var(--text);outline:none">
+          <option value="">All Events</option>
+          <option value="Package Picked Up">Package Picked Up</option>
+          <option value="Package Delivered">Package Delivered</option>
+          <option value="Location Update">Location Update</option>
+          <option value="Started Shift">Started Shift</option>
+          <option value="Ended Shift">Ended Shift</option>
+          <option value="Idle">Idle</option>
+        </select>
+      </div>
+      <div class="table-wrap" style="max-height:420px;overflow-y:auto">
+        <table class="stat-modal-table">
+          <thead><tr><th>#</th><th>Time</th><th>Rider</th><th>Event</th><th>Location</th><th>Details</th></tr></thead>
+          <tbody id="actFullBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="actFullPagination">
+        <span id="actFullPageInfo"></span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="pag-btn" id="actFullPrev" onclick="actFullPage(-1)">&#8249; Prev</button>
+          <span id="actFullPageNums" style="font-size:.75rem;font-weight:700;color:var(--teal-dark)"></span>
+          <button class="pag-btn" id="actFullNext" onclick="actFullPage(1)">Next &#8250;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1072,6 +1079,324 @@ new Chart(document.getElementById('statusChart'), {
     plugins:{ legend:{ position:'bottom', labels:{ font:{ size:10 }, padding:12 } } }
   }
 });
+
+/* ═══════════════════════════════════════════════════════ */
+/* RIDER ACTIVITY LOG — Pagination & Full View           */
+/* ═══════════════════════════════════════════════════════ */
+(function() {
+  var PER_PAGE = 5;
+  var currentPage = 0;
+  var rows = Array.from(document.querySelectorAll('#actBody tr'));
+  var totalRows = rows.length;
+  var totalPages = Math.ceil(totalRows / PER_PAGE);
+
+  document.getElementById('actTotalLabel').textContent = totalRows + ' events';
+
+  function renderPage() {
+    var start = currentPage * PER_PAGE;
+    var end = Math.min(start + PER_PAGE, totalRows);
+    rows.forEach(function(tr, i) {
+      tr.style.display = (i >= start && i < end) ? '' : 'none';
+    });
+    document.getElementById('actPageInfo').textContent =
+      'Showing ' + (start + 1) + '–' + end + ' of ' + totalRows + ' events';
+    document.getElementById('actPageNums').textContent =
+      'Page ' + (currentPage + 1) + ' of ' + totalPages;
+    document.getElementById('actPrev').disabled = currentPage === 0;
+    document.getElementById('actNext').disabled = currentPage >= totalPages - 1;
+    document.getElementById('actPrev').style.opacity = currentPage === 0 ? '.4' : '1';
+    document.getElementById('actNext').style.opacity = currentPage >= totalPages - 1 ? '.4' : '1';
+  }
+
+  window.actPage = function(dir) {
+    currentPage = Math.max(0, Math.min(totalPages - 1, currentPage + dir));
+    renderPage();
+  };
+
+  renderPage();
+
+  /* ── Full View Modal ── */
+  var FULL_PER_PAGE = 10;
+  var fullPage = 0;
+  var actData = rows.map(function(tr) {
+    var tds = tr.querySelectorAll('td');
+    return {
+      time: tds[0].textContent,
+      rider: tds[1].textContent,
+      eventHtml: tds[2].innerHTML,
+      eventText: tds[2].textContent.trim(),
+      location: tds[3].textContent,
+      details: tds[4].textContent
+    };
+  });
+
+  function getFilteredData() {
+    var q = (document.getElementById('actFullSearch').value || '').toLowerCase();
+    var ev = document.getElementById('actFullEventFilter').value;
+    return actData.filter(function(d) {
+      var textMatch = !q || d.rider.toLowerCase().indexOf(q) !== -1 || d.details.toLowerCase().indexOf(q) !== -1;
+      var evMatch = !ev || d.eventText === ev;
+      return textMatch && evMatch;
+    });
+  }
+
+  window.renderFullLog = function() {
+    fullPage = 0;
+    renderFullPage();
+  };
+
+  function renderFullPage() {
+    var filtered = getFilteredData();
+    var tp = Math.max(1, Math.ceil(filtered.length / FULL_PER_PAGE));
+    fullPage = Math.min(fullPage, tp - 1);
+    var start = fullPage * FULL_PER_PAGE;
+    var end = Math.min(start + FULL_PER_PAGE, filtered.length);
+    var body = document.getElementById('actFullBody');
+    body.innerHTML = '';
+
+    if (filtered.length === 0) {
+      body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">No matching events found</td></tr>';
+    } else {
+      for (var i = start; i < end; i++) {
+        var d = filtered[i];
+        body.innerHTML += '<tr><td>' + (i + 1) + '</td><td>' + d.time + '</td><td>' + d.rider + '</td><td>' + d.eventHtml + '</td><td>' + d.location + '</td><td style="white-space:normal;max-width:220px">' + d.details + '</td></tr>';
+      }
+    }
+
+    document.getElementById('actFullPageInfo').textContent =
+      filtered.length === 0 ? '0 events' : 'Showing ' + (start + 1) + '–' + end + ' of ' + filtered.length + ' events';
+    document.getElementById('actFullPageNums').textContent = 'Page ' + (fullPage + 1) + ' of ' + tp;
+    document.getElementById('actFullPrev').disabled = fullPage === 0;
+    document.getElementById('actFullNext').disabled = fullPage >= tp - 1;
+    document.getElementById('actFullPrev').style.opacity = fullPage === 0 ? '.4' : '1';
+    document.getElementById('actFullNext').style.opacity = fullPage >= tp - 1 ? '.4' : '1';
+  }
+
+  window.actFullPage = function(dir) {
+    var filtered = getFilteredData();
+    var tp = Math.max(1, Math.ceil(filtered.length / FULL_PER_PAGE));
+    fullPage = Math.max(0, Math.min(tp - 1, fullPage + dir));
+    renderFullPage();
+  };
+
+  /* Render full log when modal opens */
+  var origOpen = window.openModal;
+  window.openModal = function(id) {
+    origOpen(id);
+    if (id === 'activityFullModal') {
+      document.getElementById('actFullSearch').value = '';
+      document.getElementById('actFullEventFilter').value = '';
+      fullPage = 0;
+      renderFullPage();
+    }
+  };
+})();
+
+/* ═══════════════════════════════════════════════════════ */
+/* RIDER LOCATION — Interactive Map & List               */
+/* ═══════════════════════════════════════════════════════ */
+(function() {
+  var RIDERS = [
+    {id:'r1',name:'Amit Tamang',initials:'AT',phone:'9801234567',status:'On Delivery',city:'Kathmandu',loc:'Thamel, KTM',lastSeen:'2 min ago',top:18,left:25},
+    {id:'r2',name:'Rajan Shrestha',initials:'RS',phone:'9812345678',status:'Online',city:'Kathmandu',loc:'Lazimpat, KTM',lastSeen:'Just now',top:30,left:58},
+    {id:'r3',name:'Sunil Magar',initials:'SM',phone:'9823456789',status:'On Delivery',city:'Lalitpur',loc:'Patan, LTP',lastSeen:'5 min ago',top:52,left:40},
+    {id:'r4',name:'Bibek Rai',initials:'BR',phone:'9834567890',status:'Online',city:'Bhaktapur',loc:'Bhaktapur',lastSeen:'1 min ago',top:38,left:78},
+    {id:'r5',name:'Nabin KC',initials:'NK',phone:'9845678901',status:'Idle',city:'Kathmandu',loc:'Chabahil, KTM',lastSeen:'12 min ago',top:65,left:72},
+    {id:'r6',name:'Pawan Thapa',initials:'PT',phone:'9856789012',status:'On Delivery',city:'Kathmandu',loc:'Kupondol, KTM',lastSeen:'3 min ago',top:78,left:18},
+    {id:'r7',name:'Sagar Sharma',initials:'SS',phone:'9867890123',status:'Online',city:'Kathmandu',loc:'Baluwatar, KTM',lastSeen:'Just now',top:24,left:42},
+    {id:'r8',name:'Dinesh Basnet',initials:'DB',phone:'9878901234',status:'Offline',city:'Kathmandu',loc:'\u2014',lastSeen:'2 hr ago',top:85,left:50},
+    {id:'r9',name:'Kiran Lama',initials:'KL',phone:'9889012345',status:'On Delivery',city:'Kathmandu',loc:'Kirtipur',lastSeen:'8 min ago',top:70,left:32},
+    {id:'r10',name:'Prabin Joshi',initials:'PJ',phone:'9890123456',status:'Online',city:'Kathmandu',loc:'Banasthali',lastSeen:'4 min ago',top:45,left:15},
+    {id:'r11',name:'Anil Gurung',initials:'AG',phone:'9801122334',status:'Offline',city:'Kathmandu',loc:'\u2014',lastSeen:'1 hr ago',top:58,left:85},
+    {id:'r12',name:'Roshan Karki',initials:'RK',phone:'9812233445',status:'On Delivery',city:'Kathmandu',loc:'Budhanilkantha',lastSeen:'6 min ago',top:12,left:65}
+  ];
+
+  var statusToDotClass = {'On Delivery':'delivery','Online':'','Idle':'idle','Offline':'offline'};
+  var statusToBadge = {'On Delivery':'b-teal','Online':'b-green','Idle':'b-amber','Offline':'b-muted'};
+  var selectedId = null;
+  var mapArea = document.getElementById('mapArea');
+  var popup = document.getElementById('mapPopup');
+  var riderList = document.getElementById('riderLocList');
+
+  /* ── Build map dots ── */
+  RIDERS.forEach(function(r) {
+    var dot = document.createElement('div');
+    dot.className = 'map-dot ' + (statusToDotClass[r.status] || '');
+    dot.style.top = r.top + '%';
+    dot.style.left = r.left + '%';
+    dot.dataset.riderId = r.id;
+    dot.title = r.name;
+    mapArea.appendChild(dot);
+    dot.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleSelect(r.id);
+    });
+  });
+
+  /* ── Build rider list items ── */
+  RIDERS.forEach(function(r) {
+    var item = document.createElement('div');
+    item.className = 'rider-item';
+    item.dataset.riderId = r.id;
+    item.dataset.status = r.status;
+    item.dataset.city = r.city;
+    item.innerHTML =
+      '<div class="rider-avatar">' + r.initials + '</div>' +
+      '<div class="rider-info">' +
+        '<div class="rider-name">' + r.name + '</div>' +
+        '<div class="rider-phone">' + r.phone + '</div>' +
+        '<div class="rider-meta ri-meta">' + r.lastSeen + ' &middot; ' + r.loc + '</div>' +
+      '</div>' +
+      '<div class="rider-right"><span class="badge ' + statusToBadge[r.status] + '">' + r.status + '</span></div>';
+    riderList.appendChild(item);
+    item.addEventListener('click', function() {
+      toggleSelect(r.id);
+    });
+  });
+
+  /* ── Select / Deselect ── */
+  function toggleSelect(id) {
+    if (selectedId === id) {
+      deselectAll();
+    } else {
+      deselectAll();
+      selectedId = id;
+      var dot = mapArea.querySelector('[data-rider-id="' + id + '"]');
+      var item = riderList.querySelector('[data-rider-id="' + id + '"]');
+      if (dot) dot.classList.add('selected');
+      if (item) {
+        item.classList.add('selected');
+        item.scrollIntoView({behavior:'smooth', block:'nearest'});
+      }
+      showPopup(id);
+    }
+  }
+
+  function deselectAll() {
+    selectedId = null;
+    mapArea.querySelectorAll('.map-dot.selected').forEach(function(d){ d.classList.remove('selected'); });
+    riderList.querySelectorAll('.rider-item.selected').forEach(function(i){ i.classList.remove('selected'); });
+    popup.classList.remove('visible');
+  }
+
+  /* Click map background to deselect */
+  mapArea.addEventListener('click', function(e) {
+    if (e.target === mapArea || e.target.classList.contains('map-grid-lines') || e.target.classList.contains('map-emoji') || e.target.classList.contains('map-label')) {
+      deselectAll();
+    }
+  });
+
+  /* ── Popup ── */
+  function showPopup(id) {
+    var r = RIDERS.find(function(x){ return x.id === id; });
+    if (!r) return;
+    document.getElementById('mpName').textContent = r.name;
+    document.getElementById('mpLoc').textContent = r.loc;
+    document.getElementById('mpStatus').innerHTML = '<span class="badge ' + statusToBadge[r.status] + '">' + r.status + '</span>';
+    document.getElementById('mpTime').textContent = 'Last update: ' + r.lastSeen;
+    var dot = mapArea.querySelector('[data-rider-id="' + id + '"]');
+    if (dot) {
+      var pTop = dot.offsetTop - popup.offsetHeight - 12;
+      var pLeft = dot.offsetLeft - 10;
+      if (pTop < 5) pTop = dot.offsetTop + 28;
+      if (pLeft < 5) pLeft = 5;
+      if (pLeft + 190 > mapArea.offsetWidth) pLeft = mapArea.offsetWidth - 195;
+      popup.style.top = pTop + 'px';
+      popup.style.left = pLeft + 'px';
+    }
+    popup.classList.add('visible');
+  }
+
+  /* ── Filtering (two-way synced) ── */
+  var locSearch = document.getElementById('locSearch');
+  var locStatus = document.getElementById('locStatusFilter');
+  var locCity = document.getElementById('locCityFilter');
+  var panelSearch = document.getElementById('riderPanelSearch');
+  var panelStatus = document.getElementById('riderPanelStatus');
+  var locCounter = document.getElementById('locCounter');
+  var riderListCountEl = document.getElementById('riderListCount');
+
+  window.applyLocFilters = function() {
+    /* Sync values between map bar and panel bar */
+    if (document.activeElement === panelSearch) locSearch.value = panelSearch.value;
+    else panelSearch.value = locSearch.value;
+    if (document.activeElement === panelStatus) locStatus.value = panelStatus.value;
+    else panelStatus.value = locStatus.value;
+
+    var q = locSearch.value.toLowerCase();
+    var st = locStatus.value;
+    var ct = locCity.value;
+    var visible = 0;
+
+    RIDERS.forEach(function(r) {
+      var nameMatch = !q || r.name.toLowerCase().indexOf(q) !== -1;
+      var statusMatch = !st || r.status === st;
+      var cityMatch = !ct || r.city === ct;
+      var show = nameMatch && statusMatch && cityMatch;
+
+      var dot = mapArea.querySelector('.map-dot[data-rider-id="' + r.id + '"]');
+      var item = riderList.querySelector('.rider-item[data-rider-id="' + r.id + '"]');
+      if (dot) dot.classList.toggle('dot-hidden', !show);
+      if (item) item.classList.toggle('ri-hidden', !show);
+      if (show) visible++;
+    });
+
+    locCounter.textContent = 'Showing ' + visible + ' of ' + RIDERS.length + ' riders';
+    riderListCountEl.textContent = visible + ' riders';
+
+    /* Auto-select if exactly 1 rider visible */
+    if (visible === 1) {
+      var visItem = riderList.querySelector('.rider-item:not(.ri-hidden)');
+      if (visItem) toggleSelect(visItem.dataset.riderId);
+    } else if (selectedId) {
+      /* Deselect if selected rider is now hidden */
+      var selItem = riderList.querySelector('.rider-item[data-rider-id="' + selectedId + '"]');
+      if (selItem && selItem.classList.contains('ri-hidden')) deselectAll();
+    }
+  };
+
+  window.clearLocFilters = function() {
+    locSearch.value = '';
+    locStatus.value = '';
+    locCity.value = '';
+    panelSearch.value = '';
+    panelStatus.value = '';
+    deselectAll();
+    applyLocFilters();
+  };
+
+  /* ── GPS Simulation — move dots every 5s ── */
+  var lastSeenOptions = ['Just now','1 min ago','2 min ago','3 min ago','4 min ago','5 min ago','8 min ago'];
+  setInterval(function() {
+    RIDERS.forEach(function(r) {
+      if (r.status === 'Offline') return;
+      /* Slight random position shift */
+      var dt = (Math.random() - 0.5) * 4;
+      var dl = (Math.random() - 0.5) * 4;
+      r.top = Math.max(5, Math.min(90, r.top + dt));
+      r.left = Math.max(5, Math.min(90, r.left + dl));
+
+      var dot = mapArea.querySelector('.map-dot[data-rider-id="' + r.id + '"]');
+      if (dot) {
+        dot.style.top = r.top + '%';
+        dot.style.left = r.left + '%';
+      }
+
+      /* Update last seen for non-offline riders */
+      if (r.status !== 'Idle') {
+        r.lastSeen = lastSeenOptions[Math.floor(Math.random() * 3)]; /* Just now, 1m, 2m */
+      } else {
+        r.lastSeen = lastSeenOptions[3 + Math.floor(Math.random() * 4)]; /* 3m-8m */
+      }
+      var meta = riderList.querySelector('[data-rider-id="' + r.id + '"] .ri-meta');
+      if (meta) meta.innerHTML = r.lastSeen + ' &middot; ' + r.loc;
+    });
+
+    /* Refresh popup if a rider is selected */
+    if (selectedId) showPopup(selectedId);
+  }, 5000);
+
+})();
 </script>
 <script src="js/auth.js"></script>
 </body>
