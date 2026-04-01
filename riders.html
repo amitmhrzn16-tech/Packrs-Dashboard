@@ -553,17 +553,17 @@
     </div>
 
     <!-- Rider Activity Log -->
-    <div class="panel">
+    <div class="panel" id="activityPanel">
       <div class="panel-hdr">
         <span>Rider Activity Log</span>
-        <span style="font-size:.75rem;font-weight:600;opacity:.8;">Today</span>
+        <span style="font-size:.75rem;font-weight:600;opacity:.8;">Today &middot; <span id="actTotalLabel">25 events</span></span>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr><th>Time</th><th>Rider</th><th>Event</th><th>Location</th><th>Details</th></tr>
           </thead>
-          <tbody>
+          <tbody id="actBody">
             <tr><td>10:42 AM</td><td>Amit Tamang</td><td><span class="badge b-teal">Package Picked Up</span></td><td>Thamel, KTM</td><td>PKG-00821 picked up from sender</td></tr>
             <tr><td>10:35 AM</td><td>Kiran Lama</td><td><span class="badge b-green">Package Delivered</span></td><td>Kirtipur</td><td>PKG-00798 delivered successfully — signed by recipient</td></tr>
             <tr><td>10:28 AM</td><td>Rajan Shrestha</td><td><span class="badge" style="background:#e0f2fe;color:#0369a1;">Location Update</span></td><td>Lazimpat, KTM</td><td>GPS ping — rider en route to pickup</td></tr>
@@ -574,8 +574,32 @@
             <tr><td>09:12 AM</td><td>Nabin KC</td><td><span class="badge b-amber">Idle</span></td><td>Chabahil, KTM</td><td>Waiting for next assignment — no active package</td></tr>
             <tr><td>08:55 AM</td><td>Dinesh Basnet</td><td><span class="badge b-muted">Ended Shift</span></td><td>&#8212;</td><td>Rider logged out — shift ended, 6 deliveries completed</td></tr>
             <tr><td>08:40 AM</td><td>Prabin Joshi</td><td><span class="badge b-amber">Started Shift</span></td><td>Banasthali</td><td>Rider checked in — assigned 4 packages for the day</td></tr>
+            <tr><td>08:22 AM</td><td>Sagar Sharma</td><td><span class="badge b-green">Package Delivered</span></td><td>Baluwatar, KTM</td><td>PKG-00795 delivered — left at reception desk</td></tr>
+            <tr><td>08:10 AM</td><td>Amit Tamang</td><td><span class="badge b-teal">Package Picked Up</span></td><td>Thamel, KTM</td><td>PKG-00818 picked up from Thamel office</td></tr>
+            <tr><td>07:55 AM</td><td>Roshan Karki</td><td><span class="badge b-teal">Package Picked Up</span></td><td>Budhanilkantha</td><td>PKG-00810 picked up from warehouse</td></tr>
+            <tr><td>07:45 AM</td><td>Kiran Lama</td><td><span class="badge" style="background:#e0f2fe;color:#0369a1;">Location Update</span></td><td>Kirtipur</td><td>GPS ping — approaching delivery zone</td></tr>
+            <tr><td>07:30 AM</td><td>Pawan Thapa</td><td><span class="badge b-amber">Started Shift</span></td><td>Kupondol, KTM</td><td>Rider checked in — assigned 6 packages</td></tr>
+            <tr><td>07:18 AM</td><td>Sunil Magar</td><td><span class="badge b-teal">Package Picked Up</span></td><td>Patan, LTP</td><td>PKG-00805 picked up from Patan branch</td></tr>
+            <tr><td>07:05 AM</td><td>Rajan Shrestha</td><td><span class="badge b-amber">Started Shift</span></td><td>Lazimpat, KTM</td><td>Rider checked in — morning shift started</td></tr>
+            <tr><td>06:55 AM</td><td>Amit Tamang</td><td><span class="badge b-amber">Started Shift</span></td><td>Thamel, KTM</td><td>Rider checked in — assigned 8 packages for the day</td></tr>
+            <tr><td>06:45 AM</td><td>Kiran Lama</td><td><span class="badge b-amber">Started Shift</span></td><td>Kirtipur</td><td>Rider checked in — early morning shift</td></tr>
+            <tr><td>06:30 AM</td><td>Roshan Karki</td><td><span class="badge b-amber">Started Shift</span></td><td>Budhanilkantha</td><td>Rider checked in — 5 packages scheduled</td></tr>
+            <tr><td>06:15 AM</td><td>Sagar Sharma</td><td><span class="badge b-amber">Started Shift</span></td><td>Baluwatar, KTM</td><td>Rider checked in — assigned 4 packages</td></tr>
+            <tr><td>06:00 AM</td><td>Bibek Rai</td><td><span class="badge b-amber">Started Shift</span></td><td>Bhaktapur</td><td>Rider checked in — early morning depot arrival</td></tr>
+            <tr><td>05:50 AM</td><td>Nabin KC</td><td><span class="badge b-amber">Started Shift</span></td><td>Chabahil, KTM</td><td>Rider checked in — 3 packages assigned</td></tr>
+            <tr><td>05:30 AM</td><td>Sunil Magar</td><td><span class="badge b-amber">Started Shift</span></td><td>Patan, LTP</td><td>Rider checked in — first shift of the day</td></tr>
+            <tr><td>05:15 AM</td><td>Prabin Joshi</td><td><span class="badge" style="background:#e0f2fe;color:#0369a1;">Location Update</span></td><td>Banasthali</td><td>GPS ping — rider heading to depot</td></tr>
           </tbody>
         </table>
+      </div>
+      <div class="pagination" id="actPagination">
+        <span id="actPageInfo">Showing 1–5 of 25 events</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="pag-btn" id="actPrev" onclick="actPage(-1)">&#8249; Prev</button>
+          <span id="actPageNums" style="font-size:.75rem;font-weight:700;color:var(--teal-dark)"></span>
+          <button class="pag-btn" id="actNext" onclick="actPage(1)">Next &#8250;</button>
+          <button class="pag-btn" style="background:var(--teal);color:#fff;margin-left:6px" onclick="openModal('activityFullModal')">View All</button>
+        </div>
       </div>
     </div>
 
@@ -829,6 +853,46 @@
   </div>
 </div>
 
+<!-- ACTIVITY LOG FULL MODAL -->
+<div class="modal-bg" id="activityFullModal">
+  <div class="modal" style="width:750px">
+    <div class="modal-head">
+      <h3>Rider Activity Log — Full View</h3>
+      <button class="modal-x" onclick="closeModal('activityFullModal')">&#10005;</button>
+    </div>
+    <div class="modal-body" style="padding:0">
+      <div style="display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--teal-light);border-bottom:1px solid var(--border)">
+        <label style="font-size:.72rem;font-weight:700;color:var(--teal-dark)">Search:</label>
+        <input type="search" id="actFullSearch" placeholder="Rider or event..." oninput="renderFullLog()" style="padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;color:var(--text);outline:none;flex:1" />
+        <label style="font-size:.72rem;font-weight:700;color:var(--teal-dark)">Event:</label>
+        <select id="actFullEventFilter" onchange="renderFullLog()" style="padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;color:var(--text);outline:none">
+          <option value="">All Events</option>
+          <option value="Package Picked Up">Package Picked Up</option>
+          <option value="Package Delivered">Package Delivered</option>
+          <option value="Location Update">Location Update</option>
+          <option value="Started Shift">Started Shift</option>
+          <option value="Ended Shift">Ended Shift</option>
+          <option value="Idle">Idle</option>
+        </select>
+      </div>
+      <div class="table-wrap" style="max-height:420px;overflow-y:auto">
+        <table class="stat-modal-table">
+          <thead><tr><th>#</th><th>Time</th><th>Rider</th><th>Event</th><th>Location</th><th>Details</th></tr></thead>
+          <tbody id="actFullBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="actFullPagination">
+        <span id="actFullPageInfo"></span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="pag-btn" id="actFullPrev" onclick="actFullPage(-1)">&#8249; Prev</button>
+          <span id="actFullPageNums" style="font-size:.75rem;font-weight:700;color:var(--teal-dark)"></span>
+          <button class="pag-btn" id="actFullNext" onclick="actFullPage(1)">Next &#8250;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1015,6 +1079,118 @@ new Chart(document.getElementById('statusChart'), {
     plugins:{ legend:{ position:'bottom', labels:{ font:{ size:10 }, padding:12 } } }
   }
 });
+
+/* ═══════════════════════════════════════════════════════ */
+/* RIDER ACTIVITY LOG — Pagination & Full View           */
+/* ═══════════════════════════════════════════════════════ */
+(function() {
+  var PER_PAGE = 5;
+  var currentPage = 0;
+  var rows = Array.from(document.querySelectorAll('#actBody tr'));
+  var totalRows = rows.length;
+  var totalPages = Math.ceil(totalRows / PER_PAGE);
+
+  document.getElementById('actTotalLabel').textContent = totalRows + ' events';
+
+  function renderPage() {
+    var start = currentPage * PER_PAGE;
+    var end = Math.min(start + PER_PAGE, totalRows);
+    rows.forEach(function(tr, i) {
+      tr.style.display = (i >= start && i < end) ? '' : 'none';
+    });
+    document.getElementById('actPageInfo').textContent =
+      'Showing ' + (start + 1) + '–' + end + ' of ' + totalRows + ' events';
+    document.getElementById('actPageNums').textContent =
+      'Page ' + (currentPage + 1) + ' of ' + totalPages;
+    document.getElementById('actPrev').disabled = currentPage === 0;
+    document.getElementById('actNext').disabled = currentPage >= totalPages - 1;
+    document.getElementById('actPrev').style.opacity = currentPage === 0 ? '.4' : '1';
+    document.getElementById('actNext').style.opacity = currentPage >= totalPages - 1 ? '.4' : '1';
+  }
+
+  window.actPage = function(dir) {
+    currentPage = Math.max(0, Math.min(totalPages - 1, currentPage + dir));
+    renderPage();
+  };
+
+  renderPage();
+
+  /* ── Full View Modal ── */
+  var FULL_PER_PAGE = 10;
+  var fullPage = 0;
+  var actData = rows.map(function(tr) {
+    var tds = tr.querySelectorAll('td');
+    return {
+      time: tds[0].textContent,
+      rider: tds[1].textContent,
+      eventHtml: tds[2].innerHTML,
+      eventText: tds[2].textContent.trim(),
+      location: tds[3].textContent,
+      details: tds[4].textContent
+    };
+  });
+
+  function getFilteredData() {
+    var q = (document.getElementById('actFullSearch').value || '').toLowerCase();
+    var ev = document.getElementById('actFullEventFilter').value;
+    return actData.filter(function(d) {
+      var textMatch = !q || d.rider.toLowerCase().indexOf(q) !== -1 || d.details.toLowerCase().indexOf(q) !== -1;
+      var evMatch = !ev || d.eventText === ev;
+      return textMatch && evMatch;
+    });
+  }
+
+  window.renderFullLog = function() {
+    fullPage = 0;
+    renderFullPage();
+  };
+
+  function renderFullPage() {
+    var filtered = getFilteredData();
+    var tp = Math.max(1, Math.ceil(filtered.length / FULL_PER_PAGE));
+    fullPage = Math.min(fullPage, tp - 1);
+    var start = fullPage * FULL_PER_PAGE;
+    var end = Math.min(start + FULL_PER_PAGE, filtered.length);
+    var body = document.getElementById('actFullBody');
+    body.innerHTML = '';
+
+    if (filtered.length === 0) {
+      body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">No matching events found</td></tr>';
+    } else {
+      for (var i = start; i < end; i++) {
+        var d = filtered[i];
+        body.innerHTML += '<tr><td>' + (i + 1) + '</td><td>' + d.time + '</td><td>' + d.rider + '</td><td>' + d.eventHtml + '</td><td>' + d.location + '</td><td style="white-space:normal;max-width:220px">' + d.details + '</td></tr>';
+      }
+    }
+
+    document.getElementById('actFullPageInfo').textContent =
+      filtered.length === 0 ? '0 events' : 'Showing ' + (start + 1) + '–' + end + ' of ' + filtered.length + ' events';
+    document.getElementById('actFullPageNums').textContent = 'Page ' + (fullPage + 1) + ' of ' + tp;
+    document.getElementById('actFullPrev').disabled = fullPage === 0;
+    document.getElementById('actFullNext').disabled = fullPage >= tp - 1;
+    document.getElementById('actFullPrev').style.opacity = fullPage === 0 ? '.4' : '1';
+    document.getElementById('actFullNext').style.opacity = fullPage >= tp - 1 ? '.4' : '1';
+  }
+
+  window.actFullPage = function(dir) {
+    var filtered = getFilteredData();
+    var tp = Math.max(1, Math.ceil(filtered.length / FULL_PER_PAGE));
+    fullPage = Math.max(0, Math.min(tp - 1, fullPage + dir));
+    renderFullPage();
+  };
+
+  /* Render full log when modal opens */
+  var origOpen = window.openModal;
+  window.openModal = function(id) {
+    origOpen(id);
+    if (id === 'activityFullModal') {
+      document.getElementById('actFullSearch').value = '';
+      document.getElementById('actFullEventFilter').value = '';
+      fullPage = 0;
+      renderFullPage();
+    }
+  };
+})();
 
 /* ═══════════════════════════════════════════════════════ */
 /* RIDER LOCATION — Interactive Map & List               */
