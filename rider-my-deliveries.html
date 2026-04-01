@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Deliveries — Packrs Rider</title>
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    /* ─── Filter Bar ────────────────────── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .filter-bar .form-control {
+      width: auto;
+      min-width: 160px;
+    }
+
+    /* ─── Delivery Cards ────────────────── */
+    .delivery-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+      padding: 20px;
+      margin-bottom: 12px;
+      transition: box-shadow 0.2s;
+    }
+
+    .delivery-card:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .delivery-card.urgent {
+      border-left: 4px solid var(--danger);
+    }
+
+    .dc-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .dc-top .dc-id {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .dc-top .dc-time {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .dc-route {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13px;
+    }
+
+    .dc-route .dc-point {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .dc-route .dc-point-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .dc-route .dc-point-addr {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .dc-route .dc-arrow {
+      font-size: 18px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .dc-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .dc-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .dc-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dc-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* ─── Empty State ───────────────────── */
+    .tab-empty {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-secondary);
+    }
+
+    .tab-empty .empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    /* ─── Status Update Modal ───────────── */
+    .status-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .status-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: #fff;
+    }
+
+    .status-option:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .status-option.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .status-option .so-icon {
+      font-size: 22px;
+    }
+
+    .status-option .so-label {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ─── Summary Stats ─────────────────── */
+    .delivery-summary {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .ds-item {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-light);
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .ds-item .ds-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .ds-item .ds-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .delivery-summary { grid-template-columns: repeat(3, 1fr); }
+      .status-options { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .delivery-summary { grid-template-columns: 1fr 1fr; }
+      .dc-bottom { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- ─── Sidebar ──────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <a href="rider-dashboard.html">
+        <div class="logo-icon">&#128666;</div>
+        <div>
+          <span class="logo-text">Packrs</span>
+          <span class="logo-sub">Rider Portal</span>
+        </div>
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Main</div>
+      <ul class="sidebar-nav">
+        <li><a href="rider-dashboard.html"><span class="nav-icon">&#128200;</span> Dashboard</a></li>
+        <li><a href="rider-my-deliveries.html" class="active"><span class="nav-icon">&#128230;</span> My Deliveries</a></li>
+        <li><a href="rider-earnings.html"><span class="nav-icon">&#128176;</span> Earnings</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Account</div>
+      <ul class="sidebar-nav">
+        <li><a href="rider-profile.html"><span class="nav-icon">&#128100;</span> My Profile</a></li>
+        <li><a href="#" class="logout-link"><span class="nav-icon">&#128682;</span> Logout</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar">AT</div>
+        <div class="user-info">
+          <div class="name">Rider</div>
+          <div class="role">RIDER</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── Main Content ─────────────────── -->
+  <div class="main-content">
+    <div class="top-header">
+      <div class="page-title">
+        <button class="btn btn-ghost" style="display:none;font-size:18px;" id="menuToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+        <h1>My Deliveries</h1>
+        <div class="breadcrumb">Home / My Deliveries</div>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn" title="Notifications">&#128276;<span class="badge">3</span></button>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- Summary Stats -->
+      <div class="delivery-summary">
+        <div class="ds-item">
+          <div class="ds-value" style="color:var(--primary);">47</div>
+          <div class="ds-label">Total Today</div>
+        </div>
+        <div class="ds-item">
+          <div class="ds-value" style="color:var(--success);">42</div>
+          <div class="ds-label">Delivered</div>
+        </div>
+        <div class="ds-item">
+          <div class="ds-value" style="color:var(--info);">1</div>
+          <div class="ds-label">In Transit</div>
+        </div>
+        <div class="ds-item">
+          <div class="ds-value" style="color:var(--warning);">3</div>
+          <div class="ds-label">Pending</div>
+        </div>
+        <div class="ds-item">
+          <div class="ds-value" style="color:var(--danger);">1</div>
+          <div class="ds-label">Returned</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="card">
+        <div class="card-header" style="flex-wrap:wrap;gap:12px;">
+          <div class="tabs" style="margin-bottom:0;border-bottom:none;">
+            <button class="tab-btn active" onclick="switchTab('all', this)">All (47)</button>
+            <button class="tab-btn" onclick="switchTab('pending', this)">Pending (3)</button>
+            <button class="tab-btn" onclick="switchTab('transit', this)">In Transit (1)</button>
+            <button class="tab-btn" onclick="switchTab('delivered', this)">Delivered (42)</button>
+            <button class="tab-btn" onclick="switchTab('returned', this)">Returned (1)</button>
+          </div>
+          <div class="filter-bar" style="margin-bottom:0;">
+            <input type="text" class="form-control" placeholder="Search package ID..." id="searchPkg" onkeyup="filterDeliveries()" style="min-width:200px;" />
+          </div>
+        </div>
+        <div class="card-body" id="deliveryList">
+
+          <!-- In Transit -->
+          <div class="delivery-card urgent" data-status="transit">
+            <div class="dc-top">
+              <div>
+                <div class="dc-id">PKG-2024-00847</div>
+                <div class="dc-time">Assigned 8:50 AM &bull; ETA 10:30 AM</div>
+              </div>
+              <span class="badge badge-info">In Transit</span>
+            </div>
+            <div class="dc-route">
+              <div class="dc-point">
+                <span class="dc-point-label">From</span>
+                <span class="dc-point-addr">Thamel, Kathmandu</span>
+              </div>
+              <span class="dc-arrow">&rarr;</span>
+              <div class="dc-point">
+                <span class="dc-point-label">To</span>
+                <span class="dc-point-addr">Baneshwor, Kathmandu</span>
+              </div>
+            </div>
+            <div class="dc-bottom">
+              <div class="dc-meta">
+                <span>&#128100; Sita Sharma</span>
+                <span>&#128222; 9812345678</span>
+                <span>&#128176; COD Rs 1,200</span>
+              </div>
+              <div class="dc-actions">
+                <button class="btn btn-sm btn-outline" onclick="openModal('statusModal')">Update Status</button>
+                <button class="btn btn-sm btn-success" onclick="markDelivered('PKG-2024-00847')">&#9989; Delivered</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pending Items -->
+          <div class="delivery-card" data-status="pending">
+            <div class="dc-top">
+              <div>
+                <div class="dc-id">PKG-2024-00852</div>
+                <div class="dc-time">Pickup scheduled 11:30 AM</div>
+              </div>
+              <span class="badge badge-warning">Pending Pickup</span>
+            </div>
+            <div class="dc-route">
+              <div class="dc-point">
+                <span class="dc-point-label">Pickup</span>
+                <span class="dc-point-addr">New Road, Kathmandu</span>
+              </div>
+              <span class="dc-arrow">&rarr;</span>
+              <div class="dc-point">
+                <span class="dc-point-label">Deliver to</span>
+                <span class="dc-point-addr">Patan Dhoka, Lalitpur</span>
+              </div>
+            </div>
+            <div class="dc-bottom">
+              <div class="dc-meta">
+                <span>&#128100; Bikash Lama</span>
+                <span>&#128222; 9841234567</span>
+                <span>&#128176; Prepaid</span>
+              </div>
+              <div class="dc-actions">
+                <button class="btn btn-sm btn-primary" onclick="markPickedUp('PKG-2024-00852')">&#128230; Pick Up</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="delivery-card" data-status="pending">
+            <div class="dc-top">
+              <div>
+                <div class="dc-id">PKG-2024-00855</div>
+                <div class="dc-time">Delivery by 1:00 PM</div>
+              </div>
+              <span class="badge badge-warning">Pending</span>
+            </div>
+            <div class="dc-route">
+              <div class="dc-point">
+                <span class="dc-point-label">From</span>
+                <span class="dc-point-addr">Baluwatar, Kathmandu</span>
+              </div>
+              <span class="dc-arrow">&rarr;</span>
+              <div class="dc-point">
+                <span class="dc-point-label">To</span>
+                <span class="dc-point-addr">Chabahil, Kathmandu</span>
+              </div>
+            </div>
+            <div class="dc-bottom">
+              <div class="dc-meta">
+                <span>&#128100; Hari Prasad</span>
+                <span>&#128222; 9856781234</span>
+                <span>&#128176; COD Rs 850</span>
+              </div>
+              <div class="dc-actions">
+                <button class="btn btn-sm btn-outline" onclick="openModal('statusModal')">Update Status</button>
+                <button class="btn btn-sm btn-primary" onclick="markPickedUp('PKG-2024-00855')">&#128230; Pick Up</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="delivery-card" data-status="pending">
+            <div class="dc-top">
+              <div>
+                <div class="dc-id">PKG-2024-00861</div>
+                <div class="dc-time">Pickup scheduled 3:45 PM</div>
+              </div>
+              <span class="badge badge-warning">Pending Pickup</span>
+            </div>
+            <div class="dc-route">
+              <div class="dc-point">
+                <span class="dc-point-label">Pickup</span>
+                <span class="dc-point-addr">Swayambhu, Kathmandu</span>
+              </div>
+              <span class="dc-arrow">&rarr;</span>
+              <div class="dc-point">
+                <span class="dc-point-label">Deliver to</span>
+                <span class="dc-point-addr">Kalimati, Kathmandu</span>
+              </div>
+            </div>
+            <div class="dc-bottom">
+              <div class="dc-meta">
+                <span>&#128100; Maya Gurung</span>
+                <span>&#128222; 9867654321</span>
+                <span>&#128176; Prepaid</span>
+              </div>
+              <div class="dc-actions">
+                <button class="btn btn-sm btn-primary" onclick="markPickedUp('PKG-2024-00861')">&#128230; Pick Up</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Returned -->
+          <div class="delivery-card" data-status="returned">
+            <div class="dc-top">
+              <div>
+                <div class="dc-id">PKG-2024-00840</div>
+                <div class="dc-time">Return by 2:30 PM</div>
+              </div>
+              <span class="badge badge-danger">Return</span>
+            </div>
+            <div class="dc-route">
+              <div class="dc-point">
+                <span class="dc-point-label">Pickup Return</span>
+                <span class="dc-point-addr">Koteshwor, Kathmandu</span>
+              </div>
+              <span class="dc-arrow">&rarr;</span>
+              <div class="dc-point">
+                <span class="dc-point-label">Return to</span>
+                <span class="dc-point-addr">Packrs Warehouse</span>
+              </div>
+            </div>
+            <div class="dc-bottom">
+              <div class="dc-meta">
+                <span>&#128100; Customer Refused</span>
+                <span>Reason: Wrong item</span>
+              </div>
+              <div class="dc-actions">
+                <button class="btn btn-sm btn-outline" onclick="openModal('statusModal')">Update Status</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivered (sample 2) -->
+          <div class="delivery-card" data-status="delivered">
+            <div class="dc-top">
+              <div>
+                <div class="dc-id">PKG-2024-00843</div>
+                <div class="dc-time">Delivered at 9:45 AM</div>
+              </div>
+              <span class="badge badge-success">Delivered</span>
+            </div>
+            <div class="dc-route">
+              <div class="dc-point">
+                <span class="dc-point-label">From</span>
+                <span class="dc-point-addr">New Road, Kathmandu</span>
+              </div>
+              <span class="dc-arrow">&rarr;</span>
+              <div class="dc-point">
+                <span class="dc-point-label">To</span>
+                <span class="dc-point-addr">Jawalakhel, Lalitpur</span>
+              </div>
+            </div>
+            <div class="dc-bottom">
+              <div class="dc-meta">
+                <span>&#128100; Srijana Thapa</span>
+                <span>&#128176; COD Rs 2,400 Collected</span>
+              </div>
+              <div class="dc-actions">
+                <span style="font-size:12px;color:var(--success);font-weight:700;">&#9989; Completed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="delivery-card" data-status="delivered">
+            <div class="dc-top">
+              <div>
+                <div class="dc-id">PKG-2024-00841</div>
+                <div class="dc-time">Delivered at 9:15 AM</div>
+              </div>
+              <span class="badge badge-success">Delivered</span>
+            </div>
+            <div class="dc-route">
+              <div class="dc-point">
+                <span class="dc-point-label">From</span>
+                <span class="dc-point-addr">Thamel, Kathmandu</span>
+              </div>
+              <span class="dc-arrow">&rarr;</span>
+              <div class="dc-point">
+                <span class="dc-point-label">To</span>
+                <span class="dc-point-addr">Suryabinayak, Bhaktapur</span>
+              </div>
+            </div>
+            <div class="dc-bottom">
+              <div class="dc-meta">
+                <span>&#128100; Ram Karki</span>
+                <span>&#128176; Prepaid</span>
+              </div>
+              <div class="dc-actions">
+                <span style="font-size:12px;color:var(--success);font-weight:700;">&#9989; Completed</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<!-- ─── Status Update Modal ────────────── -->
+<div class="modal-overlay" id="statusModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Update Delivery Status</div>
+      <button class="modal-close" onclick="closeModal('statusModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:16px;color:var(--text-secondary);font-size:13px;">Select the new status for this delivery:</p>
+      <div class="status-options">
+        <div class="status-option" onclick="selectStatus(this, 'picked_up')">
+          <span class="so-icon">&#128230;</span>
+          <span class="so-label">Picked Up</span>
+        </div>
+        <div class="status-option" onclick="selectStatus(this, 'in_transit')">
+          <span class="so-icon">&#128666;</span>
+          <span class="so-label">In Transit</span>
+        </div>
+        <div class="status-option" onclick="selectStatus(this, 'delivered')">
+          <span class="so-icon">&#9989;</span>
+          <span class="so-label">Delivered</span>
+        </div>
+        <div class="status-option" onclick="selectStatus(this, 'failed')">
+          <span class="so-icon">&#10060;</span>
+          <span class="so-label">Failed Attempt</span>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:16px;">
+        <label class="form-label">Notes (optional)</label>
+        <textarea class="form-control" placeholder="Add any delivery notes..." rows="3"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('statusModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('statusModal');showToast('Status updated successfully!','success')">Update Status</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/auth.js"></script>
+<script>
+  // ─── Tab Switching ──────────────────────
+  function switchTab(status, btn) {
+    document.querySelectorAll('.tab-btn').forEach(function(t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+
+    document.querySelectorAll('.delivery-card').forEach(function(card) {
+      if (status === 'all') {
+        card.style.display = '';
+      } else {
+        card.style.display = card.getAttribute('data-status') === status ? '' : 'none';
+      }
+    });
+  }
+
+  // ─── Search Filter ──────────────────────
+  function filterDeliveries() {
+    var q = document.getElementById('searchPkg').value.toLowerCase();
+    document.querySelectorAll('.delivery-card').forEach(function(card) {
+      card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  // ─── Status Select in Modal ─────────────
+  function selectStatus(el, status) {
+    document.querySelectorAll('.status-option').forEach(function(o) { o.classList.remove('selected'); });
+    el.classList.add('selected');
+  }
+
+  // ─── Quick Actions ──────────────────────
+  function markDelivered(id) {
+    showToast('Package ' + id + ' marked as delivered!', 'success');
+  }
+
+  function markPickedUp(id) {
+    showToast('Package ' + id + ' picked up!', 'success');
+  }
+
+  // ─── Modal Helpers ──────────────────────
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  document.querySelectorAll('.modal-overlay').forEach(function(el) {
+    el.addEventListener('click', function(e) { if (e.target === el) el.classList.remove('open'); });
+  });
+
+  // ─── Toast ──────────────────────────────
+  function showToast(msg, type) {
+    var container = document.getElementById('toastContainer');
+    var toast = document.createElement('div');
+    toast.className = 'toast ' + (type || 'info');
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 3500);
+  }
+
+  // ─── Mobile menu ────────────────────────
+  (function() {
+    var btn = document.getElementById('menuToggle');
+    if (window.innerWidth <= 768) btn.style.display = 'inline-flex';
+    window.addEventListener('resize', function() {
+      btn.style.display = window.innerWidth <= 768 ? 'inline-flex' : 'none';
+    });
+  })();
+</script>
+</body>
+</html>

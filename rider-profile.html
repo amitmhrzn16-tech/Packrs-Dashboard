@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile — Packrs Rider</title>
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    /* ─── Profile Header ────────────────── */
+    .profile-header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #2b7a78 100%);
+      border-radius: var(--radius);
+      padding: 32px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-header::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      right: -30px;
+      width: 180px;
+      height: 180px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 50%;
+    }
+
+    .profile-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+      border: 4px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+
+    .profile-info h2 {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .profile-info .profile-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 6px;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .profile-info .profile-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .profile-stats {
+      margin-left: auto;
+      display: flex;
+      gap: 24px;
+      text-align: center;
+    }
+
+    .profile-stats .ps-item .ps-value {
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .profile-stats .ps-item .ps-label {
+      font-size: 11px;
+      opacity: 0.6;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ─── Profile Sections ──────────────── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-row .dr-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-row .dr-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* ─── Rating Stars ──────────────────── */
+    .stars {
+      display: flex;
+      gap: 2px;
+      font-size: 16px;
+      color: #f59e0b;
+    }
+
+    .stars .empty {
+      color: #d1d5db;
+    }
+
+    /* ─── Settings Toggles ──────────────── */
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .setting-row .sr-info {
+      flex: 1;
+    }
+
+    .setting-row .sr-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .setting-row .sr-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* ─── Achievement Badges ────────────── */
+    .achievement-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .achievement {
+      text-align: center;
+      padding: 20px 12px;
+      background: var(--bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-light);
+    }
+
+    .achievement .ach-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .achievement .ach-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .achievement .ach-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .profile-header { flex-direction: column; text-align: center; }
+      .profile-stats { margin-left: 0; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .achievement-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- ─── Sidebar ──────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <a href="rider-dashboard.html">
+        <div class="logo-icon">&#128666;</div>
+        <div>
+          <span class="logo-text">Packrs</span>
+          <span class="logo-sub">Rider Portal</span>
+        </div>
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Main</div>
+      <ul class="sidebar-nav">
+        <li><a href="rider-dashboard.html"><span class="nav-icon">&#128200;</span> Dashboard</a></li>
+        <li><a href="rider-my-deliveries.html"><span class="nav-icon">&#128230;</span> My Deliveries</a></li>
+        <li><a href="rider-earnings.html"><span class="nav-icon">&#128176;</span> Earnings</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Account</div>
+      <ul class="sidebar-nav">
+        <li><a href="rider-profile.html" class="active"><span class="nav-icon">&#128100;</span> My Profile</a></li>
+        <li><a href="#" class="logout-link"><span class="nav-icon">&#128682;</span> Logout</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar">AT</div>
+        <div class="user-info">
+          <div class="name">Rider</div>
+          <div class="role">RIDER</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── Main Content ─────────────────── -->
+  <div class="main-content">
+    <div class="top-header">
+      <div class="page-title">
+        <button class="btn btn-ghost" style="display:none;font-size:18px;" id="menuToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+        <h1>My Profile</h1>
+        <div class="breadcrumb">Home / Profile</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="openModal('editProfileModal')">&#9998; Edit Profile</button>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-avatar" id="profileAvatar">AT</div>
+        <div class="profile-info">
+          <h2 id="profileName">Amit Tamang</h2>
+          <div class="profile-meta">
+            <span>&#128205; Kathmandu, Nepal</span>
+            <span>&#128222; +977-9801234567</span>
+            <span>&#128231; amit.tamang@packrs.com</span>
+          </div>
+          <div style="margin-top:10px;display:flex;align-items:center;gap:8px;">
+            <span class="badge badge-success" style="font-size:12px;">Active Rider</span>
+            <span class="badge badge-primary" style="font-size:12px;">Since Jan 2024</span>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <div class="ps-item">
+            <div class="ps-value">1,240</div>
+            <div class="ps-label">This Month</div>
+          </div>
+          <div class="ps-item">
+            <div class="ps-value">12,480</div>
+            <div class="ps-label">Total Deliveries</div>
+          </div>
+          <div class="ps-item">
+            <div class="ps-value">4.8</div>
+            <div class="ps-label">Rating</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Grid -->
+      <div class="profile-grid">
+        <!-- Personal Details -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#128100; Personal Details</div>
+          </div>
+          <div class="card-body">
+            <div class="detail-row">
+              <span class="dr-label">&#128100; Full Name</span>
+              <span class="dr-value" id="detailName">Amit Tamang</span>
+            </div>
+            <div class="detail-row">
+              <span class="dr-label">&#128231; Email</span>
+              <span class="dr-value">amit.tamang@packrs.com</span>
+            </div>
+            <div class="detail-row">
+              <span class="dr-label">&#128222; Phone</span>
+              <span class="dr-value">+977-9801234567</span>
+            </div>
+            <div class="detail-row">
+              <span class="dr-label">&#128205; Address</span>
+              <span class="dr-value">Thamel, Kathmandu</span>
+            </div>
+            <div class="detail-row">
+              <span class="dr-label">&#128197; Date of Birth</span>
+              <span class="dr-value">15 Mar 1996</span>
+            </div>
+            <div class="detail-row">
+              <span class="dr-label">&#128178; Bank Account</span>
+              <span class="dr-value">**** **** 4521</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Work Details -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#128188; Work Details</div>
+          </div>
+          <div class="card-body">
+            <div class="detail-row">
+              <span class="dr-label">&#127380; Rider ID</span>
+              <span class="dr-value">RDR-001</span>
+            </div>
+            <div class="detail-row">
+              <span class="dr-label">&#128205; Assigned Zone</span>
+              <span class="dr-value">Kathmandu</span>
+            </div>
+            <div class="detail-row">
+              <span class="dr-label">&#128663; Vehicle</span>
+              <span class="dr-value">Motorcycle - Ba 12 Pa 3456</span>
+            </div>
+            <div class="detail-row">
+              <span class="dr-label">&#128337; Shift</span>
+              <span class="dr-value">8:00 AM - 6:00 PM</span>
+            </div>
+            <div class="detail-row">
+              <span class="dr-label">&#127775; Rating</span>
+              <span class="dr-value">
+                <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                4.8 / 5.0
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="dr-label">&#128197; Joined</span>
+              <span class="dr-value">January 15, 2024</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Achievements -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#127942; Achievements</div>
+          </div>
+          <div class="card-body">
+            <div class="achievement-grid">
+              <div class="achievement">
+                <div class="ach-icon">&#127942;</div>
+                <div class="ach-title">Top Performer</div>
+                <div class="ach-desc">March 2026</div>
+              </div>
+              <div class="achievement">
+                <div class="ach-icon">&#9889;</div>
+                <div class="ach-title">Speed Demon</div>
+                <div class="ach-desc">Fastest avg delivery</div>
+              </div>
+              <div class="achievement">
+                <div class="ach-icon">&#127775;</div>
+                <div class="ach-title">5-Star Streak</div>
+                <div class="ach-desc">30 days 5-star</div>
+              </div>
+              <div class="achievement">
+                <div class="ach-icon">&#128170;</div>
+                <div class="ach-title">Iron Rider</div>
+                <div class="ach-desc">10,000+ deliveries</div>
+              </div>
+              <div class="achievement">
+                <div class="ach-icon">&#128293;</div>
+                <div class="ach-title">On Fire</div>
+                <div class="ach-desc">50+ in one day</div>
+              </div>
+              <div class="achievement">
+                <div class="ach-icon">&#128155;</div>
+                <div class="ach-title">Zero Returns</div>
+                <div class="ach-desc">Feb 2026 - 0 returns</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#128276; Notification Settings</div>
+          </div>
+          <div class="card-body">
+            <div class="setting-row">
+              <div class="sr-info">
+                <div class="sr-title">New Delivery Alerts</div>
+                <div class="sr-desc">Get notified when a new delivery is assigned</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="setting-row">
+              <div class="sr-info">
+                <div class="sr-title">Payment Notifications</div>
+                <div class="sr-desc">Get notified about payment status changes</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="setting-row">
+              <div class="sr-info">
+                <div class="sr-title">Performance Reports</div>
+                <div class="sr-desc">Weekly performance summary</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="setting-row">
+              <div class="sr-info">
+                <div class="sr-title">Promotional Messages</div>
+                <div class="sr-desc">Bonus offers and incentive programs</div>
+              </div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="setting-row">
+              <div class="sr-info">
+                <div class="sr-title">Sound Alerts</div>
+                <div class="sr-desc">Play sound for new assignments</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<!-- ─── Edit Profile Modal ─────────────── -->
+<div class="modal-overlay" id="editProfileModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title">&#9998; Edit Profile</div>
+      <button class="modal-close" onclick="closeModal('editProfileModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-control" value="Amit Tamang" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" class="form-control" value="+977-9801234567" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" value="amit.tamang@packrs.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <input type="text" class="form-control" value="Thamel, Kathmandu" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vehicle Number</label>
+          <input type="text" class="form-control" value="Ba 12 Pa 3456" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bank Account</label>
+          <input type="text" class="form-control" value="**** **** 4521" />
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:8px;">
+        <label class="form-label">Change Password</label>
+        <div class="form-grid">
+          <input type="password" class="form-control" placeholder="Current password" />
+          <input type="password" class="form-control" placeholder="New password" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('editProfileModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/auth.js"></script>
+<script>
+  // ─── Populate from session ──────────────
+  (function() {
+    var name = sessionStorage.getItem('packrs_name') || 'Rider';
+    var initials = sessionStorage.getItem('packrs_initials') || 'R';
+    var el = document.getElementById('profileName');
+    if (el) el.textContent = name;
+    var av = document.getElementById('profileAvatar');
+    if (av) av.textContent = initials;
+    var dn = document.getElementById('detailName');
+    if (dn) dn.textContent = name;
+  })();
+
+  // ─── Modal Helpers ──────────────────────
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  document.querySelectorAll('.modal-overlay').forEach(function(el) {
+    el.addEventListener('click', function(e) { if (e.target === el) el.classList.remove('open'); });
+  });
+
+  // ─── Save Profile ──────────────────────
+  function saveProfile() {
+    closeModal('editProfileModal');
+    showToast('Profile updated successfully!', 'success');
+  }
+
+  // ─── Toast ──────────────────────────────
+  function showToast(msg, type) {
+    var container = document.getElementById('toastContainer');
+    var toast = document.createElement('div');
+    toast.className = 'toast ' + (type || 'info');
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 3500);
+  }
+
+  // ─── Mobile menu ────────────────────────
+  (function() {
+    var btn = document.getElementById('menuToggle');
+    if (window.innerWidth <= 768) btn.style.display = 'inline-flex';
+    window.addEventListener('resize', function() {
+      btn.style.display = window.innerWidth <= 768 ? 'inline-flex' : 'none';
+    });
+  })();
+</script>
+</body>
+</html>

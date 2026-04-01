@@ -363,6 +363,59 @@
       font-weight: 600;
     }
 
+    /* ─── Role Selector ─────────────────── */
+    .role-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .role-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 14px 10px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .role-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .role-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(58,175,169,0.15);
+    }
+
+    .role-btn .role-icon {
+      color: var(--text-secondary);
+      transition: color 0.2s;
+    }
+
+    .role-btn.active .role-icon {
+      color: var(--primary);
+    }
+
+    .role-btn .role-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .role-btn .role-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
     @media (max-width: 480px) {
       .login-wrapper { max-width: 100%; }
       .login-card-body { padding: 20px; }
@@ -388,8 +441,8 @@
     <div>
       <div class="login-card">
         <div class="login-card-header">
-          <h2>Login to DMS Admin</h2>
-          <p>Enter your credentials to continue</p>
+          <h2>Login to Packrs DMS</h2>
+          <p>Select your role and enter credentials</p>
         </div>
         <div class="login-card-body">
           <div id="login-error" class="error-msg">
@@ -398,6 +451,21 @@
           </div>
 
           <form id="login-form" autocomplete="on">
+            <!-- Role Selector -->
+            <div class="role-selector">
+              <button type="button" class="role-btn active" data-role="admin" onclick="selectRole('admin')">
+                <span class="role-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+                <span class="role-label">Admin</span>
+                <span class="role-desc">Full dashboard access</span>
+              </button>
+              <button type="button" class="role-btn" data-role="rider" onclick="selectRole('rider')">
+                <span class="role-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M9 14l-3 6"/><path d="M15 14l3 6"/></svg></span>
+                <span class="role-label">Rider</span>
+                <span class="role-desc">Delivery portal</span>
+              </button>
+            </div>
+            <input type="hidden" id="login-role" value="admin" />
+
             <div class="form-group">
               <label class="form-label" for="email">Email Address</label>
               <div class="input-wrap">
@@ -457,6 +525,14 @@
     const btnSignIn = document.getElementById('btn-sign-in');
     const btnText   = document.getElementById('btn-text');
 
+    // ─── Role Selection ──────────────────
+    function selectRole(role) {
+      document.getElementById('login-role').value = role;
+      document.querySelectorAll('.role-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-role') === role);
+      });
+    }
+
     // ─── Toggle Password ──────────────────
     function togglePassword() {
       const pw = document.getElementById('password');
@@ -505,14 +581,20 @@
         // Store user info
         const userName = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
         const initials = userName.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+        const role = document.getElementById('login-role').value;
 
         sessionStorage.setItem('packrs_email', email);
         sessionStorage.setItem('packrs_name', userName);
         sessionStorage.setItem('packrs_initials', initials);
+        sessionStorage.setItem('packrs_role', role);
         sessionStorage.setItem('packrs_authenticated', 'true');
 
-        // Redirect to dashboard
-        window.location.href = 'index.html';
+        // Redirect based on role
+        if (role === 'rider') {
+          window.location.href = 'rider-dashboard.html';
+        } else {
+          window.location.href = 'index.html';
+        }
       }, 800);
     });
 
@@ -523,7 +605,11 @@
 
     // ─── If already authenticated, go to dashboard ──
     if (sessionStorage.getItem('packrs_authenticated') === 'true') {
-      window.location.href = 'index.html';
+      if (sessionStorage.getItem('packrs_role') === 'rider') {
+        window.location.href = 'rider-dashboard.html';
+      } else {
+        window.location.href = 'index.html';
+      }
     }
   </script>
 </body>
