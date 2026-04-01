@@ -913,13 +913,40 @@
 
 <!-- ══ ASSIGN RIDER MODAL ═══════════════════════════════════ -->
 <div class="modal-bg" id="assignRiderModal">
-  <div class="modal">
+  <div class="modal" style="max-width:900px;">
     <div class="modal-head">
       <h3>Assign Rider to Scanned Packages</h3>
       <button class="modal-x" onclick="closeAssignRiderModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px;" id="assignInfo"></p>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px;" id="assignInfo"></p>
+      <div style="max-height:280px;overflow-y:auto;margin-bottom:16px;border:1.5px solid var(--border);border-radius:8px;">
+        <table style="width:100%;font-size:.78rem;border-collapse:collapse;">
+          <thead>
+            <tr style="background:var(--teal-light);">
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">S.N.</th>
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">Branch</th>
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">Package No.</th>
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">Vendor</th>
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">Customer</th>
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">Street Address</th>
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">City</th>
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">Mobile No.</th>
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">Amount</th>
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">Type</th>
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap;color:var(--teal-dark);font-weight:700;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="assignPkgTableBody"></tbody>
+          <tfoot>
+            <tr style="background:var(--teal-light);font-weight:800;">
+              <td colspan="8" style="padding:8px 10px;text-align:center;">Total</td>
+              <td style="padding:8px 10px;" id="assignTotalAmount">0</td>
+              <td colspan="2"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
       <div class="filter-group">
         <label>Select Rider</label>
         <select id="riderSelect">
@@ -1221,7 +1248,33 @@
     const pkgsToAssign = selected.length > 0 ? selected : scannedPackages;
 
     document.getElementById('assignInfo').textContent =
-      `Assigning rider to ${pkgsToAssign.length} package(s): ${pkgsToAssign.map(p => p.pkgNum).join(', ')}`;
+      `${pkgsToAssign.length} package(s) scanned and ready to assign.`;
+
+    // Populate full details table
+    const tbody = document.getElementById('assignPkgTableBody');
+    tbody.innerHTML = '';
+    let totalAmt = 0;
+    pkgsToAssign.forEach((p, i) => {
+      totalAmt += p.amount;
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid var(--border)';
+      tr.innerHTML = `
+        <td style="padding:7px 10px;">${i + 1}</td>
+        <td style="padding:7px 10px;">${p.branch}</td>
+        <td style="padding:7px 10px;font-weight:700;color:var(--teal-dark);">${p.pkgNum}</td>
+        <td style="padding:7px 10px;">${p.vendor}</td>
+        <td style="padding:7px 10px;">${p.customer}</td>
+        <td style="padding:7px 10px;">${p.street}</td>
+        <td style="padding:7px 10px;">${p.city}</td>
+        <td style="padding:7px 10px;">${p.mobile}</td>
+        <td style="padding:7px 10px;">Rs ${p.amount}</td>
+        <td style="padding:7px 10px;">${p.type}</td>
+        <td style="padding:7px 10px;"><span class="badge badge-receive">${p.status}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('assignTotalAmount').textContent = 'Rs ' + totalAmt;
+
     document.getElementById('riderSelect').value = '';
     document.getElementById('assignRiderModal').classList.add('show');
   }
