@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deliveries — Packrs Courier</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:       #3aafa9;
+      --teal-dark:  #2b7a78;
+      --teal-light: #def2f1;
+      --red:        #e05c7a;
+      --bg:         #f0f4f4;
+      --white:      #ffffff;
+      --text:       #1a1a2e;
+      --muted:      #6b7280;
+      --border:     #d1e0df;
+      --shadow:     0 2px 8px rgba(0,0,0,.08);
+      --nav:        220px;
+      --hdr:        56px;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────────── */
+    header {
+      position: fixed;
+      top: 0;
+      left: var(--nav);
+      right: 0;
+      height: var(--hdr);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 20px;
+      box-shadow: var(--shadow);
+      z-index: 200;
+    }
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--teal-dark);
+      text-transform: uppercase;
+      flex: 1;
+    }
+    .menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .hdr-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .notif-btn {
+      position: relative;
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    .notif-badge {
+      position: absolute;
+      top: -4px;
+      right: -5px;
+      background: var(--red);
+      color: #fff;
+      font-size: .6rem;
+      font-weight: 700;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: .8rem;
+    }
+    .user-name { font-size: .82rem; font-weight: 700; }
+    .user-role { font-size: .65rem; color: var(--muted); letter-spacing: 1px; }
+
+    @media(max-width:768px) {
+      header { left: 0; }
+      .menu-btn { display: block; }
+    }
+
+    /* ── SIDENAV ─────────────────────────────────────── */
+    .sidenav {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--nav);
+      height: 100vh;
+      background: var(--teal-dark);
+      color: #fff;
+      z-index: 300;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      transition: transform .25s;
+    }
+    .sn-brand {
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .sn-links {
+      list-style: none;
+      padding: 10px 0;
+      flex: 1;
+    }
+    .sn-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      color: rgba(255,255,255,.75);
+      text-decoration: none;
+      font-size: .82rem;
+      font-weight: 600;
+      transition: background .15s, color .15s;
+      border-left: 3px solid transparent;
+    }
+    .sn-item:hover, .sn-item.active {
+      background: rgba(255,255,255,.1);
+      color: #fff;
+      border-left-color: #fff;
+    }
+    .sn-icon { width: 17px; height: 17px; flex-shrink: 0; }
+    .sn-footer {
+      padding: 10px 0;
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+
+    @media(max-width:768px) {
+      .sidenav { transform: translateX(-100%); }
+      .sidenav.open { transform: translateX(0); }
+    }
+
+    /* ── PAGE BODY ─────────────────────────────────────── */
+    .page-body {
+      margin-left: var(--nav);
+      padding-top: var(--hdr);
+      min-height: 100vh;
+    }
+    .page-inner { padding: 20px; }
+
+    @media(max-width:768px) {
+      .page-body { margin-left: 0; }
+    }
+
+    /* ── PAGE HEADER ROW ─────────────────────────────────── */
+    .page-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .page-subtitle {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .breadcrumb {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .breadcrumb a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    /* ── FILTER PANEL ──────────────────────────────────── */
+    .filter-panel {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .filter-group label {
+      display: block;
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+    }
+    .filter-group input,
+    .filter-group select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: .82rem;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border .15s;
+    }
+    .filter-group input:focus,
+    .filter-group select:focus {
+      border-color: var(--teal);
+    }
+    .filter-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .btn-search {
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      padding: 9px 28px;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-search:hover { background: var(--teal-dark); }
+    .btn-reset {
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      padding: 8px 24px;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .btn-reset:hover { background: var(--bg); color: var(--text); }
+
+    /* ── TABLE PANEL ─────────────────────────────────────── */
+    .table-panel {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .table-panel-hdr {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-panel-hdr fieldset {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: .85rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .table-panel-hdr fieldset legend {
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 0 6px;
+      color: var(--muted);
+    }
+    .records-per-page {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+    .records-per-page select {
+      padding: 4px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: .8rem;
+      background: var(--white);
+      cursor: pointer;
+    }
+    .in-transit-badge {
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: .78rem;
+      font-weight: 700;
+      cursor: default;
+    }
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .8rem;
+    }
+    thead th {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      font-weight: 700;
+      padding: 10px 10px;
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 2px solid var(--border);
+      text-transform: uppercase;
+      font-size: .72rem;
+      letter-spacing: .3px;
+    }
+    thead th:first-child { padding-left: 16px; }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .12s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f8fbfb; }
+    tbody td {
+      padding: 10px 10px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    tbody td:first-child { padding-left: 16px; }
+    .pkg-id { font-weight: 700; color: var(--teal-dark); }
+    .chk-col { width: 32px; text-align: center; }
+    .chk-col input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--teal);
+      cursor: pointer;
+    }
+
+    /* ── STATUS BADGES ───────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+    .badge-in-transit  { background: #dbeafe; color: #2563eb; }
+    .badge-delivered   { background: #dcfce7; color: #16a34a; }
+    .badge-postponed   { background: #fef3c7; color: #d97706; }
+    .badge-cnr         { background: #fce4ec; color: #e05c7a; }
+    .badge-online-pay  { background: #ede9fe; color: #7c3aed; }
+
+    /* ── ACTION BUTTONS IN TABLE ─────────────────────────── */
+    .action-btn {
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-size: .72rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      color: #fff;
+      transition: opacity .15s;
+    }
+    .action-btn:hover { opacity: .85; }
+    .action-btn.transit { background: var(--teal); }
+
+    /* ── PAGINATION ──────────────────────────────────────── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      font-size: .8rem;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pag-btns { display: flex; gap: 6px; }
+    .pag-btn {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: .78rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--teal-dark);
+      transition: background .12s;
+    }
+    .pag-btn:hover { background: var(--teal-light); }
+    .pag-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    .no-results {
+      text-align: center;
+      padding: 32px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    /* ── STATUS ACTION DROPDOWN ──────────────────────────── */
+    .action-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    .action-dropdown {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.14);
+      min-width: 200px;
+      z-index: 500;
+      display: none;
+      overflow: hidden;
+    }
+    .action-dropdown.show { display: block; }
+    .action-dropdown-title {
+      padding: 10px 14px;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .action-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      transition: background .12s;
+    }
+    .action-dropdown-item:hover {
+      background: var(--teal-light);
+    }
+    .action-dropdown-item .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-delivered  { background: #16a34a; }
+    .dot-cnr        { background: #e05c7a; }
+    .dot-postponed  { background: #d97706; }
+    .dot-online     { background: #7c3aed; }
+    .dot-vendor     { background: #2563eb; }
+
+    /* ── MODAL ───────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal {
+      background: var(--white);
+      border-radius: 14px;
+      width: 480px;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 16px 48px rgba(0,0,0,.2);
+      animation: modalIn .2s ease-out;
+    }
+    @keyframes modalIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: var(--muted);
+      line-height: 1;
+      padding: 4px;
+      border-radius: 6px;
+      transition: background .12s;
+    }
+    .modal-close:hover { background: var(--bg); }
+    .modal-body {
+      padding: 22px;
+    }
+    .modal-pkg-info {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: .8rem;
+    }
+    .modal-pkg-info dt {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .modal-pkg-info dd {
+      font-weight: 700;
+      color: var(--text);
+    }
+    .modal-status-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: .78rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    .modal-status-label.delivered  { background: #dcfce7; color: #16a34a; }
+    .modal-status-label.cnr       { background: #fce4ec; color: #e05c7a; }
+    .modal-status-label.postponed { background: #fef3c7; color: #d97706; }
+    .modal-status-label.online-pay { background: #ede9fe; color: #7c3aed; }
+    .modal-status-label.online-pay-vendor { background: #dbeafe; color: #2563eb; }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .form-group label .required {
+      color: var(--red);
+    }
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: .82rem;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border .15s;
+      font-family: inherit;
+    }
+    .form-group select:focus,
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--teal);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 16px 22px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-cancel {
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      padding: 9px 22px;
+      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .btn-cancel:hover { background: var(--bg); }
+    .btn-submit {
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      padding: 9px 28px;
+      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .btn-submit:hover { background: var(--teal-dark); }
+
+    /* ── TOAST ────────────────────────────────────────────── */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .toast {
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 600;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      animation: toastIn .3s ease-out;
+    }
+    .toast.success { background: #16a34a; }
+    .toast.error   { background: #ef4444; }
+    @keyframes toastIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDENAV -->
+<nav class="sidenav" id="sidenav">
+  <div class="sn-brand">&#9992; PACKRS</div>
+  <ul class="sn-links">
+    <li><a href="index.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a></li>
+    <li><a href="users.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>User Management</span></a></li>
+    <li><a href="packages.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Packages</span></a></li>
+    <li><a href="deliveries.html" class="sn-item active"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Deliveries</span></a></li>
+    <li><a href="riders.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M15 13l3 7"/><path d="M9 13l-3 7"/></svg><span>Riders</span></a></li>
+    <li><a href="clients.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clients</span></a></li>
+    <li><a href="courier.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Courier</span></a></li>
+    <li><a href="manifesto.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Manifesto</span></a></li>
+    <li><a href="invoices.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Invoice</span></a></li>
+    <li><a href="accounts.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Accounting</span></a></li>
+    <li><a href="rider-location.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Rider Location</span></a></li>
+    <li><a href="communication.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Communication</span></a></li>
+    <li><a href="reports.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><span>Reports</span></a></li>
+    <li><a href="settings.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>System Settings</span></a></li>
+    <li><a href="support-ticket.html" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Support Ticket</span></a></li>
+  </ul>
+  <div class="sn-footer"><a href="#" class="sn-item"><svg class="sn-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span></a></div>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <button class="menu-btn" onclick="document.getElementById('sidenav').classList.toggle('open')">&#9776;</button>
+  <div class="logo">&#9992; Packrs Courier</div>
+  <div class="hdr-right">
+    <button class="notif-btn">&#128276;<span class="notif-badge">2</span></button>
+    <div class="user-chip">
+      <div class="avatar">AM</div>
+      <div class="user-info">
+        <div class="user-name">Amit Maharjan</div>
+        <div class="user-role">ADMIN</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PAGE BODY -->
+<div class="page-body">
+  <div class="page-inner">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="packages.html">Packages</a> / Deliveries
+    </div>
+
+    <!-- Page title row -->
+    <div class="page-title-row">
+      <div>
+        <div class="page-title">Packages</div>
+        <div class="page-subtitle">Manage delivery status for all packages</div>
+      </div>
+    </div>
+
+    <!-- Filter panel -->
+    <div class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>Package ID</label>
+          <input type="text" id="filterPkgId" placeholder="Package ID eg: TUXBF6CP" />
+        </div>
+        <div class="filter-group">
+          <label>Customer Name</label>
+          <input type="text" id="filterCustName" placeholder="Customer Name" />
+        </div>
+        <div class="filter-group">
+          <label>Customer Number</label>
+          <input type="text" id="filterCustNumber" placeholder="Customer Number" />
+        </div>
+        <div class="filter-group">
+          <label>From (Created Date)</label>
+          <input type="date" id="filterDateFrom" value="2026-03-02" />
+        </div>
+        <div class="filter-group">
+          <label>To (Created Date)</label>
+          <input type="date" id="filterDateTo" value="2026-04-01" />
+        </div>
+        <div class="filter-group">
+          <label>Branch</label>
+          <select id="filterBranch">
+            <option value="">Select Branch</option>
+            <option>Head Office</option>
+            <option>Chabahil</option>
+            <option>Pokhara</option>
+            <option>Chitwan</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Package Type</label>
+          <select id="filterPkgType">
+            <option value="">Select Package Type</option>
+            <option>Inside Valley</option>
+            <option>Outside Valley</option>
+            <option>International</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Courier Type</label>
+          <select id="filterCourierType">
+            <option value="">Select Courier Type</option>
+            <option>NCM</option>
+            <option>Express</option>
+            <option>Standard</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Courier</label>
+          <select id="filterCourier">
+            <option value="">Select Courier</option>
+            <option>NCM</option>
+            <option>Packrs Express</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Vendor</label>
+          <select id="filterVendor">
+            <option value="">Select Vendor</option>
+            <option>Bendthernd.0</option>
+            <option>shoes splash</option>
+            <option>people's smart</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Rider</label>
+          <select id="filterRider">
+            <option value="">Select Rider</option>
+            <option>Amit Maharjan</option>
+            <option>Sandesh Dangol</option>
+            <option>Rohan Maharjan</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button class="btn-search" onclick="applyFilters()">Search</button>
+        <button class="btn-reset" onclick="resetFilters()">Reset</button>
+      </div>
+    </div>
+
+    <!-- Deliveries table -->
+    <div class="table-panel">
+      <div class="table-panel-hdr">
+        <fieldset>
+          <legend>Deliveries</legend>
+          <div class="records-per-page">
+            <select id="perPage">
+              <option>20</option>
+              <option>50</option>
+              <option>100</option>
+            </select>
+            <span>records per page</span>
+          </div>
+        </fieldset>
+        <span class="in-transit-badge">In Transit</span>
+      </div>
+      <div class="table-wrap">
+        <table id="deliveryTable">
+          <thead>
+            <tr>
+              <th class="chk-col"><input type="checkbox" id="selectAll" /></th>
+              <th>S.N.</th>
+              <th>Branch</th>
+              <th>Package Number</th>
+              <th>Vendor Name</th>
+              <th>Customer Name</th>
+              <th>Mobile No.</th>
+              <th>Street Address</th>
+              <th>Created Date</th>
+              <th>Package Amount</th>
+              <th>Package Type</th>
+              <th>Delivery Date</th>
+              <th>Rider/Courier</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="deliveryTbody">
+            <!-- rows injected by JS -->
+          </tbody>
+        </table>
+        <div class="no-results" id="noResults" style="display:none;">No deliveries found matching your criteria.</div>
+      </div>
+      <div class="pagination">
+        <span id="pagInfo">Showing 1–20</span>
+        <div class="pag-btns">
+          <button class="pag-btn" id="prevBtn" disabled onclick="changePage(-1)">&#8592; Prev</button>
+          <button class="pag-btn" id="nextBtn" onclick="changePage(1)">Next &#8594;</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Status Update Modal -->
+<div class="modal-overlay" id="statusModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Update Delivery Status</span>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-pkg-info" id="modalPkgInfo">
+        <dt>Package ID</dt><dd id="modalPkgId">—</dd>
+        <dt>Customer</dt><dd id="modalCustName">—</dd>
+        <dt>Mobile</dt><dd id="modalMobile">—</dd>
+        <dt>Address</dt><dd id="modalAddress">—</dd>
+      </div>
+      <div id="modalStatusBadge"></div>
+      <div class="form-group">
+        <label>Remarks <span class="required">*</span></label>
+        <select id="modalRemarks">
+          <option value="">Select Remarks</option>
+          <option>Delivered to customer</option>
+          <option>Left at door</option>
+          <option>Received by family member</option>
+          <option>Customer not available</option>
+          <option>Phone switched off</option>
+          <option>Wrong address</option>
+          <option>Customer requested postpone</option>
+          <option>Payment pending</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Comment</label>
+        <textarea id="modalComment" placeholder="Add any additional notes or comments..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-submit" onclick="submitStatusUpdate()">Update Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  // ── MOCK DATA ─────────────────────────────────────────
+  const deliveries = [
+    { id:'KHJK3SUX', branch:'Head Office', vendor:'Bendthernd.0',    customer:'suprima bhattarai',  mobile:'9742557472', address:'gaidakot nawalparasi buddha chowk',  created:'2026/03/31', amount:0,    pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
+    { id:'LUUTLYDY', branch:'Chabahil',    vendor:'shoes splash',    customer:'nisha ale',           mobile:'9827303254', address:'bhairahawa',                          created:'2026/03/31', amount:1450, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
+    { id:'U7042BZ9', branch:'Chabahil',    vendor:'shoes splash',    customer:'mariyam khatun',      mobile:'9816428008', address:'pokhara miyapatan',                   created:'2026/03/31', amount:2100, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
+    { id:'WRD75KOF', branch:'Chabahil',    vendor:"people's smart",  customer:'sabina chettri',      mobile:'9763512408', address:'sankhuwasabha khandbari',              created:'2026/03/31', amount:1300, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
+    { id:'MJY9AECU', branch:'Chabahil',    vendor:"people's smart",  customer:'purnima gautam',      mobile:'9866005303', address:'valbari butwal',                       created:'2026/03/31', amount:2700, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
+    { id:'4PMWDRB1', branch:'Chabahil',    vendor:"people's smart",  customer:'binita thapa',        mobile:'9842824468', address:'deepnagar butwal',                     created:'2026/03/31', amount:1700, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
+    { id:'XKR82MNP', branch:'Head Office', vendor:'Bendthernd.0',    customer:'ram sharma',          mobile:'9801234567', address:'kalimati kathmandu',                   created:'2026/03/30', amount:850,  pkgType:'Inside Valley',  deliveryDate:'', courier:'NCM', status:'In Transit' },
+    { id:'QWE45TYU', branch:'Chabahil',    vendor:'shoes splash',    customer:'sita devi',           mobile:'9812345678', address:'bharatpur chitwan',                    created:'2026/03/30', amount:1200, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
+    { id:'PLM09OKN', branch:'Head Office', vendor:'Bendthernd.0',    customer:'hari bahadur',        mobile:'9845678901', address:'lakeside pokhara',                     created:'2026/03/29', amount:950,  pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
+    { id:'ZXC67VBN', branch:'Chabahil',    vendor:"people's smart",  customer:'geeta kumari',        mobile:'9867890123', address:'itahari sunsari',                      created:'2026/03/29', amount:3200, pkgType:'Outside Valley', deliveryDate:'', courier:'NCM', status:'In Transit' },
+  ];
+
+  let activeDropdown = null;
+
+  // ── RENDER TABLE ────────────────────────────────────────
+  function renderTable(data) {
+    const tbody = document.getElementById('deliveryTbody');
+    const noRes = document.getElementById('noResults');
+    const items = data || deliveries;
+
+    tbody.innerHTML = '';
+
+    if (items.length === 0) {
+      noRes.style.display = 'block';
+      document.getElementById('pagInfo').textContent = 'No deliveries found';
+      return;
+    }
+
+    noRes.style.display = 'none';
+
+    items.forEach((d, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="chk-col"><input type="checkbox" data-id="${d.id}" /></td>
+        <td>${i + 1}</td>
+        <td>${d.branch}</td>
+        <td class="pkg-id">${d.id}</td>
+        <td>${d.vendor}</td>
+        <td>${d.customer}</td>
+        <td>${d.mobile}</td>
+        <td style="white-space:normal;min-width:160px;">${d.address}</td>
+        <td>${d.created}</td>
+        <td>${d.amount}</td>
+        <td>${d.pkgType}</td>
+        <td>${d.deliveryDate || '—'}</td>
+        <td>${d.courier}</td>
+        <td>
+          <div class="action-wrapper">
+            <button class="action-btn transit" onclick="toggleDropdown(event, '${d.id}')">${d.status}</button>
+            <div class="action-dropdown" id="dropdown-${d.id}">
+              <div class="action-dropdown-title">Update Status</div>
+              <button class="action-dropdown-item" onclick="openStatusModal('${d.id}', 'delivered')">
+                <span class="dot dot-delivered"></span> Delivered
+              </button>
+              <button class="action-dropdown-item" onclick="openStatusModal('${d.id}', 'cnr')">
+                <span class="dot dot-cnr"></span> Call Not Received
+              </button>
+              <button class="action-dropdown-item" onclick="openStatusModal('${d.id}', 'postponed')">
+                <span class="dot dot-postponed"></span> Postponed
+              </button>
+              <button class="action-dropdown-item" onclick="openStatusModal('${d.id}', 'online-pay')">
+                <span class="dot dot-online"></span> Online Pay
+              </button>
+              <button class="action-dropdown-item" onclick="openStatusModal('${d.id}', 'online-pay-vendor')">
+                <span class="dot dot-vendor"></span> Online Pay Vendor
+              </button>
+            </div>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('pagInfo').textContent = `Showing 1–${items.length} of ${items.length} deliveries`;
+  }
+
+  // ── DROPDOWN TOGGLE ──────────────────────────────────────
+  function toggleDropdown(e, id) {
+    e.stopPropagation();
+    const dd = document.getElementById('dropdown-' + id);
+
+    if (activeDropdown && activeDropdown !== dd) {
+      activeDropdown.classList.remove('show');
+    }
+
+    dd.classList.toggle('show');
+    activeDropdown = dd.classList.contains('show') ? dd : null;
+  }
+
+  document.addEventListener('click', () => {
+    if (activeDropdown) {
+      activeDropdown.classList.remove('show');
+      activeDropdown = null;
+    }
+  });
+
+  // ── MODAL ────────────────────────────────────────────────
+  let currentPkgId = null;
+  let currentStatus = null;
+
+  const statusLabels = {
+    'delivered':         'Delivered',
+    'cnr':               'Call Not Received',
+    'postponed':         'Postponed',
+    'online-pay':        'Online Pay',
+    'online-pay-vendor': 'Online Pay Vendor',
+  };
+
+  function openStatusModal(pkgId, status) {
+    if (activeDropdown) {
+      activeDropdown.classList.remove('show');
+      activeDropdown = null;
+    }
+
+    currentPkgId = pkgId;
+    currentStatus = status;
+
+    const pkg = deliveries.find(d => d.id === pkgId);
+    if (!pkg) return;
+
+    document.getElementById('modalPkgId').textContent = pkg.id;
+    document.getElementById('modalCustName').textContent = pkg.customer;
+    document.getElementById('modalMobile').textContent = pkg.mobile;
+    document.getElementById('modalAddress').textContent = pkg.address;
+    document.getElementById('modalTitle').textContent = 'Update to: ' + statusLabels[status];
+
+    const badgeEl = document.getElementById('modalStatusBadge');
+    const cssClass = status === 'cnr' ? 'cnr' : status;
+    badgeEl.innerHTML = `<span class="modal-status-label ${cssClass}">${statusLabels[status]}</span>`;
+
+    document.getElementById('modalRemarks').value = '';
+    document.getElementById('modalComment').value = '';
+
+    document.getElementById('statusModal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('statusModal').classList.remove('show');
+    currentPkgId = null;
+    currentStatus = null;
+  }
+
+  function submitStatusUpdate() {
+    const remarks = document.getElementById('modalRemarks').value;
+    if (!remarks) {
+      showToast('Please select remarks before submitting.', 'error');
+      return;
+    }
+
+    const comment = document.getElementById('modalComment').value;
+    const pkg = deliveries.find(d => d.id === currentPkgId);
+
+    if (pkg) {
+      pkg.status = statusLabels[currentStatus];
+      pkg.deliveryDate = new Date().toISOString().slice(0, 10).replace(/-/g, '/');
+    }
+
+    closeModal();
+    renderTable();
+    showToast(`Package ${currentPkgId || ''} status updated to "${statusLabels[currentStatus] || ''}" successfully!`, 'success');
+  }
+
+  // Close modal on overlay click
+  document.getElementById('statusModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ── TOAST ─────────────────────────────────────────────────
+  function showToast(msg, type) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3500);
+  }
+
+  // ── FILTERS ───────────────────────────────────────────────
+  function applyFilters() {
+    const pkgId      = document.getElementById('filterPkgId').value.trim().toLowerCase();
+    const custName   = document.getElementById('filterCustName').value.trim().toLowerCase();
+    const custNumber = document.getElementById('filterCustNumber').value.trim();
+    const branch     = document.getElementById('filterBranch').value;
+    const pkgType    = document.getElementById('filterPkgType').value;
+    const vendor     = document.getElementById('filterVendor').value;
+    const rider      = document.getElementById('filterRider').value;
+
+    const filtered = deliveries.filter(d => {
+      if (pkgId && !d.id.toLowerCase().includes(pkgId)) return false;
+      if (custName && !d.customer.toLowerCase().includes(custName)) return false;
+      if (custNumber && !d.mobile.includes(custNumber)) return false;
+      if (branch && d.branch !== branch) return false;
+      if (pkgType && d.pkgType !== pkgType) return false;
+      if (vendor && d.vendor !== vendor) return false;
+      return true;
+    });
+
+    renderTable(filtered);
+  }
+
+  function resetFilters() {
+    document.getElementById('filterPkgId').value = '';
+    document.getElementById('filterCustName').value = '';
+    document.getElementById('filterCustNumber').value = '';
+    document.getElementById('filterDateFrom').value = '2026-03-02';
+    document.getElementById('filterDateTo').value = '2026-04-01';
+    document.getElementById('filterBranch').value = '';
+    document.getElementById('filterPkgType').value = '';
+    document.getElementById('filterCourierType').value = '';
+    document.getElementById('filterCourier').value = '';
+    document.getElementById('filterVendor').value = '';
+    document.getElementById('filterRider').value = '';
+    renderTable();
+  }
+
+  // ── SELECT ALL ───────────────────────────────────────────
+  document.getElementById('selectAll').addEventListener('change', function() {
+    document.querySelectorAll('#deliveryTbody input[type="checkbox"]').forEach(cb => {
+      cb.checked = this.checked;
+    });
+  });
+
+  // ── PAGINATION (demo) ────────────────────────────────────
+  let currentPage = 1;
+  function changePage(dir) {
+    currentPage += dir;
+    document.getElementById('prevBtn').disabled = currentPage <= 1;
+  }
+
+  // ── INIT ──────────────────────────────────────────────────
+  renderTable();
+</script>
+
+</body>
+</html>
