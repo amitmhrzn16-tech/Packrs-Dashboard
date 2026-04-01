@@ -130,43 +130,165 @@
       margin-bottom: 12px;
     }
 
-    /* ─── Status Update Modal ───────────── */
-    .status-options {
+    /* ─── Status Update Modal (matching deliveries.html) ── */
+    .modal-pkg-info {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
+      font-size: 13px;
     }
 
-    .status-option {
-      display: flex;
+    .modal-pkg-info dt {
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .modal-pkg-info dd {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .modal-status-label {
+      display: inline-flex;
       align-items: center;
-      gap: 10px;
-      padding: 14px;
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .modal-status-label.delivered { background: #dcfce7; color: #16a34a; }
+    .modal-status-label.cnr { background: #fce4ec; color: #e05c7a; }
+    .modal-status-label.postponed { background: #fef3c7; color: #d97706; }
+    .modal-status-label.online-pay { background: #ede9fe; color: #7c3aed; }
+    .modal-status-label.online-pay-vendor { background: #dbeafe; color: #2563eb; }
+
+    .status-action-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .status-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
+      border: 2px solid transparent;
       transition: all 0.15s;
-      background: #fff;
     }
 
-    .status-option:hover {
-      border-color: var(--primary);
-      background: var(--primary-light);
+    .status-action-btn.delivered { background: #dcfce7; color: #16a34a; border-color: #dcfce7; }
+    .status-action-btn.cnr { background: #fce4ec; color: #e05c7a; border-color: #fce4ec; }
+    .status-action-btn.postponed { background: #fef3c7; color: #d97706; border-color: #fef3c7; }
+    .status-action-btn.online-pay { background: #ede9fe; color: #7c3aed; border-color: #ede9fe; }
+    .status-action-btn.online-pay-vendor { background: #dbeafe; color: #2563eb; border-color: #dbeafe; }
+
+    .status-action-btn.active {
+      border-color: currentColor;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
     }
 
-    .status-option.selected {
-      border-color: var(--primary);
-      background: var(--primary-light);
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
 
-    .status-option .so-icon {
-      font-size: 22px;
+    .dot-delivered { background: #16a34a; }
+    .dot-cnr { background: #e05c7a; }
+    .dot-postponed { background: #d97706; }
+    .dot-online { background: #7c3aed; }
+    .dot-vendor { background: #2563eb; }
+
+    /* ─── Comments Section ──────────────── */
+    .comments-section {
+      margin-bottom: 18px;
     }
 
-    .status-option .so-label {
+    .comments-section-title {
       font-size: 13px;
       font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+
+    .comments-section-title .count-badge {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .comment-list {
+      max-height: 160px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .comment-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 13px;
+    }
+
+    .comment-item:last-child { border-bottom: none; }
+
+    .comment-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .comment-status {
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    .comment-date {
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+
+    .comment-remark {
+      color: var(--primary-dark);
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .comment-text {
+      color: var(--text-secondary);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .no-comments {
+      padding: 16px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .required { color: var(--danger); }
 
     /* ─── Summary Stats ─────────────────── */
     .delivery-summary {
@@ -307,7 +429,7 @@
         <div class="card-body" id="deliveryList">
 
           <!-- In Transit -->
-          <div class="delivery-card urgent" data-status="transit">
+          <div class="delivery-card urgent" data-status="transit" data-pkg="PKG-2024-00847">
             <div class="dc-top">
               <div>
                 <div class="dc-id">PKG-2024-00847</div>
@@ -333,14 +455,14 @@
                 <span>&#128176; COD Rs 1,200</span>
               </div>
               <div class="dc-actions">
-                <button class="btn btn-sm btn-outline" onclick="openModal('statusModal')">Update Status</button>
-                <button class="btn btn-sm btn-success" onclick="markDelivered('PKG-2024-00847')">&#9989; Delivered</button>
+                <button class="btn btn-sm btn-outline" onclick="openStatusModal('PKG-2024-00847')">Update Status</button>
+                <button class="btn btn-sm btn-success" onclick="openStatusModal('PKG-2024-00847', 'delivered')">&#9989; Delivered</button>
               </div>
             </div>
           </div>
 
           <!-- Pending Items -->
-          <div class="delivery-card" data-status="pending">
+          <div class="delivery-card" data-status="pending" data-pkg="PKG-2024-00852">
             <div class="dc-top">
               <div>
                 <div class="dc-id">PKG-2024-00852</div>
@@ -366,12 +488,13 @@
                 <span>&#128176; Prepaid</span>
               </div>
               <div class="dc-actions">
-                <button class="btn btn-sm btn-primary" onclick="markPickedUp('PKG-2024-00852')">&#128230; Pick Up</button>
+                <button class="btn btn-sm btn-outline" onclick="openStatusModal('PKG-2024-00852')">Update Status</button>
+                <button class="btn btn-sm btn-primary" onclick="openStatusModal('PKG-2024-00852', 'delivered')">&#128230; Pick Up</button>
               </div>
             </div>
           </div>
 
-          <div class="delivery-card" data-status="pending">
+          <div class="delivery-card" data-status="pending" data-pkg="PKG-2024-00855">
             <div class="dc-top">
               <div>
                 <div class="dc-id">PKG-2024-00855</div>
@@ -397,13 +520,13 @@
                 <span>&#128176; COD Rs 850</span>
               </div>
               <div class="dc-actions">
-                <button class="btn btn-sm btn-outline" onclick="openModal('statusModal')">Update Status</button>
-                <button class="btn btn-sm btn-primary" onclick="markPickedUp('PKG-2024-00855')">&#128230; Pick Up</button>
+                <button class="btn btn-sm btn-outline" onclick="openStatusModal('PKG-2024-00855')">Update Status</button>
+                <button class="btn btn-sm btn-primary" onclick="openStatusModal('PKG-2024-00855', 'delivered')">&#128230; Pick Up</button>
               </div>
             </div>
           </div>
 
-          <div class="delivery-card" data-status="pending">
+          <div class="delivery-card" data-status="pending" data-pkg="PKG-2024-00861">
             <div class="dc-top">
               <div>
                 <div class="dc-id">PKG-2024-00861</div>
@@ -429,13 +552,14 @@
                 <span>&#128176; Prepaid</span>
               </div>
               <div class="dc-actions">
-                <button class="btn btn-sm btn-primary" onclick="markPickedUp('PKG-2024-00861')">&#128230; Pick Up</button>
+                <button class="btn btn-sm btn-outline" onclick="openStatusModal('PKG-2024-00861')">Update Status</button>
+                <button class="btn btn-sm btn-primary" onclick="openStatusModal('PKG-2024-00861', 'delivered')">&#128230; Pick Up</button>
               </div>
             </div>
           </div>
 
           <!-- Returned -->
-          <div class="delivery-card" data-status="returned">
+          <div class="delivery-card" data-status="returned" data-pkg="PKG-2024-00840">
             <div class="dc-top">
               <div>
                 <div class="dc-id">PKG-2024-00840</div>
@@ -460,13 +584,13 @@
                 <span>Reason: Wrong item</span>
               </div>
               <div class="dc-actions">
-                <button class="btn btn-sm btn-outline" onclick="openModal('statusModal')">Update Status</button>
+                <button class="btn btn-sm btn-outline" onclick="openStatusModal('PKG-2024-00840')">Update Status</button>
               </div>
             </div>
           </div>
 
           <!-- Delivered (sample 2) -->
-          <div class="delivery-card" data-status="delivered">
+          <div class="delivery-card" data-status="delivered" data-pkg="PKG-2024-00843">
             <div class="dc-top">
               <div>
                 <div class="dc-id">PKG-2024-00843</div>
@@ -496,7 +620,7 @@
             </div>
           </div>
 
-          <div class="delivery-card" data-status="delivered">
+          <div class="delivery-card" data-status="delivered" data-pkg="PKG-2024-00841">
             <div class="dc-top">
               <div>
                 <div class="dc-id">PKG-2024-00841</div>
@@ -533,41 +657,80 @@
   </div><!-- /main-content -->
 </div><!-- /app-shell -->
 
-<!-- ─── Status Update Modal ────────────── -->
+<!-- ─── Status Update Modal (matching deliveries.html) ── -->
 <div class="modal-overlay" id="statusModal">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">Update Delivery Status</div>
+      <div class="modal-title" id="modalTitle">Update Delivery Status</div>
       <button class="modal-close" onclick="closeModal('statusModal')">&times;</button>
     </div>
     <div class="modal-body">
-      <p style="margin-bottom:16px;color:var(--text-secondary);font-size:13px;">Select the new status for this delivery:</p>
-      <div class="status-options">
-        <div class="status-option" onclick="selectStatus(this, 'picked_up')">
-          <span class="so-icon">&#128230;</span>
-          <span class="so-label">Picked Up</span>
+      <!-- Package Info -->
+      <div class="modal-pkg-info" id="modalPkgInfo">
+        <dt>Package ID</dt><dd id="modalPkgId">&mdash;</dd>
+        <dt>Customer</dt><dd id="modalCustName">&mdash;</dd>
+        <dt>Mobile</dt><dd id="modalMobile">&mdash;</dd>
+        <dt>Address</dt><dd id="modalAddress">&mdash;</dd>
+      </div>
+
+      <!-- Status Badge -->
+      <div id="modalStatusBadge"></div>
+
+      <!-- Status Action Buttons -->
+      <div class="status-action-btns" id="statusActionBtns">
+        <button class="status-action-btn delivered" onclick="setModalStatus('delivered', this)">
+          <span class="dot dot-delivered"></span> Delivered
+        </button>
+        <button class="status-action-btn cnr" onclick="setModalStatus('cnr', this)">
+          <span class="dot dot-cnr"></span> Call Not Received
+        </button>
+        <button class="status-action-btn postponed" onclick="setModalStatus('postponed', this)">
+          <span class="dot dot-postponed"></span> Postponed
+        </button>
+        <button class="status-action-btn online-pay" onclick="setModalStatus('online-pay', this)">
+          <span class="dot dot-online"></span> Online Pay
+        </button>
+        <button class="status-action-btn online-pay-vendor" onclick="setModalStatus('online-pay-vendor', this)">
+          <span class="dot dot-vendor"></span> Online Pay Vendor
+        </button>
+      </div>
+
+      <!-- Latest Comments -->
+      <div class="comments-section" id="commentsSection">
+        <div class="comments-section-title">
+          Latest Comments <span class="count-badge" id="commentCount">0</span>
         </div>
-        <div class="status-option" onclick="selectStatus(this, 'in_transit')">
-          <span class="so-icon">&#128666;</span>
-          <span class="so-label">In Transit</span>
-        </div>
-        <div class="status-option" onclick="selectStatus(this, 'delivered')">
-          <span class="so-icon">&#9989;</span>
-          <span class="so-label">Delivered</span>
-        </div>
-        <div class="status-option" onclick="selectStatus(this, 'failed')">
-          <span class="so-icon">&#10060;</span>
-          <span class="so-label">Failed Attempt</span>
+        <div class="comment-list" id="commentList">
+          <div class="no-comments">No comments yet.</div>
         </div>
       </div>
-      <div class="form-group" style="margin-top:16px;">
-        <label class="form-label">Notes (optional)</label>
-        <textarea class="form-control" placeholder="Add any delivery notes..." rows="3"></textarea>
+
+      <!-- Remarks -->
+      <div class="form-group">
+        <label class="form-label">Remarks <span class="required">*</span></label>
+        <select class="form-control" id="modalRemarks">
+          <option value="">Select Remarks</option>
+          <option>Delivered to customer</option>
+          <option>Left at door</option>
+          <option>Received by family member</option>
+          <option>Customer not available</option>
+          <option>Phone switched off</option>
+          <option>Wrong address</option>
+          <option>Customer requested postpone</option>
+          <option>Payment pending</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <!-- Comment -->
+      <div class="form-group">
+        <label class="form-label">Comment</label>
+        <textarea class="form-control" id="modalComment" placeholder="Add any additional notes or comments..." rows="3"></textarea>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('statusModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="closeModal('statusModal');showToast('Status updated successfully!','success')">Update Status</button>
+      <button class="btn btn-primary" onclick="submitStatusUpdate()">Update Status</button>
     </div>
   </div>
 </div>
@@ -576,6 +739,68 @@
 
 <script src="js/auth.js"></script>
 <script>
+  // ─── Package Data (with comments history matching deliveries.html) ──
+  var packages = {
+    'PKG-2024-00847': {
+      id: 'PKG-2024-00847', customer: 'Sita Sharma', mobile: '9812345678',
+      address: 'Baneshwor, Kathmandu', amount: 1200, status: 'In Transit',
+      comments: [
+        { status: 'In Transit', remark: 'Picked up from warehouse', comment: 'Package collected from Thamel hub', date: '2026/04/01 08:50' }
+      ]
+    },
+    'PKG-2024-00852': {
+      id: 'PKG-2024-00852', customer: 'Bikash Lama', mobile: '9841234567',
+      address: 'Patan Dhoka, Lalitpur', amount: 0, status: 'Pending',
+      comments: []
+    },
+    'PKG-2024-00855': {
+      id: 'PKG-2024-00855', customer: 'Hari Prasad', mobile: '9856781234',
+      address: 'Chabahil, Kathmandu', amount: 850, status: 'Pending',
+      comments: [
+        { status: 'Postponed', remark: 'Customer not available', comment: 'Will deliver after 12 PM', date: '2026/03/31 10:30' }
+      ]
+    },
+    'PKG-2024-00861': {
+      id: 'PKG-2024-00861', customer: 'Maya Gurung', mobile: '9867654321',
+      address: 'Kalimati, Kathmandu', amount: 0, status: 'Pending',
+      comments: []
+    },
+    'PKG-2024-00840': {
+      id: 'PKG-2024-00840', customer: 'Customer Refused', mobile: '9800000000',
+      address: 'Packrs Warehouse', amount: 0, status: 'Return',
+      comments: [
+        { status: 'Call Not Received', remark: 'Phone switched off', comment: 'Tried 3 times, no answer', date: '2026/03/31 14:20' },
+        { status: 'Postponed', remark: 'Wrong address', comment: 'Customer gave wrong location', date: '2026/03/30 11:00' }
+      ]
+    },
+    'PKG-2024-00843': {
+      id: 'PKG-2024-00843', customer: 'Srijana Thapa', mobile: '9823456789',
+      address: 'Jawalakhel, Lalitpur', amount: 2400, status: 'Delivered',
+      comments: [
+        { status: 'Delivered', remark: 'Delivered to customer', comment: 'Cash collected Rs 2,400', date: '2026/04/01 09:45' }
+      ]
+    },
+    'PKG-2024-00841': {
+      id: 'PKG-2024-00841', customer: 'Ram Karki', mobile: '9834567890',
+      address: 'Suryabinayak, Bhaktapur', amount: 0, status: 'Delivered',
+      comments: [
+        { status: 'Delivered', remark: 'Delivered to customer', comment: 'Prepaid - no collection needed', date: '2026/04/01 09:15' }
+      ]
+    }
+  };
+
+  // ─── Status Labels (matching deliveries.html) ───
+  var statusLabels = {
+    'delivered':         'Delivered',
+    'cnr':               'Call Not Received',
+    'postponed':         'Postponed',
+    'online-pay':        'Online Pay',
+    'online-pay-vendor': 'Online Pay Vendor'
+  };
+
+  var currentPkgId = null;
+  var currentStatus = null;
+
   // ─── Tab Switching ──────────────────────
   function switchTab(status, btn) {
     document.querySelectorAll('.tab-btn').forEach(function(t) { t.classList.remove('active'); });
@@ -598,19 +823,167 @@
     });
   }
 
-  // ─── Status Select in Modal ─────────────
-  function selectStatus(el, status) {
-    document.querySelectorAll('.status-option').forEach(function(o) { o.classList.remove('selected'); });
-    el.classList.add('selected');
+  // ─── Open Status Modal (matching deliveries.html) ──
+  function openStatusModal(pkgId, presetStatus) {
+    var pkg = packages[pkgId];
+    if (!pkg) return;
+
+    currentPkgId = pkgId;
+    currentStatus = presetStatus || null;
+
+    // Fill package info
+    document.getElementById('modalPkgId').textContent = pkg.id;
+    document.getElementById('modalCustName').textContent = pkg.customer;
+    document.getElementById('modalMobile').textContent = pkg.mobile;
+    document.getElementById('modalAddress').textContent = pkg.address;
+    document.getElementById('modalTitle').textContent = presetStatus
+      ? 'Update to: ' + statusLabels[presetStatus]
+      : 'Update Delivery Status';
+
+    // Status badge
+    var badgeEl = document.getElementById('modalStatusBadge');
+    if (presetStatus) {
+      var cssClass = presetStatus === 'cnr' ? 'cnr' : presetStatus;
+      badgeEl.innerHTML = '<span class="modal-status-label ' + cssClass + '">' + statusLabels[presetStatus] + '</span>';
+    } else {
+      badgeEl.innerHTML = '';
+    }
+
+    // Highlight preset status button
+    document.querySelectorAll('.status-action-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+    if (presetStatus) {
+      var activeBtn = document.querySelector('.status-action-btn.' + presetStatus);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    // Render comments history
+    renderComments(pkg);
+
+    // Reset form fields
+    document.getElementById('modalRemarks').value = '';
+    document.getElementById('modalComment').value = '';
+
+    document.getElementById('statusModal').classList.add('open');
   }
 
-  // ─── Quick Actions ──────────────────────
-  function markDelivered(id) {
-    showToast('Package ' + id + ' marked as delivered!', 'success');
+  // ─── Set Modal Status (click status button) ──
+  function setModalStatus(status, btnEl) {
+    currentStatus = status;
+
+    // Update badge
+    var badgeEl = document.getElementById('modalStatusBadge');
+    var cssClass = status === 'cnr' ? 'cnr' : status;
+    badgeEl.innerHTML = '<span class="modal-status-label ' + cssClass + '">' + statusLabels[status] + '</span>';
+
+    // Update title
+    document.getElementById('modalTitle').textContent = 'Update to: ' + statusLabels[status];
+
+    // Highlight active button
+    document.querySelectorAll('.status-action-btn').forEach(function(b) { b.classList.remove('active'); });
+    btnEl.classList.add('active');
   }
 
-  function markPickedUp(id) {
-    showToast('Package ' + id + ' picked up!', 'success');
+  // ─── Render Comments (matching deliveries.html) ──
+  function renderComments(pkg) {
+    var list = document.getElementById('commentList');
+    var countEl = document.getElementById('commentCount');
+    var comments = pkg.comments || [];
+
+    countEl.textContent = comments.length;
+
+    if (comments.length === 0) {
+      list.innerHTML = '<div class="no-comments">No previous comments.</div>';
+      return;
+    }
+
+    list.innerHTML = comments.map(function(c) {
+      return '<div class="comment-item">' +
+        '<div class="comment-item-header">' +
+          '<span class="comment-status" style="color:' + getStatusColor(c.status) + '">' + c.status + '</span>' +
+          '<span class="comment-date">' + c.date + '</span>' +
+        '</div>' +
+        '<div class="comment-remark">' + c.remark + '</div>' +
+        (c.comment ? '<div class="comment-text">' + c.comment + '</div>' : '') +
+      '</div>';
+    }).join('');
+  }
+
+  // ─── Status Color Map (matching deliveries.html) ──
+  function getStatusColor(status) {
+    var map = {
+      'Delivered': '#16a34a',
+      'Call Not Received': '#e05c7a',
+      'Postponed': '#d97706',
+      'Online Pay': '#7c3aed',
+      'Online Pay Vendor': '#2563eb',
+      'In Transit': '#3b82f6'
+    };
+    return map[status] || '#6b7280';
+  }
+
+  // ─── Submit Status Update (matching deliveries.html) ──
+  function submitStatusUpdate() {
+    if (!currentStatus) {
+      showToast('Please select a status before submitting.', 'error');
+      return;
+    }
+
+    var remarks = document.getElementById('modalRemarks').value;
+    if (!remarks) {
+      showToast('Please select remarks before submitting.', 'error');
+      return;
+    }
+
+    var comment = document.getElementById('modalComment').value;
+    var now = new Date();
+    var dateStr = now.toISOString().slice(0, 10).replace(/-/g, '/') + ' ' + now.toTimeString().slice(0, 5);
+
+    var pkg = packages[currentPkgId];
+    if (pkg) {
+      // Add comment to history (same as deliveries.html)
+      pkg.comments.unshift({
+        status: statusLabels[currentStatus],
+        remark: remarks,
+        comment: comment,
+        date: dateStr
+      });
+      pkg.status = statusLabels[currentStatus];
+    }
+
+    // Update the card's badge visually
+    var card = document.querySelector('.delivery-card[data-pkg="' + currentPkgId + '"]');
+    if (card) {
+      var badgeEl = card.querySelector('.dc-top .badge');
+      if (badgeEl) {
+        var badgeMap = {
+          'delivered': { cls: 'badge badge-success', text: 'Delivered' },
+          'cnr': { cls: 'badge badge-danger', text: 'CNR' },
+          'postponed': { cls: 'badge badge-warning', text: 'Postponed' },
+          'online-pay': { cls: 'badge badge-purple', text: 'Online Pay' },
+          'online-pay-vendor': { cls: 'badge badge-info', text: 'Online Pay Vendor' }
+        };
+        var b = badgeMap[currentStatus];
+        if (b) {
+          badgeEl.className = b.cls;
+          badgeEl.textContent = b.text;
+        }
+      }
+
+      // Update data-status for filtering
+      var statusMap = {
+        'delivered': 'delivered',
+        'cnr': 'returned',
+        'postponed': 'pending',
+        'online-pay': 'delivered',
+        'online-pay-vendor': 'delivered'
+      };
+      card.setAttribute('data-status', statusMap[currentStatus] || card.getAttribute('data-status'));
+    }
+
+    closeModal('statusModal');
+    showToast('Package ' + currentPkgId + ' updated to "' + statusLabels[currentStatus] + '" successfully!', 'success');
   }
 
   // ─── Modal Helpers ──────────────────────
