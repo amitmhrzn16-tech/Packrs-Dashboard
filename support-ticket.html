@@ -103,6 +103,57 @@
     .btn-save{background:var(--teal);color:#fff;border:none;padding:8px 20px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.82rem}
     .btn-save:hover{background:var(--teal-dark)}
     .btn-cancel{background:none;color:var(--muted);border:1.5px solid var(--border);padding:8px 16px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.82rem}
+    /* View Modal */
+    .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .detail-item{display:flex;flex-direction:column;gap:2px}
+    .detail-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .detail-value{font-size:.85rem;font-weight:600;color:var(--text)}
+    .detail-full{grid-column:1/-1}
+    .detail-divider{grid-column:1/-1;border:none;border-top:1px solid var(--border);margin:4px 0}
+    /* Delete Modal */
+    .del-warn{text-align:center;padding:10px 0}
+    .del-warn svg{width:48px;height:48px;color:var(--red);margin-bottom:8px}
+    .del-warn p{font-size:.88rem;color:var(--text);margin-bottom:4px}
+    .del-warn .del-id{font-weight:800;color:var(--red)}
+    .del-warn .del-hint{font-size:.75rem;color:var(--muted)}
+    .btn-danger{background:var(--red);color:#fff;border:none;padding:8px 20px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.82rem}
+    .btn-danger:hover{background:#c94a65}
+    /* Toast */
+    .toast{position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:12px 20px;border-radius:8px;font-size:.82rem;font-weight:700;z-index:9999;transform:translateX(120%);transition:transform .3s ease;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    .toast.show{transform:translateX(0)}
+    .toast.error{background:var(--red)}
+    /* Stat Detail Modal */
+    .stat-detail-list{list-style:none;padding:0}
+    .stat-detail-list li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:.82rem}
+    .stat-detail-list li:last-child{border-bottom:none}
+    .stat-detail-list .sdl-label{color:var(--muted);font-weight:600}
+    .stat-detail-list .sdl-value{font-weight:800;color:var(--text)}
+    /* Comments */
+    .comments-section{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
+    .comments-title{font-size:.82rem;font-weight:800;color:var(--teal-dark);display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .comments-title .c-count{background:var(--teal);color:#fff;font-size:.65rem;padding:2px 8px;border-radius:10px}
+    .comment-card{background:var(--bg);border-radius:8px;padding:10px 12px;margin-bottom:8px;border:1px solid var(--border)}
+    .comment-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+    .comment-avatar{width:26px;height:26px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.6rem;flex-shrink:0}
+    .comment-meta{flex:1}
+    .comment-author{font-size:.75rem;font-weight:700;color:var(--text)}
+    .comment-role{display:inline-block;font-size:.58rem;font-weight:700;background:var(--teal);color:#fff;padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle}
+    .comment-time{font-size:.65rem;color:var(--muted)}
+    .comment-text{font-size:.78rem;color:var(--text);line-height:1.5}
+    .comment-empty{text-align:center;padding:16px;color:var(--muted);font-size:.8rem}
+    .comment-empty svg{width:32px;height:32px;margin-bottom:6px;opacity:.4}
+    /* Add Comment in Edit */
+    .add-comment-box{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
+    .add-comment-box .ac-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .add-comment-box textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;color:var(--text);outline:none;font-family:inherit;resize:vertical;transition:border-color .15s}
+    .add-comment-box textarea:focus{border-color:var(--teal)}
+    .add-comment-box textarea.invalid{border-color:var(--red)}
+    .btn-comment{background:var(--teal);color:#fff;border:none;padding:7px 16px;border-radius:7px;font-size:.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;margin-top:8px}
+    .btn-comment:hover{background:var(--teal-dark)}
+    .existing-comments{margin-top:12px}
+    .existing-comments .ec-title{font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:6px}
+    /* Comment badge in table */
+    .comment-badge{display:inline-flex;align-items:center;gap:3px;background:var(--teal-light);color:var(--teal-dark);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle}
   </style>
 </head>
 <body>
@@ -315,12 +366,310 @@
   </div>
 </div>
 
+<!-- VIEW TICKET MODAL -->
+<div class="modal-bg" id="viewModal">
+  <div class="modal" style="width:560px">
+    <div class="modal-head">
+      <h3 id="viewTitle">Ticket Details</h3>
+      <button class="modal-x" onclick="closeModal('viewModal')">&#10005;</button>
+    </div>
+    <div class="modal-body" id="viewBody"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('viewModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TICKET MODAL -->
+<div class="modal-bg" id="editModal">
+  <div class="modal" style="width:560px">
+    <div class="modal-head">
+      <h3 id="editTitle">Edit Ticket</h3>
+      <button class="modal-x" onclick="closeModal('editModal')">&#10005;</button>
+    </div>
+    <div class="modal-body" id="editBody"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+      <button class="btn-save" onclick="saveTicket()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE TICKET MODAL -->
+<div class="modal-bg" id="deleteModal">
+  <div class="modal" style="width:420px">
+    <div class="modal-head" style="background:var(--red)">
+      <h3>Delete Ticket</h3>
+      <button class="modal-x" onclick="closeModal('deleteModal')">&#10005;</button>
+    </div>
+    <div class="modal-body" id="deleteBody"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn-danger" onclick="confirmDelete()">Delete Ticket</button>
+    </div>
+  </div>
+</div>
+
+<!-- STAT DETAIL MODAL -->
+<div class="modal-bg" id="statModal">
+  <div class="modal" style="width:480px">
+    <div class="modal-head">
+      <h3 id="statTitle">Details</h3>
+      <button class="modal-x" onclick="closeModal('statModal')">&#10005;</button>
+    </div>
+    <div class="modal-body" id="statBody"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('statModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
+/* ---- Data store for comments ---- */
+var ticketComments = {};
+
+/* ---- Modal helpers ---- */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(function(m) {
+  m.addEventListener('click', function(e) { if (e.target === m) m.classList.remove('open'); });
+});
+
+/* ---- Toast ---- */
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type === 'error' ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+/* ---- Get row data ---- */
+function getRowData(tr) {
+  var cells = tr.querySelectorAll('td');
+  return {
+    sn: cells[0].textContent,
+    id: cells[1].textContent.trim(),
+    date: cells[2].textContent,
+    customer: cells[3].textContent,
+    subject: cells[4].textContent,
+    category: cells[5].textContent,
+    priority: cells[6].textContent.trim(),
+    priorityRaw: tr.dataset.priority,
+    status: cells[7].textContent.trim(),
+    statusRaw: tr.dataset.status,
+    row: tr
+  };
+}
+
+/* ---- Render comment badges in table ---- */
+function updateCommentBadges() {
+  document.querySelectorAll('#ticketBody tr').forEach(function(tr) {
+    var id = tr.querySelectorAll('td')[1].textContent.trim();
+    var actCell = tr.querySelector('.act-btns');
+    var existing = actCell.querySelector('.comment-badge');
+    if (existing) existing.remove();
+    var comments = ticketComments[id] || [];
+    if (comments.length > 0) {
+      var badge = document.createElement('span');
+      badge.className = 'comment-badge';
+      badge.innerHTML = '&#128172; ' + comments.length;
+      actCell.appendChild(badge);
+    }
+  });
+}
+
+/* ---- VIEW ---- */
+var currentViewId = '';
+function viewTicket(btn) {
+  var tr = btn.closest('tr');
+  var d = getRowData(tr);
+  currentViewId = d.id;
+  document.getElementById('viewTitle').textContent = 'Ticket Details — ' + d.id;
+  var comments = ticketComments[d.id] || [];
+  var commentsHtml = '';
+  if (comments.length > 0) {
+    commentsHtml = comments.map(function(c) {
+      return '<div class="comment-card"><div class="comment-header"><div class="comment-avatar">' + c.initials + '</div><div class="comment-meta"><span class="comment-author">' + c.author + '<span class="comment-role">' + c.role + '</span></span><div class="comment-time">' + c.time + '</div></div></div><div class="comment-text">' + c.text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div></div>';
+    }).join('');
+  } else {
+    commentsHtml = '<div class="comment-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><div>No comments yet</div></div>';
+  }
+  document.getElementById('viewBody').innerHTML =
+    '<div class="detail-grid">' +
+      '<div class="detail-item"><div class="detail-label">Ticket ID</div><div class="detail-value">' + d.id + '</div></div>' +
+      '<div class="detail-item"><div class="detail-label">Date</div><div class="detail-value">' + d.date + '</div></div>' +
+      '<div class="detail-item"><div class="detail-label">Customer</div><div class="detail-value">' + d.customer + '</div></div>' +
+      '<div class="detail-item"><div class="detail-label">Category</div><div class="detail-value">' + d.category + '</div></div>' +
+      '<div class="detail-item"><div class="detail-label">Subject</div><div class="detail-value">' + d.subject + '</div></div>' +
+      '<div class="detail-item"><div class="detail-label">Priority</div><div class="detail-value">' + d.priority + '</div></div>' +
+      '<hr class="detail-divider">' +
+      '<div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">' + d.status + '</div></div>' +
+      '<div class="detail-item"><div class="detail-label">Assigned To</div><div class="detail-value">Rina Tamang</div></div>' +
+    '</div>' +
+    '<div class="comments-section">' +
+      '<div class="comments-title">Comments <span class="c-count">' + comments.length + '</span></div>' +
+      commentsHtml +
+    '</div>';
+  openModal('viewModal');
+}
+
+/* ---- EDIT ---- */
+var editingRow = null;
+function editTicket(btn) {
+  var tr = btn.closest('tr');
+  editingRow = tr;
+  var d = getRowData(tr);
+  document.getElementById('editTitle').textContent = 'Edit Ticket — ' + d.id;
+  var comments = ticketComments[d.id] || [];
+  var existingHtml = '';
+  if (comments.length > 0) {
+    existingHtml = '<div class="existing-comments"><div class="ec-title">' + comments.length + ' Existing Comment(s)</div>' +
+      comments.map(function(c) {
+        return '<div class="comment-card"><div class="comment-header"><div class="comment-avatar">' + c.initials + '</div><div class="comment-meta"><span class="comment-author">' + c.author + '<span class="comment-role">' + c.role + '</span></span><div class="comment-time">' + c.time + '</div></div></div><div class="comment-text">' + c.text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div></div>';
+      }).join('') + '</div>';
+  }
+  document.getElementById('editBody').innerHTML =
+    '<div class="form-grid">' +
+      '<div class="form-group"><label>Ticket ID</label><input type="text" value="' + d.id + '" disabled style="background:#f3f4f6" /></div>' +
+      '<div class="form-group"><label>Date</label><input type="date" id="editDate" value="' + d.date + '" /></div>' +
+      '<div class="form-group"><label>Customer Name</label><input type="text" id="editCustomer" value="' + d.customer + '" /></div>' +
+      '<div class="form-group"><label>Category</label><select id="editCategory"><option' + (d.category==='Delivery'?' selected':'') + '>Delivery</option><option' + (d.category==='Damage'?' selected':'') + '>Damage</option><option' + (d.category==='Payment'?' selected':'') + '>Payment</option><option' + (d.category==='Delay'?' selected':'') + '>Delay</option><option' + (d.category==='Pickup'?' selected':'') + '>Pickup</option><option' + (d.category==='Billing'?' selected':'') + '>Billing</option><option' + (d.category==='Tracking'?' selected':'') + '>Tracking</option><option' + (d.category==='Refund'?' selected':'') + '>Refund</option><option' + (d.category==='Account'?' selected':'') + '>Account</option><option' + (d.category==='Other'?' selected':'') + '>Other</option></select></div>' +
+      '<div class="form-group form-full"><label>Subject</label><input type="text" id="editSubject" value="' + d.subject + '" /></div>' +
+      '<div class="form-group"><label>Priority</label><select id="editPriority"><option value="high"' + (d.priorityRaw==='high'?' selected':'') + '>High</option><option value="medium"' + (d.priorityRaw==='medium'?' selected':'') + '>Medium</option><option value="low"' + (d.priorityRaw==='low'?' selected':'') + '>Low</option></select></div>' +
+      '<div class="form-group"><label>Status</label><select id="editStatus"><option value="open"' + (d.statusRaw==='open'?' selected':'') + '>Open</option><option value="in-progress"' + (d.statusRaw==='in-progress'?' selected':'') + '>In Progress</option><option value="resolved"' + (d.statusRaw==='resolved'?' selected':'') + '>Resolved</option><option value="closed"' + (d.statusRaw==='closed'?' selected':'') + '>Closed</option></select></div>' +
+    '</div>' +
+    '<div class="add-comment-box">' +
+      '<div class="comments-title">Add Comment</div>' +
+      '<div class="ac-head"><div class="comment-avatar">AM</div><div style="font-size:.78rem;font-weight:700">Amit Maharjan <span class="comment-role">ADMIN</span></div></div>' +
+      '<textarea id="newComment" rows="3" placeholder="Write a comment..."></textarea>' +
+      '<button class="btn-comment" onclick="postComment()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Post Comment</button>' +
+      existingHtml +
+    '</div>';
+  openModal('editModal');
+}
+
+/* ---- Post Comment ---- */
+function postComment() {
+  var textarea = document.getElementById('newComment');
+  var text = textarea.value.trim();
+  if (!text) { textarea.classList.add('invalid'); textarea.focus(); return; }
+  textarea.classList.remove('invalid');
+  var id = editingRow.querySelectorAll('td')[1].textContent.trim();
+  if (!ticketComments[id]) ticketComments[id] = [];
+  var now = new Date();
+  ticketComments[id].push({
+    author: 'Amit Maharjan',
+    initials: 'AM',
+    role: 'ADMIN',
+    time: now.toLocaleString('en-US', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}),
+    text: text
+  });
+  textarea.value = '';
+  showToast('Comment posted successfully!');
+  updateCommentBadges();
+  /* Refresh existing comments in edit modal */
+  var comments = ticketComments[id];
+  var container = document.querySelector('.existing-comments');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'existing-comments';
+    document.querySelector('.add-comment-box').appendChild(container);
+  }
+  container.innerHTML = '<div class="ec-title">' + comments.length + ' Existing Comment(s)</div>' +
+    comments.map(function(c) {
+      return '<div class="comment-card"><div class="comment-header"><div class="comment-avatar">' + c.initials + '</div><div class="comment-meta"><span class="comment-author">' + c.author + '<span class="comment-role">' + c.role + '</span></span><div class="comment-time">' + c.time + '</div></div></div><div class="comment-text">' + c.text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div></div>';
+    }).join('');
+}
+
+/* ---- Save Ticket ---- */
+function saveTicket() {
+  if (!editingRow) return;
+  var cells = editingRow.querySelectorAll('td');
+  var newDate = document.getElementById('editDate').value;
+  var newCustomer = document.getElementById('editCustomer').value;
+  var newSubject = document.getElementById('editSubject').value;
+  var newCategory = document.getElementById('editCategory').value;
+  var newPriority = document.getElementById('editPriority').value;
+  var newStatus = document.getElementById('editStatus').value;
+  cells[2].textContent = newDate;
+  cells[3].textContent = newCustomer;
+  cells[4].textContent = newSubject;
+  cells[5].textContent = newCategory;
+  editingRow.dataset.date = newDate;
+  editingRow.dataset.priority = newPriority;
+  editingRow.dataset.status = newStatus;
+  var prClasses = {high:'b-red',medium:'b-yellow',low:'b-gray'};
+  var prLabels = {high:'High',medium:'Medium',low:'Low'};
+  cells[6].innerHTML = '<span class="badge ' + prClasses[newPriority] + '">' + prLabels[newPriority] + '</span>';
+  var stClasses = {open:'b-orange','in-progress':'b-blue',resolved:'b-green',closed:'b-gray'};
+  var stLabels = {open:'Open','in-progress':'In Progress',resolved:'Resolved',closed:'Closed'};
+  cells[7].innerHTML = '<span class="badge ' + stClasses[newStatus] + '">' + stLabels[newStatus] + '</span>';
+  closeModal('editModal');
+  showToast('Ticket updated successfully!');
+}
+
+/* ---- DELETE ---- */
+var deletingRow = null;
+function deleteTicket(btn) {
+  var tr = btn.closest('tr');
+  deletingRow = tr;
+  var d = getRowData(tr);
+  document.getElementById('deleteBody').innerHTML =
+    '<div class="del-warn">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+      '<p>Are you sure you want to delete ticket</p>' +
+      '<p class="del-id">' + d.id + '</p>' +
+      '<p><strong>' + d.customer + '</strong> — ' + d.subject + '</p>' +
+      '<p class="del-hint">This action cannot be undone.</p>' +
+    '</div>';
+  openModal('deleteModal');
+}
+
+function confirmDelete() {
+  if (!deletingRow) return;
+  var id = deletingRow.querySelectorAll('td')[1].textContent.trim();
+  deletingRow.remove();
+  delete ticketComments[id];
+  closeModal('deleteModal');
+  showToast('Ticket ' + id + ' deleted successfully!');
+  /* Re-number rows */
+  document.querySelectorAll('#ticketBody tr').forEach(function(tr, i) {
+    tr.querySelectorAll('td')[0].textContent = i + 1;
+  });
+}
+
+/* ---- VIEW MORE (stat cards) ---- */
+var statData = [
+  {title:'Total Tickets — Details', items:[['Total Tickets','158'],['This Month','24'],['Last Month','31'],['This Quarter','89'],['Avg per Day','2.1'],['Pending Review','3']]},
+  {title:'Open Tickets — Details', items:[['Open Tickets','14'],['High Priority','5'],['Normal Priority','9'],['Oldest Open','Apr 8, 2025'],['Avg Open Duration','2.3 days'],['Awaiting Response','4']]},
+  {title:'Resolved Tickets — Details', items:[['Total Resolved','138'],['Avg Resolution Time','1.2 days'],['Same Day Resolution','85'],['Customer Satisfaction','94%'],['Reopened Tickets','3'],['First Contact Resolution','112']]},
+  {title:'Overdue Tickets — Details', items:[['Total Overdue','6'],['> 3 Days Overdue','4'],['> 7 Days Overdue','2'],['Most Overdue','TKT-0132 (12 days)'],['Avg Overdue Duration','5.8 days'],['Escalated','2']]}
+];
+document.querySelectorAll('.stat-more').forEach(function(link, i) {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    var sd = statData[i];
+    document.getElementById('statTitle').textContent = sd.title;
+    document.getElementById('statBody').innerHTML =
+      '<ul class="stat-detail-list">' +
+      sd.items.map(function(item) {
+        return '<li><span class="sdl-label">' + item[0] + '</span><span class="sdl-value">' + item[1] + '</span></li>';
+      }).join('') +
+      '</ul>';
+    openModal('statModal');
+  });
+});
+
+/* ---- Render action buttons ---- */
 document.querySelectorAll('.act-btns').forEach(td => {
   td.innerHTML = `<div style="display:flex;gap:4px">
-    <button class="act-btn act-view" title="View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-    <button class="act-btn act-edit" title="Edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-    <button class="act-btn act-del" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
+    <button class="act-btn act-view" title="View" onclick="viewTicket(this)"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    <button class="act-btn act-edit" title="Edit" onclick="editTicket(this)"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+    <button class="act-btn act-del" title="Delete" onclick="deleteTicket(this)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
   </div>`;
 });
 
