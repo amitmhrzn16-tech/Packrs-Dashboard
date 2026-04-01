@@ -323,10 +323,107 @@
     .filter-panel {
       background: var(--white);
       border-radius: 12px;
-      padding: 16px 20px;
+      padding: 20px 24px;
       box-shadow: var(--shadow);
       margin-bottom: 20px;
     }
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .filter-group label {
+      display: block;
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .filter-group input[type="text"],
+    .filter-group input[type="date"],
+    .filter-group select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: .82rem;
+      color: var(--text);
+      outline: none;
+      transition: border .15s;
+      background: var(--white);
+    }
+    .filter-group input:focus,
+    .filter-group select:focus {
+      border-color: var(--teal);
+    }
+    .filter-group select {
+      cursor: pointer;
+      appearance: auto;
+    }
+    .more-filters {
+      display: none;
+    }
+    .more-filters.show {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .btn-toggle-filters {
+      background: none;
+      border: none;
+      color: var(--teal);
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 6px 0;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .15s;
+    }
+    .btn-toggle-filters:hover {
+      color: var(--teal-dark);
+    }
+    .btn-toggle-filters .arrow {
+      display: inline-block;
+      transition: transform .2s;
+      font-size: .7rem;
+    }
+    .btn-toggle-filters.expanded .arrow {
+      transform: rotate(180deg);
+    }
+    .filter-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .btn-search {
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-search:hover { background: var(--teal-dark); }
+    .btn-reset {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      padding: 7px 20px;
+      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .btn-reset:hover { background: var(--bg); }
     .tab-row {
       display: flex;
       gap: 8px;
@@ -349,58 +446,6 @@
       background: var(--teal);
       color: #fff;
     }
-    .filter-controls {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .filter-controls input[type="text"],
-    .filter-controls input[type="date"] {
-      padding: 7px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-size: .82rem;
-      color: var(--text);
-      outline: none;
-      transition: border .15s;
-    }
-    .filter-controls input[type="text"] { min-width: 220px; flex: 1; }
-    .filter-controls input:focus { border-color: var(--teal); }
-    .filter-controls label {
-      font-size: .78rem;
-      color: var(--muted);
-      font-weight: 600;
-    }
-    .date-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-filter {
-      background: var(--teal);
-      color: #fff;
-      border: none;
-      padding: 7px 16px;
-      border-radius: 8px;
-      font-size: .82rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .15s;
-    }
-    .btn-filter:hover { background: var(--teal-dark); }
-    .btn-reset {
-      background: transparent;
-      color: var(--teal);
-      border: 2px solid var(--teal);
-      padding: 5px 14px;
-      border-radius: 8px;
-      font-size: .82rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .15s, color .15s;
-    }
-    .btn-reset:hover { background: var(--teal); color: #fff; }
 
     /* ── TABLE PANEL ─────────────────────────────────────── */
     .table-panel {
@@ -656,17 +701,115 @@
         <button class="tab-btn" data-status="canceled">CANCELED</button>
         <button class="tab-btn" data-status="cod">COD</button>
       </div>
-      <div class="filter-controls">
-        <input type="text" id="searchInput" placeholder="Search by ID, client, barcode..." />
-        <div class="date-group">
+
+      <!-- Primary Filters -->
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>Package ID</label>
+          <input type="text" id="filterId" placeholder="Package ID eg: TUXBF6CP" />
+        </div>
+        <div class="filter-group">
+          <label>Customer Name</label>
+          <input type="text" id="filterName" placeholder="Customer Name" />
+        </div>
+        <div class="filter-group">
+          <label>Customer Number</label>
+          <input type="text" id="filterPhone" placeholder="Customer Phone" />
+        </div>
+        <div class="filter-group">
           <label>From</label>
           <input type="date" id="dateFrom" />
         </div>
-        <div class="date-group">
+        <div class="filter-group">
           <label>To</label>
           <input type="date" id="dateTo" />
         </div>
-        <button class="btn-filter">Filter</button>
+      </div>
+
+      <!-- Toggle for more filters -->
+      <button class="btn-toggle-filters" id="toggleMoreFilters" onclick="toggleMoreFilters()">
+        <span class="arrow">&#9660;</span> View More Filters
+      </button>
+
+      <!-- Extra Filters (hidden by default) -->
+      <div class="more-filters" id="moreFilters">
+        <div class="filter-group">
+          <label>Branch</label>
+          <select id="filterBranch">
+            <option value="">Select Branch</option>
+            <option value="Chabahil">Chabahil</option>
+            <option value="Baneshwor">Baneshwor</option>
+            <option value="Lalitpur">Lalitpur</option>
+            <option value="Bhaktapur">Bhaktapur</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Package Type</label>
+          <select id="filterPkgType">
+            <option value="">Select Package Type</option>
+            <option value="Inside Valley">Inside Valley</option>
+            <option value="Outside Valley">Outside Valley</option>
+            <option value="International">International</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Instant Package</label>
+          <select id="filterInstant">
+            <option value="">Select Instant Package</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Courier Type</label>
+          <select id="filterCourierType">
+            <option value="">Select Courier Type</option>
+            <option value="Standard">Standard</option>
+            <option value="Express">Express</option>
+            <option value="Same Day">Same Day</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Courier</label>
+          <select id="filterCourier">
+            <option value="">Select Courier</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Vendor</label>
+          <select id="filterVendor">
+            <option value="">Select Vendor</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Rider</label>
+          <select id="filterRider">
+            <option value="">Select Rider</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Payment Status</label>
+          <select id="filterPayment">
+            <option value="">Select Payment Status</option>
+            <option value="Paid">Paid</option>
+            <option value="Unpaid">Unpaid</option>
+            <option value="Partial">Partial</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Package Status</label>
+          <select id="filterPkgStatus">
+            <option value="">Select Package Status</option>
+            <option value="Warehouse">Warehouse</option>
+            <option value="Ongoing">Ongoing</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Canceled">Canceled</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn-search" onclick="applyFilters()">Search</button>
         <button class="btn-reset" onclick="resetFilters()">Reset</button>
       </div>
     </div>
@@ -735,22 +878,44 @@
   };
 
   let activeStatus = 'all';
-  let searchQuery  = '';
 
   function getBadgeClass(status) {
     return statusBadgeMap[status] || 'badge-warehouse';
+  }
+
+  function toggleMoreFilters() {
+    const panel = document.getElementById('moreFilters');
+    const btn = document.getElementById('toggleMoreFilters');
+    panel.classList.toggle('show');
+    btn.classList.toggle('expanded');
+    btn.innerHTML = panel.classList.contains('show')
+      ? '<span class="arrow">&#9660;</span> Hide Filters'
+      : '<span class="arrow">&#9660;</span> View More Filters';
+  }
+
+  function applyFilters() {
+    renderTable();
+  }
+
+  function getFilteredData() {
+    const idVal = document.getElementById('filterId').value.toLowerCase();
+    const nameVal = document.getElementById('filterName').value.toLowerCase();
+    const phoneVal = document.getElementById('filterPhone').value.toLowerCase();
+
+    return packages.filter(p => {
+      const matchStatus = activeStatus === 'all' || p.status.toLowerCase() === activeStatus;
+      const matchId = !idVal || p.id.toLowerCase().includes(idVal);
+      const matchName = !nameVal || p.client.toLowerCase().includes(nameVal);
+      const matchPhone = !phoneVal || (p.phone && p.phone.includes(phoneVal));
+      return matchStatus && matchId && matchName && matchPhone;
+    });
   }
 
   function renderTable() {
     const tbody = document.getElementById('packageTbody');
     const noRes = document.getElementById('noResults');
 
-    const filtered = packages.filter(p => {
-      const matchStatus = activeStatus === 'all' || p.status.toLowerCase() === activeStatus;
-      const q = searchQuery.toLowerCase();
-      const matchSearch = !q || p.id.toLowerCase().includes(q) || p.client.toLowerCase().includes(q);
-      return matchStatus && matchSearch;
-    });
+    const filtered = getFilteredData();
 
     tbody.innerHTML = '';
 
@@ -818,12 +983,6 @@
     renderTable();
   });
 
-  // Search filter
-  document.getElementById('searchInput').addEventListener('input', e => {
-    searchQuery = e.target.value;
-    renderTable();
-  });
-
   // Pagination (demo)
   let currentPage = 1;
   function changePage(dir) {
@@ -834,12 +993,27 @@
 
   function resetFilters() {
     activeStatus = 'all';
-    searchQuery = '';
-    document.getElementById('searchInput').value = '';
+    document.getElementById('filterId').value = '';
+    document.getElementById('filterName').value = '';
+    document.getElementById('filterPhone').value = '';
     document.getElementById('dateFrom').value = '';
     document.getElementById('dateTo').value = '';
+    document.getElementById('filterBranch').value = '';
+    document.getElementById('filterPkgType').value = '';
+    document.getElementById('filterInstant').value = '';
+    document.getElementById('filterCourierType').value = '';
+    document.getElementById('filterCourier').value = '';
+    document.getElementById('filterVendor').value = '';
+    document.getElementById('filterRider').value = '';
+    document.getElementById('filterPayment').value = '';
+    document.getElementById('filterPkgStatus').value = '';
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelector('[data-status="all"]').classList.add('active');
+    // Collapse more filters
+    document.getElementById('moreFilters').classList.remove('show');
+    const btn = document.getElementById('toggleMoreFilters');
+    btn.classList.remove('expanded');
+    btn.innerHTML = '<span class="arrow">&#9660;</span> View More Filters';
     renderTable();
   }
 
