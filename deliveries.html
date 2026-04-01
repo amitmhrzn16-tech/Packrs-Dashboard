@@ -243,6 +243,21 @@
     }
     .breadcrumb a:hover { text-decoration: underline; }
 
+    /* ── STAT CARDS ──────────────────────────────────────── */
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+    @media(max-width:1100px) { .stat-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:600px)  { .stat-grid { grid-template-columns: 1fr; } }
+    .stat-card { background: var(--teal); color: #fff; border-radius: 12px; padding: 18px 20px 14px; position: relative; overflow: hidden; box-shadow: var(--shadow); }
+    .stat-card::after { content: ''; position: absolute; bottom: -28px; right: -28px; width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,.1); }
+    .stat-card::before { content: ''; position: absolute; top: -18px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,.07); }
+    .stat-label { font-size: .75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; opacity: .85; }
+    .stat-value { font-size: 2rem; font-weight: 800; line-height: 1.1; margin: 6px 0 8px; }
+    .stat-subs { display: flex; flex-direction: column; gap: 2px; }
+    .stat-sub { font-size: .72rem; opacity: .8; display: flex; justify-content: space-between; }
+    .stat-sub span:last-child { font-weight: 700; }
+    .stat-more { display: block; text-align: right; font-size: .68rem; font-weight: 700; color: rgba(255,255,255,.7); text-decoration: none; margin-top: 10px; letter-spacing: .5px; position: relative; z-index: 1; }
+    .stat-more:hover { color: #fff; }
+
     /* ── FILTER PANEL ──────────────────────────────────── */
     .filter-panel {
       background: var(--white);
@@ -786,8 +801,36 @@
     <!-- Page title row -->
     <div class="page-title-row">
       <div>
-        <div class="page-title">Packages</div>
-        <div class="page-subtitle">Manage delivery status for all packages</div>
+        <div class="page-title">Deliveries</div>
+        <div class="page-subtitle">Track all delivery operations</div>
+      </div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Deliveries</div>
+        <div class="stat-value">1,890</div>
+        <div class="stat-subs"><div class="stat-sub"><span>Inside</span><span>980</span></div><div class="stat-sub"><span>Outside</span><span>760</span></div><div class="stat-sub"><span>International</span><span>150</span></div></div>
+        <a href="#" class="stat-more">VIEW MORE &rsaquo;</a>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Out for Delivery</div>
+        <div class="stat-value">245</div>
+        <div class="stat-subs"><div class="stat-sub"><span>Inside</span><span>130</span></div><div class="stat-sub"><span>Outside</span><span>95</span></div><div class="stat-sub"><span>International</span><span>20</span></div></div>
+        <a href="#" class="stat-more">VIEW MORE &rsaquo;</a>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Delivered Today</div>
+        <div class="stat-value">178</div>
+        <div class="stat-subs"><div class="stat-sub"><span>Inside</span><span>92</span></div><div class="stat-sub"><span>Outside</span><span>70</span></div><div class="stat-sub"><span>International</span><span>16</span></div></div>
+        <a href="#" class="stat-more">VIEW MORE &rsaquo;</a>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Failed</div>
+        <div class="stat-value">32</div>
+        <div class="stat-subs"><div class="stat-sub"><span>No One Home</span><span>15</span></div><div class="stat-sub"><span>Wrong Address</span><span>10</span></div><div class="stat-sub"><span>Refused</span><span>7</span></div></div>
+        <a href="#" class="stat-more">VIEW MORE &rsaquo;</a>
       </div>
     </div>
 
