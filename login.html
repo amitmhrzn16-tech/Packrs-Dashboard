@@ -363,6 +363,59 @@
       font-weight: 600;
     }
 
+    /* ─── Role Tabs ─────────────────────── */
+    .role-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .role-tab {
+      flex: 1;
+      padding: 10px 16px;
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: var(--font);
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .role-tab:hover {
+      color: var(--text);
+    }
+
+    .role-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .role-hint {
+      background: var(--primary-light);
+      border: 1px solid rgba(58,175,169,0.2);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .role-hint svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 2;
+      flex-shrink: 0;
+    }
+
     @media (max-width: 480px) {
       .login-wrapper { max-width: 100%; }
       .login-card-body { padding: 20px; }
@@ -388,10 +441,21 @@
     <div>
       <div class="login-card">
         <div class="login-card-header">
-          <h2>Login to DMS Admin</h2>
+          <h2 id="login-heading">Login to DMS Admin</h2>
           <p>Enter your credentials to continue</p>
         </div>
         <div class="login-card-body">
+          <!-- Role Tabs -->
+          <div class="role-tabs">
+            <button type="button" class="role-tab active" onclick="switchRole('admin')">Admin Login</button>
+            <button type="button" class="role-tab" onclick="switchRole('vendor')">Vendor Login</button>
+          </div>
+
+          <div id="role-hint" class="role-hint" style="display:none">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>Login with your vendor email to access the Vendor Portal</span>
+          </div>
+
           <div id="login-error" class="error-msg">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <span id="login-error-text">Invalid email or password</span>
@@ -457,6 +521,18 @@
     const btnSignIn = document.getElementById('btn-sign-in');
     const btnText   = document.getElementById('btn-text');
 
+    var selectedRole = 'admin';
+
+    // ─── Role Switching ───────────────────
+    function switchRole(role) {
+      selectedRole = role;
+      document.querySelectorAll('.role-tab').forEach(function(tab) { tab.classList.remove('active'); });
+      event.target.classList.add('active');
+      document.getElementById('role-hint').style.display = role === 'vendor' ? 'flex' : 'none';
+      document.getElementById('login-heading').textContent = role === 'vendor' ? 'Login to Vendor Portal' : 'Login to DMS Admin';
+      errorBox.classList.remove('show');
+    }
+
     // ─── Toggle Password ──────────────────
     function togglePassword() {
       const pw = document.getElementById('password');
@@ -509,10 +585,15 @@
         sessionStorage.setItem('packrs_email', email);
         sessionStorage.setItem('packrs_name', userName);
         sessionStorage.setItem('packrs_initials', initials);
+        sessionStorage.setItem('packrs_role', selectedRole);
         sessionStorage.setItem('packrs_authenticated', 'true');
 
-        // Redirect to dashboard
-        window.location.href = 'index.html';
+        // Redirect based on role
+        if (selectedRole === 'vendor') {
+          window.location.href = 'vendor-dashboard.html';
+        } else {
+          window.location.href = 'index.html';
+        }
       }, 800);
     });
 
@@ -523,7 +604,8 @@
 
     // ─── If already authenticated, go to dashboard ──
     if (sessionStorage.getItem('packrs_authenticated') === 'true') {
-      window.location.href = 'index.html';
+      var role = sessionStorage.getItem('packrs_role') || 'admin';
+      window.location.href = role === 'vendor' ? 'vendor-dashboard.html' : 'index.html';
     }
   </script>
 </body>
