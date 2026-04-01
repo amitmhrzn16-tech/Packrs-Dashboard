@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rider Dashboard — Packrs Courier</title>
+  <link rel="stylesheet" href="css/shared.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ─── Rider Dashboard Overrides ─────── */
+    .rider-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 16px 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .rider-status-bar .rider-greeting h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .rider-status-bar .rider-greeting p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .rider-status-toggle {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .status-indicator.online {
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    .status-indicator.offline {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .status-dot.online {
+      background: #059669;
+      box-shadow: 0 0 0 3px rgba(5,150,105,0.2);
+      animation: pulse-green 2s infinite;
+    }
+
+    .status-dot.offline {
+      background: #9ca3af;
+    }
+
+    @keyframes pulse-green {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(5,150,105,0.2); }
+      50% { box-shadow: 0 0 0 6px rgba(5,150,105,0.1); }
+    }
+
+    .toggle-status-btn {
+      padding: 8px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .toggle-status-btn.go-online {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .toggle-status-btn.go-offline {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    /* ─── Quick Actions ─────────────────── */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .qa-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .qa-btn:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+
+    .qa-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .qa-icon.teal { background: var(--primary-light); color: var(--primary); }
+    .qa-icon.amber { background: #fffbeb; color: #d97706; }
+    .qa-icon.blue { background: #eff6ff; color: #2563eb; }
+    .qa-icon.green { background: #ecfdf5; color: #059669; }
+
+    .qa-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* ─── Active Delivery Card ──────────── */
+    .active-delivery {
+      background: linear-gradient(135deg, #1a1a2e 0%, #2b7a78 100%);
+      border-radius: var(--radius);
+      padding: 24px;
+      color: #fff;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .active-delivery::after {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+
+    .active-delivery .ad-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .active-delivery .ad-header h3 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .active-delivery .ad-badge {
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .active-delivery .ad-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .ad-detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ad-detail-item .ad-label {
+      font-size: 11px;
+      opacity: 0.6;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .ad-detail-item .ad-value {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .ad-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .ad-progress-bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .ad-progress-fill {
+      height: 100%;
+      background: #10b981;
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    .ad-progress-text {
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .ad-steps {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .ad-step {
+      flex: 1;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 6px 4px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.08);
+      opacity: 0.5;
+    }
+
+    .ad-step.done {
+      background: rgba(16,185,129,0.3);
+      opacity: 1;
+    }
+
+    .ad-step.current {
+      background: rgba(245,158,11,0.4);
+      opacity: 1;
+      border: 1px solid rgba(245,158,11,0.6);
+    }
+
+    .ad-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .ad-actions .btn {
+      flex: 1;
+      justify-content: center;
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+
+    .btn-light {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-light:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .btn-green {
+      background: #10b981;
+      color: #fff;
+    }
+
+    .btn-green:hover {
+      background: #059669;
+    }
+
+    /* ─── Delivery Queue ────────────────── */
+    .delivery-queue-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .delivery-queue-item:last-child {
+      border-bottom: none;
+    }
+
+    .dq-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .dq-icon.pickup { background: #eff6ff; }
+    .dq-icon.deliver { background: #ecfdf5; }
+    .dq-icon.return { background: #fef2f2; }
+
+    .dq-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dq-info .dq-id {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .dq-info .dq-addr {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dq-meta {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .dq-meta .dq-time {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .dq-meta .dq-type {
+      font-size: 11px;
+    }
+
+    /* ─── Today Timeline ────────────────── */
+    .timeline {
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 20px;
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -20px;
+      top: 2px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      background: #fff;
+    }
+
+    .timeline-dot.green { border-color: var(--success); }
+    .timeline-dot.amber { border-color: var(--warning); }
+    .timeline-dot.blue { border-color: var(--info); }
+
+    .timeline-content {
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .timeline-content .tl-time {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .timeline-content .tl-text {
+      margin-top: 2px;
+    }
+
+    /* ─── Charts grid ───────────────────── */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    /* ─── Responsive ────────────────────── */
+    @media (max-width: 768px) {
+      .quick-actions { grid-template-columns: repeat(2, 1fr); }
+      .active-delivery .ad-details { grid-template-columns: 1fr; }
+      .charts-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .quick-actions { grid-template-columns: 1fr 1fr; }
+      .rider-status-bar { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* Sidebar active highlight for rider pages */
+    .sidebar-nav li a.active {
+      background: var(--primary);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- ─── Sidebar ──────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <a href="rider-dashboard.html">
+        <div class="logo-icon">&#128666;</div>
+        <div>
+          <span class="logo-text">Packrs</span>
+          <span class="logo-sub">Rider Portal</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Main</div>
+      <ul class="sidebar-nav">
+        <li><a href="rider-dashboard.html" class="active">
+          <span class="nav-icon">&#128200;</span> Dashboard
+        </a></li>
+        <li><a href="rider-my-deliveries.html">
+          <span class="nav-icon">&#128230;</span> My Deliveries
+        </a></li>
+        <li><a href="rider-earnings.html">
+          <span class="nav-icon">&#128176;</span> Earnings
+        </a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Account</div>
+      <ul class="sidebar-nav">
+        <li><a href="rider-profile.html">
+          <span class="nav-icon">&#128100;</span> My Profile
+        </a></li>
+        <li><a href="#" class="logout-link">
+          <span class="nav-icon">&#128682;</span> Logout
+        </a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar">AT</div>
+        <div class="user-info">
+          <div class="name">Rider</div>
+          <div class="role">RIDER</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── Main Content ─────────────────── -->
+  <div class="main-content">
+    <!-- Header -->
+    <div class="top-header">
+      <div class="page-title">
+        <button class="btn btn-ghost" style="display:none;font-size:18px;" id="menuToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+        <h1>Rider Dashboard</h1>
+        <div class="breadcrumb">Home / Dashboard</div>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn" title="Notifications">
+          &#128276;
+          <span class="badge">3</span>
+        </button>
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <div class="avatar" style="width:34px;height:34px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;">AT</div>
+          <div>
+            <div class="user-name" style="font-size:13px;font-weight:700;">Rider</div>
+            <div class="user-role" style="font-size:10px;color:var(--text-secondary);letter-spacing:1px;">RIDER</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Body -->
+    <div class="page-body">
+
+      <!-- Status Bar -->
+      <div class="rider-status-bar">
+        <div class="rider-greeting">
+          <h2 id="greetingText">Good Morning, Rider!</h2>
+          <p>Today is <span id="todayDate"></span> &mdash; You have <strong>5 deliveries</strong> assigned</p>
+        </div>
+        <div class="rider-status-toggle">
+          <div class="status-indicator online" id="statusIndicator">
+            <span class="status-dot online" id="statusDot"></span>
+            <span id="statusText">Online</span>
+          </div>
+          <button class="toggle-status-btn go-offline" id="toggleStatusBtn" onclick="toggleRiderStatus()">Go Offline</button>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <a href="rider-my-deliveries.html" class="qa-btn">
+          <div class="qa-icon teal">&#128230;</div>
+          <div class="qa-label">My Deliveries</div>
+        </a>
+        <a href="rider-my-deliveries.html#pickup" class="qa-btn">
+          <div class="qa-icon amber">&#128666;</div>
+          <div class="qa-label">Pending Pickups</div>
+        </a>
+        <a href="rider-earnings.html" class="qa-btn">
+          <div class="qa-icon blue">&#128176;</div>
+          <div class="qa-label">My Earnings</div>
+        </a>
+        <a href="rider-profile.html" class="qa-btn">
+          <div class="qa-icon green">&#128100;</div>
+          <div class="qa-label">My Profile</div>
+        </a>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="stat-card">
+          <div class="stat-icon teal" style="font-size:22px;">&#128230;</div>
+          <div>
+            <div class="stat-value">47</div>
+            <div class="stat-label">Today's Deliveries</div>
+            <div class="stat-change up">&#9650; 8% vs yesterday</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green" style="font-size:22px;">&#9989;</div>
+          <div>
+            <div class="stat-value">42</div>
+            <div class="stat-label">Completed</div>
+            <div class="stat-change up">89.4% success rate</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon amber" style="font-size:22px;">&#9203;</div>
+          <div>
+            <div class="stat-value">5</div>
+            <div class="stat-label">Pending</div>
+            <div class="stat-change down">3 urgent</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue" style="font-size:22px;">&#127775;</div>
+          <div>
+            <div class="stat-value">4.8</div>
+            <div class="stat-label">My Rating</div>
+            <div class="stat-change up">&#9650; 0.2 this week</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Delivery Card -->
+      <div class="active-delivery" id="activeDelivery">
+        <div class="ad-header">
+          <h3>&#128230; Active Delivery</h3>
+          <span class="ad-badge">IN TRANSIT</span>
+        </div>
+        <div class="ad-details">
+          <div class="ad-detail-item">
+            <span class="ad-label">Package ID</span>
+            <span class="ad-value">PKG-2024-00847</span>
+          </div>
+          <div class="ad-detail-item">
+            <span class="ad-label">Customer</span>
+            <span class="ad-value">Sita Sharma</span>
+          </div>
+          <div class="ad-detail-item">
+            <span class="ad-label">Pickup</span>
+            <span class="ad-value">Thamel, Kathmandu</span>
+          </div>
+          <div class="ad-detail-item">
+            <span class="ad-label">Delivery</span>
+            <span class="ad-value">Baneshwor, Kathmandu</span>
+          </div>
+        </div>
+        <div class="ad-progress">
+          <div class="ad-progress-bar"><div class="ad-progress-fill" style="width:66%"></div></div>
+          <span class="ad-progress-text">66% Complete</span>
+        </div>
+        <div class="ad-steps">
+          <div class="ad-step done">Assigned</div>
+          <div class="ad-step done">Picked Up</div>
+          <div class="ad-step current">In Transit</div>
+          <div class="ad-step">Delivered</div>
+        </div>
+        <div class="ad-actions">
+          <button class="btn btn-light" onclick="openModal('callCustomerModal')">&#128222; Call Customer</button>
+          <button class="btn btn-light" onclick="openModal('navigateModal')">&#128506; Navigate</button>
+          <button class="btn btn-green" onclick="openModal('confirmDeliveryModal')">&#9989; Mark Delivered</button>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-row">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#128200; Weekly Performance</div>
+          </div>
+          <div class="card-body">
+            <canvas id="weeklyChart" height="220"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#128202; Delivery Status</div>
+          </div>
+          <div class="card-body" style="display:flex;align-items:center;justify-content:center;">
+            <canvas id="statusChart" height="220" width="220"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two Column: Delivery Queue + Timeline -->
+      <div class="grid-2">
+        <!-- Upcoming Deliveries -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#128203; Delivery Queue</div>
+            <a href="rider-my-deliveries.html" class="btn btn-sm btn-outline">View All</a>
+          </div>
+          <div class="card-body">
+            <div class="delivery-queue-item">
+              <div class="dq-icon pickup">&#128230;</div>
+              <div class="dq-info">
+                <div class="dq-id">PKG-2024-00852</div>
+                <div class="dq-addr">New Road, Kathmandu &rarr; Patan Dhoka</div>
+              </div>
+              <div class="dq-meta">
+                <div class="dq-time">11:30 AM</div>
+                <div class="dq-type"><span class="badge badge-info">Pickup</span></div>
+              </div>
+            </div>
+            <div class="delivery-queue-item">
+              <div class="dq-icon deliver">&#128666;</div>
+              <div class="dq-info">
+                <div class="dq-id">PKG-2024-00849</div>
+                <div class="dq-addr">Lazimpat &rarr; Maharajgunj</div>
+              </div>
+              <div class="dq-meta">
+                <div class="dq-time">12:15 PM</div>
+                <div class="dq-type"><span class="badge badge-success">Deliver</span></div>
+              </div>
+            </div>
+            <div class="delivery-queue-item">
+              <div class="dq-icon deliver">&#128666;</div>
+              <div class="dq-info">
+                <div class="dq-id">PKG-2024-00855</div>
+                <div class="dq-addr">Baluwatar &rarr; Chabahil</div>
+              </div>
+              <div class="dq-meta">
+                <div class="dq-time">1:00 PM</div>
+                <div class="dq-type"><span class="badge badge-success">Deliver</span></div>
+              </div>
+            </div>
+            <div class="delivery-queue-item">
+              <div class="dq-icon return">&#128259;</div>
+              <div class="dq-info">
+                <div class="dq-id">PKG-2024-00840</div>
+                <div class="dq-addr">Koteshwor &rarr; Warehouse</div>
+              </div>
+              <div class="dq-meta">
+                <div class="dq-time">2:30 PM</div>
+                <div class="dq-type"><span class="badge badge-danger">Return</span></div>
+              </div>
+            </div>
+            <div class="delivery-queue-item">
+              <div class="dq-icon pickup">&#128230;</div>
+              <div class="dq-info">
+                <div class="dq-id">PKG-2024-00861</div>
+                <div class="dq-addr">Swayambhu &rarr; Kalimati</div>
+              </div>
+              <div class="dq-meta">
+                <div class="dq-time">3:45 PM</div>
+                <div class="dq-type"><span class="badge badge-info">Pickup</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Timeline -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#128337; Today's Activity</div>
+          </div>
+          <div class="card-body">
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot green"></div>
+                <div class="timeline-content">
+                  <div class="tl-time">9:45 AM</div>
+                  <div class="tl-text"><strong>PKG-00843</strong> delivered to Srijana Thapa, Lalitpur</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot green"></div>
+                <div class="timeline-content">
+                  <div class="tl-time">9:15 AM</div>
+                  <div class="tl-text"><strong>PKG-00841</strong> delivered to Ram Karki, Bhaktapur</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot blue"></div>
+                <div class="timeline-content">
+                  <div class="tl-time">8:50 AM</div>
+                  <div class="tl-text"><strong>PKG-00847</strong> picked up from Thamel warehouse</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot blue"></div>
+                <div class="timeline-content">
+                  <div class="tl-time">8:30 AM</div>
+                  <div class="tl-text"><strong>PKG-00843</strong> picked up from New Road client</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot amber"></div>
+                <div class="timeline-content">
+                  <div class="tl-time">8:10 AM</div>
+                  <div class="tl-text">Shift started &mdash; 5 packages assigned</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <div class="tl-time">8:00 AM</div>
+                  <div class="tl-text">Went online</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Stats Row -->
+      <div style="margin-top:24px;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#128197; Monthly Summary</div>
+            <span class="badge badge-primary">April 2026</span>
+          </div>
+          <div class="card-body">
+            <div class="stats-grid" style="grid-template-columns: repeat(5, 1fr); margin-bottom:0;">
+              <div style="text-align:center;">
+                <div style="font-size:28px;font-weight:800;color:var(--text-primary);">1,240</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Total Deliveries</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:28px;font-weight:800;color:var(--success);">1,180</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Successful</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:28px;font-weight:800;color:var(--danger);">38</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Returns</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:28px;font-weight:800;color:var(--primary);">Rs 28,500</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Earnings</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:28px;font-weight:800;color:var(--warning);">95.3%</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Success Rate</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<!-- ─── Modals ──────────────────────────── -->
+
+<!-- Confirm Delivery Modal -->
+<div class="modal-overlay" id="confirmDeliveryModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">&#9989; Confirm Delivery</div>
+      <button class="modal-close" onclick="closeModal('confirmDeliveryModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:16px;color:var(--text-secondary);font-size:13px;">Confirm that package <strong>PKG-2024-00847</strong> has been delivered to the customer.</p>
+      <div class="form-group">
+        <label class="form-label">Received By</label>
+        <input type="text" class="form-control" placeholder="Customer name" value="Sita Sharma" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Delivery Note</label>
+        <textarea class="form-control" placeholder="Any delivery notes..." rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Payment Status</label>
+        <select class="form-control">
+          <option>Prepaid</option>
+          <option selected>Cash on Delivery - Collected</option>
+          <option>Cash on Delivery - Pending</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('confirmDeliveryModal')">Cancel</button>
+      <button class="btn btn-success" onclick="confirmDelivery()">&#9989; Confirm Delivery</button>
+    </div>
+  </div>
+</div>
+
+<!-- Call Customer Modal -->
+<div class="modal-overlay" id="callCustomerModal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-title">&#128222; Contact Customer</div>
+      <button class="modal-close" onclick="closeModal('callCustomerModal')">&times;</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:32px 24px;">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;">&#128100;</div>
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:4px;">Sita Sharma</h3>
+      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">PKG-2024-00847 &bull; Baneshwor, KTM</p>
+      <a href="tel:+9779812345678" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">&#128222; Call +977-9812345678</a>
+    </div>
+  </div>
+</div>
+
+<!-- Navigate Modal -->
+<div class="modal-overlay" id="navigateModal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-title">&#128506; Navigation</div>
+      <button class="modal-close" onclick="closeModal('navigateModal')">&times;</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:32px 24px;">
+      <div style="width:64px;height:64px;border-radius:50%;background:#eff6ff;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;">&#128506;</div>
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:4px;">Baneshwor, Kathmandu</h3>
+      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Delivery destination for PKG-2024-00847</p>
+      <a href="https://www.google.com/maps/search/Baneshwor+Kathmandu" target="_blank" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">&#128506; Open in Google Maps</a>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Toast Container ────────────────── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/auth.js"></script>
+<script>
+  // ─── Date & Greeting ────────────────────
+  (function() {
+    var now = new Date();
+    var h = now.getHours();
+    var greeting = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening';
+    var name = sessionStorage.getItem('packrs_name') || 'Rider';
+    document.getElementById('greetingText').textContent = greeting + ', ' + name + '!';
+
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('todayDate').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+  })();
+
+  // ─── Online/Offline Toggle ──────────────
+  var isOnline = true;
+  function toggleRiderStatus() {
+    isOnline = !isOnline;
+    var indicator = document.getElementById('statusIndicator');
+    var dot = document.getElementById('statusDot');
+    var text = document.getElementById('statusText');
+    var btn = document.getElementById('toggleStatusBtn');
+
+    if (isOnline) {
+      indicator.className = 'status-indicator online';
+      dot.className = 'status-dot online';
+      text.textContent = 'Online';
+      btn.className = 'toggle-status-btn go-offline';
+      btn.textContent = 'Go Offline';
+      showToast('You are now online! Deliveries will be assigned to you.', 'success');
+    } else {
+      indicator.className = 'status-indicator offline';
+      dot.className = 'status-dot offline';
+      text.textContent = 'Offline';
+      btn.className = 'toggle-status-btn go-online';
+      btn.textContent = 'Go Online';
+      showToast('You are now offline. No new deliveries will be assigned.', 'info');
+    }
+  }
+
+  // ─── Modal Helpers ──────────────────────
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  // Close on backdrop click
+  document.querySelectorAll('.modal-overlay').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      if (e.target === el) el.classList.remove('open');
+    });
+  });
+
+  // ─── Confirm Delivery ───────────────────
+  function confirmDelivery() {
+    closeModal('confirmDeliveryModal');
+    // Update the active delivery card
+    var ad = document.getElementById('activeDelivery');
+    ad.querySelector('.ad-badge').textContent = 'DELIVERED';
+    ad.querySelector('.ad-badge').style.background = 'rgba(16,185,129,0.3)';
+    ad.querySelector('.ad-progress-fill').style.width = '100%';
+    ad.querySelector('.ad-progress-text').textContent = '100% Complete';
+    var steps = ad.querySelectorAll('.ad-step');
+    steps.forEach(function(s) { s.className = 'ad-step done'; });
+    showToast('Package PKG-2024-00847 marked as delivered!', 'success');
+  }
+
+  // ─── Toast ──────────────────────────────
+  function showToast(msg, type) {
+    var container = document.getElementById('toastContainer');
+    var toast = document.createElement('div');
+    toast.className = 'toast ' + (type || 'info');
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 3500);
+  }
+
+  // ─── Charts ─────────────────────────────
+  // Weekly Performance
+  new Chart(document.getElementById('weeklyChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [{
+        label: 'Deliveries',
+        data: [38, 45, 42, 50, 47, 35, 20],
+        backgroundColor: '#3aafa9',
+        borderRadius: 6,
+        barThickness: 28
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // Delivery Status Doughnut
+  new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Delivered', 'In Transit', 'Pending', 'Returned'],
+      datasets: [{
+        data: [42, 1, 5, 2],
+        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { size: 12, weight: 600 }, padding: 16 }
+        }
+      }
+    }
+  });
+
+  // ─── Mobile Menu ────────────────────────
+  (function() {
+    if (window.innerWidth <= 768) {
+      document.getElementById('menuToggle').style.display = 'inline-flex';
+    }
+    window.addEventListener('resize', function() {
+      document.getElementById('menuToggle').style.display = window.innerWidth <= 768 ? 'inline-flex' : 'none';
+    });
+  })();
+</script>
+</body>
+</html>
